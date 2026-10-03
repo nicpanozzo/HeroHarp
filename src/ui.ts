@@ -97,10 +97,11 @@ export function paper(scene: Phaser.Scene): void {
 }
 
 /** Testo che sale e svanisce, per danni e complimenti. */
-export function pop(scene: Phaser.Scene, x: number, y: number, s: string, color: string = HEX.inchiostro, size = 32): void {
+export function pop(scene: Phaser.Scene, x: number, y: number, s: string, color: string = HEX.inchiostro, size = 32): Phaser.GameObjects.Text {
   const t = txt(scene, x, y, s, size, color, "titoli").setStroke(HEX.carta, 6);
   const reduce = reducedMotion();
   scene.tweens.add({ targets: t, y: reduce ? y : y - 60, alpha: 0, duration: 1100, ease: "Cubic.easeOut", onComplete: () => t.destroy() });
+  return t;
 }
 
 export const reducedMotion = (): boolean => save.settings.reduceMotion || !!window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;

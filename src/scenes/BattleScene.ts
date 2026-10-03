@@ -46,6 +46,7 @@ export class BattleScene extends Phaser.Scene {
   private battle!: Battle;
   private enemy!: EnemyDef;
   private enemyImg!: Phaser.GameObjects.Image;
+  private wrongPop?: Phaser.GameObjects.Text;
   private playerImg!: Phaser.GameObjects.Image;
   private banner!: Phaser.GameObjects.Text;
   private sub!: Phaser.GameObjects.Text;
@@ -434,7 +435,12 @@ export class BattleScene extends Phaser.Scene {
         pop(this, W / 2, 380, t("hold"), HEX.prugna, 26);
         break;
       case "wrongNote":
-        pop(this, W / 2, 460, `${t("wrong")}: ${noteName(ev.midi, getLang())}`, HEX.rosso, 22);
+        // una sola scritta alla volta: le note sbagliate di fila non si impilano
+        if (this.wrongPop?.active) {
+          this.tweens.killTweensOf(this.wrongPop);
+          this.wrongPop.destroy();
+        }
+        this.wrongPop = pop(this, W / 2, 460, `${t("wrong")}: ${noteName(ev.midi, getLang())}`, HEX.rosso, 22);
         break;
       case "enemyDamaged":
         if (ev.amount > 0) {
