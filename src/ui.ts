@@ -64,11 +64,16 @@ export function panel(scene: Phaser.Scene, x: number, y: number, w: number, h: n
   return g;
 }
 
-/** Sfondo del portico (tre livelli). `dim` lo scurisce per far risaltare i pannelli. */
-export function porch(scene: Phaser.Scene, dim = 0): void {
-  for (const k of ["sfondi-portico-1-cielo", "sfondi-portico-2-casa", "sfondi-portico-3-primo-piano"]) scene.add.image(W / 2, H / 2, k).setDisplaySize(W, H);
+const PORCH = ["sfondi-portico-1-cielo", "sfondi-portico-2-casa", "sfondi-portico-3-primo-piano"];
+
+/** Sfondo di un luogo (tre livelli di parallasse). `dim` lo scurisce per far risaltare i pannelli. */
+export function backdrop(scene: Phaser.Scene, layers: string[] | null = PORCH, dim = 0): Phaser.GameObjects.Image[] {
+  const imgs = (layers ?? PORCH).map((k) => scene.add.image(W / 2, H / 2, k).setDisplaySize(W, H));
   if (dim > 0) scene.add.rectangle(W / 2, H / 2, W, H, C.inchiostro, dim);
+  return imgs;
 }
+
+export const porch = (scene: Phaser.Scene, dim = 0) => backdrop(scene, PORCH, dim);
 
 /** Fondo di carta semplice. */
 export function paper(scene: Phaser.Scene): void {

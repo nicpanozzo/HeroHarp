@@ -3,14 +3,14 @@ import { click, start, startBot } from "./helpers";
 
 test("il microfono finto viene riconosciuto come foro 4 soffiato", async ({ page }) => {
   const errors = await start(page);
-  await expect.poll(() => page.evaluate(() => window.__game.scene.getScene("map").children.getByName("hearing").text)).toContain("4↑");
+  await expect.poll(() => page.evaluate(() => window.__game.scene.getScene("journey").children.getByName("hearing").text)).toContain("4↑");
   expect(errors).toEqual([]);
 });
 
 for (const enemy of ["draft", "silence"]) {
   test(`un giocatore perfetto batte ${enemy}`, async ({ page }) => {
     const errors = await start(page);
-    await page.evaluate((e) => window.__game.scene.getScene("map").scene.start("battle", { enemyId: e }), enemy);
+    await page.evaluate((e) => window.__game.scene.getScene("journey").scene.start("battle", { enemyId: e }), enemy);
     await page.waitForFunction(() => window.__game.scene.isActive("battle"));
     await startBot(page);
     await page.waitForFunction(() => window.__game.scene.isActive("result"), null, { timeout: 280_000 });
@@ -22,8 +22,7 @@ for (const enemy of ["draft", "silence"]) {
 
 test("le opzioni si salvano", async ({ page }) => {
   await start(page);
-  await click(page, "map", "mae-ok"); // la prima volta Zia Mae spiega il gioco
-  await click(page, "map", "options");
+  await click(page, "journey", "options");
   await page.waitForFunction(() => window.__game.scene.isActive("options"));
   await click(page, "options", "opt-headphones");
   const saved = await page.evaluate(() => JSON.parse(localStorage.getItem("duello-dance-save")!).settings.headphones);
@@ -32,8 +31,7 @@ test("le opzioni si salvano", async ({ page }) => {
 
 test("la calibrazione del ritardo misura e salva lo scarto", async ({ page }) => {
   await start(page);
-  await click(page, "map", "mae-ok");
-  await click(page, "map", "options");
+  await click(page, "journey", "options");
   await click(page, "options", "opt-latency");
   await page.waitForFunction(() => window.__game.scene.isActive("latency"));
   await click(page, "latency", "lat-go");
@@ -54,11 +52,37 @@ test("la calibrazione del ritardo misura e salva lo scarto", async ({ page }) =>
     };
     tick();
   });
-  await page.waitForFunction(() => JSON.parse(localStorage.getItem("duello-dance-save")!).settings.latency !== null, null, { timeout: 20_000 });
+  await page.waitForFunction(() => JSON.parse(localStorage.getItem("duello-dance-save")!).settings?.latency != null, null, { timeout: 20_000 });
   const latency = await page.evaluate(() => JSON.parse(localStorage.getItem("duello-dance-save")!).settings.latency);
   const offsets: number[] = (await page.evaluate(() => (window as any).__offsets)).sort((a: number, b: number) => a - b);
   const median = (offsets[3] + offsets[4]) / 2;
   expect(latency).toBeGreaterThan(0.1);
   expect(Math.abs(latency - median)).toBeLessThan(0.03);
   expect(await page.evaluate(() => window.__engine().inputLatency)).toBe(latency);
+});
+
+test("la prima volta Zia Mae spiega il gioco e la tappa, poi si entra nel portico", async ({ page }) => {
+  const errors = await start(page, false);
+  await click(page, "journey", "mae-ok");
+  // le lezioni della prima tappa, una pagina per tecnica
+  for (let i = 0; i < 10 && !(await page.evaluate(() => window.__game.scene.isActive("map"))); i++) {
+    await click(page, "journey", "mae-ok");
+    await page.waitForTimeout(150);
+  }
+  await page.waitForFunction(() => window.__game.scene.isActive("map"));
+  const title = await page.evaluate(() => window.__game.scene.getScene("map").children.getByName("area-title").text);
+  expect(title).toMatch(/PORTICO/);
+  expect(errors).toEqual([]);
+});
+
+test("si gioca una tappa con accordi e una con i bend", async ({ page }) => {
+  const errors = await start(page);
+  for (const enemy of ["stoker", "crow"]) {
+    await page.evaluate((e) => window.__game.scene.getScene("journey").scene.start("battle", { enemyId: e }), enemy);
+    await page.waitForFunction(() => window.__game.scene.isActive("battle"));
+    await page.waitForFunction(() => window.__game.scene.getScene("battle").battle.phase === "response", null, { timeout: 60_000 });
+    await page.evaluate(() => window.__game.scene.getScene("battle").scene.start("journey"));
+    await page.waitForFunction(() => window.__game.scene.isActive("journey"));
+  }
+  expect(errors).toEqual([]);
 });

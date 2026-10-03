@@ -3,6 +3,7 @@ import Phaser from "phaser";
 import { BootScene } from "./scenes/BootScene";
 import { TitleScene } from "./scenes/TitleScene";
 import { MapScene } from "./scenes/MapScene";
+import { JourneyScene } from "./scenes/JourneyScene";
 import { BattleScene } from "./scenes/BattleScene";
 import { ResultScene } from "./scenes/ResultScene";
 import { OptionsScene } from "./scenes/OptionsScene";
@@ -37,7 +38,7 @@ fontsReady().then(() => {
     height: H,
     backgroundColor: C.carta,
     scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
-    scene: [BootScene, TitleScene, MapScene, BattleScene, ResultScene, OptionsScene, CalibrationScene, LatencyScene],
+    scene: [BootScene, TitleScene, JourneyScene, MapScene, BattleScene, ResultScene, OptionsScene, CalibrationScene, LatencyScene],
   });
   // accesso per i test automatici e il debug dalla console
   Object.assign(window, { __game: game, __engine: getEngine });

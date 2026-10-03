@@ -1,13 +1,13 @@
 import Phaser from "phaser";
 import { Battle, PLAYER_HP, type BattleEvent, type Round } from "../battle/logic";
-import { enemyById, type EnemyDef } from "../content/area1";
+import { areaById, enemyById, type EnemyDef } from "../content/areas";
 import { keyById, noteName, type Tab } from "../harp";
+import type { PhraseNote } from "../battle/logic";
 import { getLang, t } from "../i18n";
 import { save, persist } from "../state";
 import { getEngine } from "../audio/engine";
 import type { TonalitaArmonica } from "../style/basi";
-import type { Timbro } from "../style/effetti";
-import { C, W, HEX, txt, porch, pop, panel, reducedMotion } from "../ui";
+import { C, W, HEX, txt, backdrop, pop, panel, reducedMotion } from "../ui";
 import { HearingReadout } from "./readout";
 import { applySettings } from "../settings";
 
@@ -25,6 +25,15 @@ interface Chip {
   label: Phaser.GameObjects.Text;
   x: number;
   tab: Tab;
+}
+
+/** Etichetta di una nota della frase: 4↑, 4↓', accordo 456↑, overblow 6↑°. */
+export function chipLabel(n: PhraseNote): string {
+  const src = n.source;
+  const arrow = n.tab.draw ? "↓" : "↑";
+  if (src.kind === "chord" && src.holes.length > 1) return `${src.holes.join("")}${arrow}`;
+  const over = src.technique === "overblow" || src.technique === "overdraw" ? "°" : "";
+  return `${n.tab.hole}${arrow}${"'".repeat(n.tab.bend)}${over}`;
 }
 
 type Pose = "idle" | "suona" | "colpito" | "vittoria";
@@ -74,7 +83,8 @@ export class BattleScene extends Phaser.Scene {
     const engine = getEngine();
     const lang = getLang();
     applySettings();
-    porch(this);
+    const area = areaById(this.enemy.areaId);
+    backdrop(this, area.backdrop);
 
     // base musicale nella tonalità dell'armonica: i round partono sempre a inizio battuta
     const basi = engine.basi;
@@ -84,7 +94,7 @@ export class BattleScene extends Phaser.Scene {
       return s;
     };
     this.battle = new Battle(this.enemy, keyById(save.keyId), { align });
-    basi.avvia({ area: "portico", armonica: save.keyId as TonalitaArmonica, bpm: this.battle.bpm });
+    basi.avvia({ area: area.music, armonica: save.keyId as TonalitaArmonica, bpm: this.battle.bpm });
     engine.fx.tonica = basi.tonicaMidi;
     this.cleanup.push(() => basi.ferma(0.4));
     this.cleanup.push(
@@ -158,13 +168,14 @@ export class BattleScene extends Phaser.Scene {
     this.scheduledRound = r.number;
     engine.basi.impostaTempo(r.bpm);
     r.countIn.forEach((tm, i) => engine.click(tm, i === 0));
-    for (const n of r.call) engine.fx.voceNemico(n.midi, Math.max(0.15, n.dur * 0.85), this.enemy.sprite as Timbro, n.time);
+    for (const n of r.call) engine.fx.voceNemico(n.midi, Math.max(0.15, n.dur * 0.85), this.enemy.timbre, n.time);
     this.buildChips(r);
     this.projectiles.forEach((p) => p.destroy());
     this.projectiles.clear();
     for (const p of r.volley) {
       const c = this.add.container(this.laneX(p.lane), LANE_TOP);
-      c.add(this.add.image(0, 0, p.tab.draw ? "ui-colpo-aspirato" : "ui-colpo-soffio").setDisplaySize(56, 56));
+      c.add(this.add.image(0, 0, p.tab.bend ? "ui-colpo-bend" : p.tab.draw ? "ui-colpo-aspirato" : "ui-colpo-soffio").setDisplaySize(56, 56));
+      if (p.tab.bend) c.add(txt(this, 0, 0, "'".repeat(p.tab.bend), 22, HEX.carta, "fori"));
       c.setVisible(false);
       this.projectiles.set(p.id, c);
     }
@@ -192,7 +203,8 @@ export class BattleScene extends Phaser.Scene {
     r.call.forEach((note, i) => {
       const x = (i - (n - 1) / 2) * gap;
       const bg = this.add.graphics();
-      const label = txt(this, x, 0, `${note.tab.hole}${note.tab.draw ? "↓" : "↑"}`, gap > 70 ? 40 : 32, HEX.carta, "fori");
+      const s = chipLabel(note);
+      const label = txt(this, x, 0, s, s.length > 3 ? (gap > 70 ? 28 : 22) : gap > 70 ? 40 : 32, HEX.carta, "fori");
       this.chipLayer.add([bg, label]);
       this.chips.push({ bg, label, x, tab: note.tab });
       this.paintChip(i, "idle");

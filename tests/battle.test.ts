@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { Battle } from "../src/battle/logic";
-import { AREA1, enemyById, segment } from "../src/content/area1";
+import { AREA1, AREAS, enemyById, segment } from "../src/content/areas";
 import { keyById } from "../src/harp";
 
 const seeded = () => {
@@ -93,7 +93,9 @@ describe("battaglia", () => {
 
   it("una nota lunga lasciata subito vale metà", () => {
     const b = new Battle(enemyById("draft"), keyById("C"), { rng: seeded() });
-    const r = b.startRound(0); // draft-1: 4↑ e 5↑ da due battiti
+    // si cerca un round che cominci con una nota lunga (almeno due battiti)
+    let r = b.startRound(0);
+    while (r.response[0].dur < 2 * r.beat - 1e-6) r = b.startRound(r.end);
     b.update(r.callEnd, null);
     const n = r.response[0];
     b.onset(n.midi, n.time);
@@ -113,5 +115,53 @@ describe("battaglia", () => {
   it("i round si allineano alla battuta della base", () => {
     const b = new Battle(enemyById("draft"), keyById("C"), { align: (t) => Math.ceil(t / 2) * 2 });
     expect(b.startRound(0.3).countIn[0]).toBe(2);
+  });
+});
+
+describe("tutte le tappe", () => {
+  it("carica il viaggio completo dal percorso, con grafica e lezioni", () => {
+    expect(AREAS.map((a) => a.order)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+    for (const a of AREAS.filter((x) => !x.comingSoon)) {
+      expect(a.backdrop, a.id).not.toBeNull();
+      expect(a.lessons.length, a.id).toBeGreaterThan(0);
+    }
+  });
+
+  it("il giocatore perfetto batte ogni nemico giocabile di ogni tappa", () => {
+    const playable = AREAS.flatMap((a) => a.enemies).filter((e) => !e.comingSoon);
+    expect(playable.length).toBeGreaterThan(25);
+    for (const e of playable) {
+      const b = simulate(true, e.id);
+      expect(b.phase, e.id).toBe("won");
+    }
+  });
+
+  it("le frasi partono dal livello facile e salgono", () => {
+    for (const e of AREAS.flatMap((a) => a.enemies).filter((x) => !x.comingSoon))
+      for (const ph of e.phases)
+        expect(
+          [...ph.tiers].sort((a, b) => a - b),
+          e.id,
+        ).toEqual(ph.tiers);
+  });
+
+  it("un accordo vale con una qualunque delle sue note", () => {
+    const e = AREAS.flatMap((a) => a.enemies).find((x) => !x.comingSoon && x.phases[0].phrases.some((p) => p.some((s) => s.notes[0].kind === "chord")))!;
+    const b = new Battle(e, keyById("C"), { rng: seeded() });
+    let r = b.startRound(0);
+    while (r.response[0].source.kind !== "chord") r = b.startRound(r.end);
+    b.update(r.callEnd, null);
+    const n = r.response[0];
+    expect(n.accept.length).toBeGreaterThan(1);
+    b.onset(n.accept[n.accept.length - 1], n.time);
+    expect(n.hit).toBe(true);
+  });
+
+  it("i bend e gli overblow hanno l'altezza giusta in ogni tonalità", () => {
+    const notes = AREAS.flatMap((a) => a.enemies.flatMap((e) => e.phases.flatMap((p) => p.phrases.flat().flatMap((s) => s.notes))));
+    const bend = notes.find((n) => n.tab.hole === 4 && n.tab.draw && n.tab.bend === 1)!;
+    expect(bend.semitones[0]).toBe(13); // 4↓' = Do# su armonica in Do
+    const ob = notes.find((n) => n.technique === "overblow" && n.tab.hole === 6);
+    if (ob) expect(ob.semitones[0]).toBe(22); // 6 overblow = Si bemolle
   });
 });

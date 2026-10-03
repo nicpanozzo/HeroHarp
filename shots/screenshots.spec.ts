@@ -1,55 +1,76 @@
-import { test } from "@playwright/test";
+import { test, type Page } from "@playwright/test";
 import { mkdirSync } from "node:fs";
 import { resolve } from "node:path";
 import { click, start, startBot } from "../e2e/helpers";
 
 // Fotografa le schermate principali per le presentazioni dei progressi.
-// Uso: SHOTS=../screenshots/2026-10-03-opzioni npx playwright test -c playwright.shots.config.ts
+// Uso: SHOTS=../screenshots/<data-tappa> npm run shots
 const OUT = resolve(process.env.SHOTS ?? "test-results/shots");
 mkdirSync(OUT, { recursive: true });
 
-test("schermate", async ({ page }) => {
-  const shot = (name: string) => page.screenshot({ path: `${OUT}/${name}.png` });
-  await page.goto(resolve("dist/index.html").replace(/^/, "file://"));
-  await page.waitForFunction(() => window.__game?.scene.isActive("title"));
-  await page.waitForTimeout(600);
-  await shot("01-titolo");
-  await start(page);
-  await page.waitForTimeout(800);
-  await shot("02-zia-mae");
-  await click(page, "map", "mae-ok");
-  await page.waitForTimeout(600);
-  await shot("03-mappa");
-  await click(page, "map", "options");
-  await page.waitForFunction(() => window.__game.scene.isActive("options"));
-  await page.waitForTimeout(400);
-  await shot("04-opzioni");
-  await click(page, "options", "opt-latency");
-  await page.waitForFunction(() => window.__game.scene.isActive("latency"));
-  await page.waitForTimeout(400);
-  await shot("05-ritardo");
-  await click(page, "latency", "lat-go");
-  await page.waitForTimeout(4200);
-  await shot("05-ritardo-in-corso");
-  await page.evaluate(() => window.__game.scene.getScene("latency").scene.start("options", { from: "map" }));
-  await page.waitForFunction(() => window.__game.scene.isActive("options"));
-  await click(page, "options", "opt-calibrate");
-  await page.waitForFunction(() => window.__game.scene.isActive("calibration"));
-  await page.waitForTimeout(400);
-  await shot("05-calibrazione-microfono");
+const active = (page: Page, s: string) => page.waitForFunction((n) => window.__game.scene.isActive(n), s);
 
-  await page.evaluate(() => window.__game.scene.getScene("calibration").scene.start("battle", { enemyId: "silence" }));
-  await page.waitForFunction(() => window.__game.scene.isActive("battle"));
-  await startBot(page);
-  const at = async (phase: string, name: string, extra = 0) => {
-    await page.waitForFunction((p) => window.__game.scene.getScene("battle").battle.phase === p, phase, { timeout: 60_000 });
-    await page.waitForTimeout(extra);
-    await shot(name);
+test("schermate", async ({ page }) => {
+  const shot = async (name: string, wait = 500) => {
+    await page.waitForTimeout(wait);
+    await page.screenshot({ path: `${OUT}/${name}.png` });
   };
-  await at("call", "06-battaglia-chiamata", 900);
-  await at("response", "07-battaglia-risposta", 900);
-  await at("volley", "08-battaglia-attacco", 700);
+  await page.goto("file://" + resolve("dist/index.html"));
+  await active(page, "title");
+  await shot("01-titolo");
+  await start(page, false);
+  await shot("02-zia-mae", 800);
+  await click(page, "journey", "mae-ok");
+  await shot("03-lezione");
+  for (let i = 0; i < 10 && !(await page.evaluate(() => window.__game.scene.isActive("map"))); i++) {
+    await click(page, "journey", "mae-ok");
+    await page.waitForTimeout(150);
+  }
+  await active(page, "map");
+  await shot("04-tappa-portico", 800);
+
+  // un viaggio già avanzato: prime tre tappe battute, la band cresce
+  await page.evaluate(() => {
+    const s = JSON.parse(localStorage.getItem("duello-dance-save")!);
+    s.beaten = ["draft", "sigh", "bellows", "silence", "ticket-clerk", "porter", "stationmaster", "mad-metronome", "stoker", "hobo", "whistle", "old-iron"];
+    s.lessonsSeen = ["porch", "station", "freight-train", "juke-joint", "beale-street", "delta-crossroads", "riverboat", "chicago-club", "after-hours"];
+    localStorage.setItem("duello-dance-save", JSON.stringify(s));
+    location.reload();
+  });
+  await active(page, "title");
+  await click(page, "title", "start");
+  await active(page, "journey");
+  await shot("05-viaggio", 900);
+  await page.evaluate(() => window.__game.scene.getScene("journey").scene.start("map", { areaId: "juke-joint" }));
+  await active(page, "map");
+  await shot("06-tappa-juke-joint", 800);
+  await click(page, "map", "options");
+  await active(page, "options");
+  await shot("07-opzioni");
+  await click(page, "options", "opt-latency");
+  await active(page, "latency");
+  await click(page, "latency", "lat-go");
+  await shot("08-ritardo", 4200);
+
+  const battle = async (enemyId: string, prefix: string) => {
+    await page.evaluate((e) => {
+      const g = window.__game;
+      const cur = g.scene.getScenes(true)[0];
+      cur.scene.start("battle", { enemyId: e });
+    }, enemyId);
+    await active(page, "battle");
+    await startBot(page);
+    const at = async (phase: string, name: string, extra: number) => {
+      await page.waitForFunction((p) => window.__game.scene.getScene("battle").battle.phase === p, phase, { timeout: 60_000 });
+      await shot(name, extra);
+    };
+    await at("call", `${prefix}-chiamata`, 900);
+    await at("response", `${prefix}-risposta`, 900);
+    await at("volley", `${prefix}-attacco`, 700);
+  };
+  await battle("singer", "09-juke-joint");
+  await battle("crow", "10-crocevia");
+  await battle("silence", "11-portico");
   await page.waitForFunction(() => window.__game.scene.isActive("result"), null, { timeout: 280_000 });
-  await page.waitForTimeout(1200);
-  await shot("09-vittoria");
+  await shot("12-vittoria", 1200);
 });

@@ -16,6 +16,8 @@ export interface Settings {
   micGate: number | null;
   /** Ritardo misurato tra colpo del metronomo e nota sentita, in secondi. */
   latency: number | null;
+  /** Tutte le tappe aperte, per allenarsi dove si vuole. */
+  openAll: boolean;
 }
 
 export interface Save {
@@ -23,6 +25,8 @@ export interface Save {
   keyId: string;
   beaten: string[];
   introSeen: boolean;
+  /** Aree di cui Zia Mae ha già spiegato le lezioni. */
+  lessonsSeen: string[];
   settings: Settings;
 }
 
@@ -35,8 +39,9 @@ export const DEFAULT_SETTINGS: Settings = {
   reduceMotion: false,
   micGate: null,
   latency: null,
+  openAll: false,
 };
-const defaults: Save = { lang: "it", keyId: "C", beaten: [], introSeen: false, settings: DEFAULT_SETTINGS };
+const defaults: Save = { lang: "it", keyId: "C", beaten: [], introSeen: false, lessonsSeen: [], settings: DEFAULT_SETTINGS };
 
 function load(): Save {
   try {

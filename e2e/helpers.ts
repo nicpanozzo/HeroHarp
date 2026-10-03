@@ -14,22 +14,44 @@ export async function click(page: Page, scene: string, name: string) {
     ([s, n]) => {
       const g = window.__game;
       const sc = g.scene.getScene(s);
-      const o = sc.children.getByName(n) ?? sc.children.list.flatMap((c: any) => c.list ?? []).find((c: any) => c.name === n);
+      // cerca anche dentro i contenitori (finestre di dialogo), l'ultimo aggiunto vince
+      const find = (list: any[]): any => {
+        for (const c of [...list].reverse()) {
+          if (c.name === n && c.active) return c;
+          const inner = c.list && find(c.list);
+          if (inner) return inner;
+        }
+      };
+      const o = find(sc.children.list);
+      if (!o) throw new Error(`"${n}" non trovato nella scena ${s}`);
+      const m = o.getWorldTransformMatrix ? o.getWorldTransformMatrix() : { tx: o.x, ty: o.y };
       const r = g.canvas.getBoundingClientRect();
-      return { x: r.left + (o.x * r.width) / g.config.width, y: r.top + (o.y * r.height) / g.config.height };
+      return { x: r.left + (m.tx * r.width) / g.config.width, y: r.top + (m.ty * r.height) / g.config.height };
     },
     [scene, name],
   );
   await page.mouse.click(pos.x, pos.y);
 }
 
-export async function start(page: Page) {
+export async function start(page: Page, skipIntro = true) {
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
+  // Zia Mae ha già spiegato tutto: le prove partono dalla mappa del viaggio
+  if (skipIntro)
+    await page.addInitScript(() => {
+      if (!localStorage.getItem("duello-dance-save"))
+        localStorage.setItem(
+          "duello-dance-save",
+          JSON.stringify({
+            introSeen: true,
+            lessonsSeen: ["porch", "station", "freight-train", "juke-joint", "beale-street", "delta-crossroads", "riverboat", "chicago-club", "after-hours"],
+          }),
+        );
+    });
   await page.goto(GAME);
   await page.waitForFunction(() => window.__game?.scene.isActive("title"));
   await click(page, "title", "start");
-  await page.waitForFunction(() => window.__game.scene.isActive("map"));
+  await page.waitForFunction(() => window.__game.scene.isActive("journey"));
   return errors;
 }
 

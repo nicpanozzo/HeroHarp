@@ -33,10 +33,10 @@ export class OptionsScene extends Phaser.Scene {
           .setWordWrapWidth(560)
           .setAlign("left")
           .setAlpha(0.75);
-      y += hint ? 84 : 56;
+      y += hint ? 78 : 52;
     };
     const onOff = (v: boolean) => (v ? t("on") : t("off"));
-    const toggle = (k: "music" | "metronome" | "headphones" | "reduceMotion") => () => {
+    const toggle = (k: "music" | "metronome" | "headphones" | "reduceMotion" | "openAll") => () => {
       updateSettings({ [k]: !s[k] });
       this.scene.restart();
     };
@@ -69,10 +69,12 @@ export class OptionsScene extends Phaser.Scene {
 
     txt(this, 240, y, `${t("optMic")} · ${s.micGate === null ? t("notCalibrated") : t("calibrated")}`, 24, HEX.inchiostro).setOrigin(0, 0.5);
     button(this, W - 340, y, t("calibrate"), () => this.scene.start("calibration", { from: this.from }), 220, false, 44).setName("opt-calibrate");
-    y += 56;
+    y += 52;
     const lat = s.latency === null ? t("notCalibrated") : `${Math.round(s.latency * 1000)} ms`;
     txt(this, 240, y, `${t("optLatency")} · ${lat}`, 24, HEX.inchiostro).setOrigin(0, 0.5);
     button(this, W - 340, y, t("calibrate"), () => this.scene.start("latency", { from: this.from }), 220, false, 44).setName("opt-latency");
+    y += 52;
+    row("optOpenAll", onOff(s.openAll), toggle("openAll"), "opt-open-all");
 
     button(this, W / 2, 686, t("back"), () => this.scene.start(this.from), 260).setName("back");
   }

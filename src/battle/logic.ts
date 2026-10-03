@@ -1,14 +1,19 @@
 // Regole della battaglia, senza grafica né audio: così si possono testare.
 // Un round: conto alla rovescia → il nemico suona (Ascolta) → tu ripeti (Rispondi) → raffica da parare (Para!).
 
-import type { EnemyDef, Phrase } from "../content/area1";
+import type { EnemyDef, Phrase, PhraseNote as ContentNote } from "../content/areas";
 import { tabToMidi, type HarpKey, type Tab } from "../harp";
 
 export type Phase = "countin" | "call" | "response" | "volley" | "won" | "lost";
 
 export interface PhraseNote {
   tab: Tab;
+  /** Nota principale; per un accordo la più bassa. */
   midi: number;
+  /** Note accettate: per accordi, ottave e trilli basta una delle loro note. */
+  accept: number[];
+  /** Nota del percorso da cui viene (fori, tecnica, tipo). */
+  source: ContentNote;
   /** Istante ideale (orologio audio) e durata, in secondi. */
   time: number;
   dur: number;
@@ -85,6 +90,7 @@ export class Battle {
   private nextId = 0;
   private offsets: number[] = [];
   private queue: Phrase[] = [];
+  private lastPhrase = -1;
   private sustain: { index: number; until: number } | null = null;
   private silentSince: number | null = null;
   private healedBeats = 0;
@@ -96,13 +102,17 @@ export class Battle {
     opts: BattleOptions = {},
   ) {
     this.rng = opts.rng ?? Math.random;
+    this.level = 0;
     this.align = opts.align ?? ((t) => t);
     this.enemyHp = enemy.hp;
     this.bpm = enemy.phases[0].bpm[0];
+    // la raffica usa le note singole del nemico (niente accordi né overblow: si parano con una nota sola)
     const seen = new Map<string, Tab>();
     for (const ph of enemy.phases)
-      for (const phrase of ph.phrases) for (const seg of phrase) for (const n of seg.notes) seen.set(`${n.tab.hole}${n.tab.draw}${n.tab.bend}`, n.tab);
-    this.volleyTabs = [...seen.values()].sort((a, b) => a.hole - b.hole || Number(a.draw) - Number(b.draw));
+      for (const phrase of ph.phrases)
+        for (const seg of phrase) for (const n of seg.notes) if (n.kind === "note" && !n.technique) seen.set(`${n.tab.hole}${n.tab.draw}${n.tab.bend}`, n.tab);
+    if (seen.size === 0) seen.set("4b", { hole: 4, draw: false, bend: 0 });
+    this.volleyTabs = [...seen.values()].sort((a, b) => a.hole - b.hole || Number(a.draw) - Number(b.draw) || a.bend - b.bend);
     this.lanes = [...new Set(this.volleyTabs.map((t) => t.hole))];
   }
 
@@ -125,12 +135,27 @@ export class Battle {
     return e;
   }
 
+  /** Livello più alto disponibile nella fase attuale (0 facile, 1 medio, 2 difficile). */
+  private get maxLevel(): number {
+    return Math.max(...this.currentPhase.tiers);
+  }
+
+  /** Una frase a caso del livello attuale (o del più vicino), mai la stessa due volte di fila. */
   private nextPhrase(): Phrase {
     if (this.queue.length === 0) {
-      const list = this.currentPhase.phrases;
-      this.queue = [...list[Math.min(this.level, list.length - 1)]];
+      const { phrases, tiers } = this.currentPhase;
+      const wanted = [...new Set(tiers)].sort((a, b) => Math.abs(a - this.level) - Math.abs(b - this.level) || a - b)[0];
+      let pool = tiers.map((t, i) => (t === wanted ? i : -1)).filter((i) => i >= 0);
+      if (pool.length > 1) pool = pool.filter((i) => i !== this.lastPhrase);
+      const pick = pool[Math.floor(this.rng() * pool.length)];
+      this.lastPhrase = pick;
+      this.queue = [...phrases[pick]];
     }
     return this.queue.shift()!;
+  }
+
+  private midiOf(semitone: number): number {
+    return this.key.root + semitone;
   }
 
   startRound(at: number): Round {
@@ -140,7 +165,14 @@ export class Battle {
     const countIn = [0, 1, 2, 3].map((i) => t0 + i * beat);
     const callStart = t0 + 4 * beat;
     const mk = (start: number): PhraseNote[] =>
-      phrase.notes.map((n) => ({ tab: n.tab, midi: tabToMidi(n.tab, this.key), time: start + n.start * beat, dur: n.dur * beat }));
+      phrase.notes.map((n) => ({
+        tab: n.tab,
+        midi: this.midiOf(n.semitones[0]),
+        accept: n.semitones.map((s) => this.midiOf(s)),
+        source: n,
+        time: start + n.start * beat,
+        dur: n.dur * beat,
+      }));
     const call = mk(callStart);
     const callEnd = callStart + phrase.beats * beat;
     const response = mk(callEnd);
@@ -181,7 +213,7 @@ export class Battle {
     if (this.phase !== "response") return;
     const exp = this.round.response[this.respIndex];
     if (!exp) return;
-    if (midi === exp.midi) {
+    if (exp.accept.includes(midi)) {
       exp.hit = true;
       this.offsets.push(time - exp.time);
       if (exp.dur >= HOLD_BEATS * this.round.beat - 1e-6) this.sustain = { index: this.respIndex, until: time + 0.6 * exp.dur };
@@ -231,7 +263,7 @@ export class Battle {
     if (!s) return;
     const exp = this.round.response[s.index];
     if (now >= s.until) this.sustain = null;
-    else if (heldMidi !== exp.midi) {
+    else if (heldMidi === null || !exp.accept.includes(heldMidi)) {
       exp.short = true;
       this.sustain = null;
       this.events.push({ type: "shortNote", index: s.index });
@@ -305,7 +337,7 @@ export class Battle {
   private adapt(accuracy: number): void {
     const before = [this.level, this.bpm];
     const [lo, hi] = this.currentPhase.bpm;
-    const maxLevel = this.currentPhase.phrases.length - 1;
+    const maxLevel = this.maxLevel;
     if (accuracy >= 0.9) {
       if (this.level < maxLevel) this.level++;
       else this.bpm = Math.min(hi, this.bpm + 4);

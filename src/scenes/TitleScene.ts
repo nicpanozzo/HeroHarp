@@ -66,9 +66,9 @@ export class TitleScene extends Phaser.Scene {
         const mic = engine.micStatus === "on" ? "on" : await engine.startMic();
         if (mic !== "on") {
           status.setText(t("micDenied")).setColor(HEX.rosso);
-          this.time.delayedCall(2800, () => this.scene.start("map"));
+          this.time.delayedCall(2800, () => this.scene.start("journey"));
         } else {
-          this.scene.start("map");
+          this.scene.start("journey");
         }
       },
       300,
