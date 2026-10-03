@@ -20,6 +20,16 @@
     "pelleMae": "#5E3B26"
   },
   "nota": "Chiave Phaser = percorso senza estensione con / sostituito da -, es. nemici-silenzio-idle. Caricare con this.load.svg(key, url, { width, height }).",
+  "sfondiPerArea": {
+    "porch": "portico",
+    "station": "stazione",
+    "freight-train": "treno",
+    "juke-joint": "juke",
+    "beale-street": "beale",
+    "delta-crossroads": "crocevia",
+    "chicago-club": "chicago",
+    "after-hours": "dopo-chiusura"
+  },
   "file": [
     {
       "key": "personaggi-protagonista-idle",
@@ -61,115 +71,201 @@
       "key": "nemici-spiffero-idle",
       "file": "nemici/spiffero-idle.svg",
       "w": 256,
-      "h": 256
+      "h": 256,
+      "area": "porch",
+      "nemico": "draft",
+      "nome": "Lo Spiffero",
+      "boss": false,
+      "posa": "idle"
     },
     {
       "key": "nemici-spiffero-attacco",
       "file": "nemici/spiffero-attacco.svg",
       "w": 256,
-      "h": 256
+      "h": 256,
+      "area": "porch",
+      "nemico": "draft",
+      "nome": "Lo Spiffero",
+      "boss": false,
+      "posa": "attacco"
     },
     {
       "key": "nemici-spiffero-colpito",
       "file": "nemici/spiffero-colpito.svg",
       "w": 256,
-      "h": 256
+      "h": 256,
+      "area": "porch",
+      "nemico": "draft",
+      "nome": "Lo Spiffero",
+      "boss": false,
+      "posa": "colpito"
     },
     {
       "key": "nemici-spiffero-sconfitto",
       "file": "nemici/spiffero-sconfitto.svg",
       "w": 256,
-      "h": 256
+      "h": 256,
+      "area": "porch",
+      "nemico": "draft",
+      "nome": "Lo Spiffero",
+      "boss": false,
+      "posa": "sconfitto"
     },
     {
       "key": "nemici-sospiro-idle",
       "file": "nemici/sospiro-idle.svg",
       "w": 256,
-      "h": 256
+      "h": 256,
+      "area": "porch",
+      "nemico": "sigh",
+      "nome": "Il Sospiro",
+      "boss": false,
+      "posa": "idle"
     },
     {
       "key": "nemici-sospiro-attacco",
       "file": "nemici/sospiro-attacco.svg",
       "w": 256,
-      "h": 256
+      "h": 256,
+      "area": "porch",
+      "nemico": "sigh",
+      "nome": "Il Sospiro",
+      "boss": false,
+      "posa": "attacco"
     },
     {
       "key": "nemici-sospiro-colpito",
       "file": "nemici/sospiro-colpito.svg",
       "w": 256,
-      "h": 256
+      "h": 256,
+      "area": "porch",
+      "nemico": "sigh",
+      "nome": "Il Sospiro",
+      "boss": false,
+      "posa": "colpito"
     },
     {
       "key": "nemici-sospiro-sconfitto",
       "file": "nemici/sospiro-sconfitto.svg",
       "w": 256,
-      "h": 256
+      "h": 256,
+      "area": "porch",
+      "nemico": "sigh",
+      "nome": "Il Sospiro",
+      "boss": false,
+      "posa": "sconfitto"
     },
     {
       "key": "nemici-mantice-idle",
       "file": "nemici/mantice-idle.svg",
       "w": 256,
-      "h": 256
+      "h": 256,
+      "area": "porch",
+      "nemico": "bellows",
+      "nome": "Il Mantice",
+      "boss": false,
+      "posa": "idle"
     },
     {
       "key": "nemici-mantice-attacco",
       "file": "nemici/mantice-attacco.svg",
       "w": 256,
-      "h": 256
+      "h": 256,
+      "area": "porch",
+      "nemico": "bellows",
+      "nome": "Il Mantice",
+      "boss": false,
+      "posa": "attacco"
     },
     {
       "key": "nemici-mantice-colpito",
       "file": "nemici/mantice-colpito.svg",
       "w": 256,
-      "h": 256
+      "h": 256,
+      "area": "porch",
+      "nemico": "bellows",
+      "nome": "Il Mantice",
+      "boss": false,
+      "posa": "colpito"
     },
     {
       "key": "nemici-mantice-sconfitto",
       "file": "nemici/mantice-sconfitto.svg",
       "w": 256,
-      "h": 256
+      "h": 256,
+      "area": "porch",
+      "nemico": "bellows",
+      "nome": "Il Mantice",
+      "boss": false,
+      "posa": "sconfitto"
     },
     {
       "key": "nemici-silenzio-idle",
       "file": "nemici/silenzio-idle.svg",
       "w": 384,
-      "h": 384
+      "h": 384,
+      "area": "porch",
+      "nemico": "silence",
+      "nome": "Il Silenzio",
+      "boss": true,
+      "posa": "idle"
     },
     {
       "key": "nemici-silenzio-attacco",
       "file": "nemici/silenzio-attacco.svg",
       "w": 384,
-      "h": 384
+      "h": 384,
+      "area": "porch",
+      "nemico": "silence",
+      "nome": "Il Silenzio",
+      "boss": true,
+      "posa": "attacco"
     },
     {
       "key": "nemici-silenzio-colpito",
       "file": "nemici/silenzio-colpito.svg",
       "w": 384,
-      "h": 384
+      "h": 384,
+      "area": "porch",
+      "nemico": "silence",
+      "nome": "Il Silenzio",
+      "boss": true,
+      "posa": "colpito"
     },
     {
       "key": "nemici-silenzio-sconfitto",
       "file": "nemici/silenzio-sconfitto.svg",
       "w": 384,
-      "h": 384
+      "h": 384,
+      "area": "porch",
+      "nemico": "silence",
+      "nome": "Il Silenzio",
+      "boss": true,
+      "posa": "sconfitto"
     },
     {
       "key": "sfondi-portico-1-cielo",
       "file": "sfondi/portico-1-cielo.svg",
       "w": 1280,
-      "h": 720
+      "h": 720,
+      "area": "porch",
+      "livello": 1
     },
     {
       "key": "sfondi-portico-2-casa",
       "file": "sfondi/portico-2-casa.svg",
       "w": 1280,
-      "h": 720
+      "h": 720,
+      "area": "porch",
+      "livello": 2
     },
     {
       "key": "sfondi-portico-3-primo-piano",
       "file": "sfondi/portico-3-primo-piano.svg",
       "w": 1280,
-      "h": 720
+      "h": 720,
+      "area": "porch",
+      "livello": 3
     },
     {
       "key": "ui-soffio",
@@ -242,6 +338,1506 @@
       "file": "ui/nota-mancata.svg",
       "w": 96,
       "h": 96
+    },
+    {
+      "key": "nemici-bigliettaio-idle",
+      "file": "nemici/bigliettaio-idle.svg",
+      "w": 256,
+      "h": 256,
+      "area": "station",
+      "nemico": "ticket-clerk",
+      "nome": "Il Bigliettaio",
+      "boss": false,
+      "posa": "idle"
+    },
+    {
+      "key": "nemici-bigliettaio-attacco",
+      "file": "nemici/bigliettaio-attacco.svg",
+      "w": 256,
+      "h": 256,
+      "area": "station",
+      "nemico": "ticket-clerk",
+      "nome": "Il Bigliettaio",
+      "boss": false,
+      "posa": "attacco"
+    },
+    {
+      "key": "nemici-bigliettaio-colpito",
+      "file": "nemici/bigliettaio-colpito.svg",
+      "w": 256,
+      "h": 256,
+      "area": "station",
+      "nemico": "ticket-clerk",
+      "nome": "Il Bigliettaio",
+      "boss": false,
+      "posa": "colpito"
+    },
+    {
+      "key": "nemici-bigliettaio-sconfitto",
+      "file": "nemici/bigliettaio-sconfitto.svg",
+      "w": 256,
+      "h": 256,
+      "area": "station",
+      "nemico": "ticket-clerk",
+      "nome": "Il Bigliettaio",
+      "boss": false,
+      "posa": "sconfitto"
+    },
+    {
+      "key": "nemici-facchino-idle",
+      "file": "nemici/facchino-idle.svg",
+      "w": 256,
+      "h": 256,
+      "area": "station",
+      "nemico": "porter",
+      "nome": "Il Facchino",
+      "boss": false,
+      "posa": "idle"
+    },
+    {
+      "key": "nemici-facchino-attacco",
+      "file": "nemici/facchino-attacco.svg",
+      "w": 256,
+      "h": 256,
+      "area": "station",
+      "nemico": "porter",
+      "nome": "Il Facchino",
+      "boss": false,
+      "posa": "attacco"
+    },
+    {
+      "key": "nemici-facchino-colpito",
+      "file": "nemici/facchino-colpito.svg",
+      "w": 256,
+      "h": 256,
+      "area": "station",
+      "nemico": "porter",
+      "nome": "Il Facchino",
+      "boss": false,
+      "posa": "colpito"
+    },
+    {
+      "key": "nemici-facchino-sconfitto",
+      "file": "nemici/facchino-sconfitto.svg",
+      "w": 256,
+      "h": 256,
+      "area": "station",
+      "nemico": "porter",
+      "nome": "Il Facchino",
+      "boss": false,
+      "posa": "sconfitto"
+    },
+    {
+      "key": "nemici-capostazione-idle",
+      "file": "nemici/capostazione-idle.svg",
+      "w": 256,
+      "h": 256,
+      "area": "station",
+      "nemico": "stationmaster",
+      "nome": "Il Capostazione",
+      "boss": false,
+      "posa": "idle"
+    },
+    {
+      "key": "nemici-capostazione-attacco",
+      "file": "nemici/capostazione-attacco.svg",
+      "w": 256,
+      "h": 256,
+      "area": "station",
+      "nemico": "stationmaster",
+      "nome": "Il Capostazione",
+      "boss": false,
+      "posa": "attacco"
+    },
+    {
+      "key": "nemici-capostazione-colpito",
+      "file": "nemici/capostazione-colpito.svg",
+      "w": 256,
+      "h": 256,
+      "area": "station",
+      "nemico": "stationmaster",
+      "nome": "Il Capostazione",
+      "boss": false,
+      "posa": "colpito"
+    },
+    {
+      "key": "nemici-capostazione-sconfitto",
+      "file": "nemici/capostazione-sconfitto.svg",
+      "w": 256,
+      "h": 256,
+      "area": "station",
+      "nemico": "stationmaster",
+      "nome": "Il Capostazione",
+      "boss": false,
+      "posa": "sconfitto"
+    },
+    {
+      "key": "nemici-metronomo-idle",
+      "file": "nemici/metronomo-idle.svg",
+      "w": 384,
+      "h": 384,
+      "area": "station",
+      "nemico": "mad-metronome",
+      "nome": "Il Metronomo impazzito",
+      "boss": true,
+      "posa": "idle"
+    },
+    {
+      "key": "nemici-metronomo-attacco",
+      "file": "nemici/metronomo-attacco.svg",
+      "w": 384,
+      "h": 384,
+      "area": "station",
+      "nemico": "mad-metronome",
+      "nome": "Il Metronomo impazzito",
+      "boss": true,
+      "posa": "attacco"
+    },
+    {
+      "key": "nemici-metronomo-colpito",
+      "file": "nemici/metronomo-colpito.svg",
+      "w": 384,
+      "h": 384,
+      "area": "station",
+      "nemico": "mad-metronome",
+      "nome": "Il Metronomo impazzito",
+      "boss": true,
+      "posa": "colpito"
+    },
+    {
+      "key": "nemici-metronomo-sconfitto",
+      "file": "nemici/metronomo-sconfitto.svg",
+      "w": 384,
+      "h": 384,
+      "area": "station",
+      "nemico": "mad-metronome",
+      "nome": "Il Metronomo impazzito",
+      "boss": true,
+      "posa": "sconfitto"
+    },
+    {
+      "key": "nemici-fuochista-idle",
+      "file": "nemici/fuochista-idle.svg",
+      "w": 256,
+      "h": 256,
+      "area": "freight-train",
+      "nemico": "stoker",
+      "nome": "Il Fuochista",
+      "boss": false,
+      "posa": "idle"
+    },
+    {
+      "key": "nemici-fuochista-attacco",
+      "file": "nemici/fuochista-attacco.svg",
+      "w": 256,
+      "h": 256,
+      "area": "freight-train",
+      "nemico": "stoker",
+      "nome": "Il Fuochista",
+      "boss": false,
+      "posa": "attacco"
+    },
+    {
+      "key": "nemici-fuochista-colpito",
+      "file": "nemici/fuochista-colpito.svg",
+      "w": 256,
+      "h": 256,
+      "area": "freight-train",
+      "nemico": "stoker",
+      "nome": "Il Fuochista",
+      "boss": false,
+      "posa": "colpito"
+    },
+    {
+      "key": "nemici-fuochista-sconfitto",
+      "file": "nemici/fuochista-sconfitto.svg",
+      "w": 256,
+      "h": 256,
+      "area": "freight-train",
+      "nemico": "stoker",
+      "nome": "Il Fuochista",
+      "boss": false,
+      "posa": "sconfitto"
+    },
+    {
+      "key": "nemici-vagabondo-idle",
+      "file": "nemici/vagabondo-idle.svg",
+      "w": 256,
+      "h": 256,
+      "area": "freight-train",
+      "nemico": "hobo",
+      "nome": "Il Vagabondo",
+      "boss": false,
+      "posa": "idle"
+    },
+    {
+      "key": "nemici-vagabondo-attacco",
+      "file": "nemici/vagabondo-attacco.svg",
+      "w": 256,
+      "h": 256,
+      "area": "freight-train",
+      "nemico": "hobo",
+      "nome": "Il Vagabondo",
+      "boss": false,
+      "posa": "attacco"
+    },
+    {
+      "key": "nemici-vagabondo-colpito",
+      "file": "nemici/vagabondo-colpito.svg",
+      "w": 256,
+      "h": 256,
+      "area": "freight-train",
+      "nemico": "hobo",
+      "nome": "Il Vagabondo",
+      "boss": false,
+      "posa": "colpito"
+    },
+    {
+      "key": "nemici-vagabondo-sconfitto",
+      "file": "nemici/vagabondo-sconfitto.svg",
+      "w": 256,
+      "h": 256,
+      "area": "freight-train",
+      "nemico": "hobo",
+      "nome": "Il Vagabondo",
+      "boss": false,
+      "posa": "sconfitto"
+    },
+    {
+      "key": "nemici-fischio-idle",
+      "file": "nemici/fischio-idle.svg",
+      "w": 256,
+      "h": 256,
+      "area": "freight-train",
+      "nemico": "whistle",
+      "nome": "Il Fischio",
+      "boss": false,
+      "posa": "idle"
+    },
+    {
+      "key": "nemici-fischio-attacco",
+      "file": "nemici/fischio-attacco.svg",
+      "w": 256,
+      "h": 256,
+      "area": "freight-train",
+      "nemico": "whistle",
+      "nome": "Il Fischio",
+      "boss": false,
+      "posa": "attacco"
+    },
+    {
+      "key": "nemici-fischio-colpito",
+      "file": "nemici/fischio-colpito.svg",
+      "w": 256,
+      "h": 256,
+      "area": "freight-train",
+      "nemico": "whistle",
+      "nome": "Il Fischio",
+      "boss": false,
+      "posa": "colpito"
+    },
+    {
+      "key": "nemici-fischio-sconfitto",
+      "file": "nemici/fischio-sconfitto.svg",
+      "w": 256,
+      "h": 256,
+      "area": "freight-train",
+      "nemico": "whistle",
+      "nome": "Il Fischio",
+      "boss": false,
+      "posa": "sconfitto"
+    },
+    {
+      "key": "nemici-locomotiva-idle",
+      "file": "nemici/locomotiva-idle.svg",
+      "w": 384,
+      "h": 384,
+      "area": "freight-train",
+      "nemico": "old-iron",
+      "nome": "La Locomotiva",
+      "boss": true,
+      "posa": "idle"
+    },
+    {
+      "key": "nemici-locomotiva-attacco",
+      "file": "nemici/locomotiva-attacco.svg",
+      "w": 384,
+      "h": 384,
+      "area": "freight-train",
+      "nemico": "old-iron",
+      "nome": "La Locomotiva",
+      "boss": true,
+      "posa": "attacco"
+    },
+    {
+      "key": "nemici-locomotiva-colpito",
+      "file": "nemici/locomotiva-colpito.svg",
+      "w": 384,
+      "h": 384,
+      "area": "freight-train",
+      "nemico": "old-iron",
+      "nome": "La Locomotiva",
+      "boss": true,
+      "posa": "colpito"
+    },
+    {
+      "key": "nemici-locomotiva-sconfitto",
+      "file": "nemici/locomotiva-sconfitto.svg",
+      "w": 384,
+      "h": 384,
+      "area": "freight-train",
+      "nemico": "old-iron",
+      "nome": "La Locomotiva",
+      "boss": true,
+      "posa": "sconfitto"
+    },
+    {
+      "key": "nemici-barista-idle",
+      "file": "nemici/barista-idle.svg",
+      "w": 256,
+      "h": 256,
+      "area": "juke-joint",
+      "nemico": "bartender",
+      "nome": "Il Barista",
+      "boss": false,
+      "posa": "idle"
+    },
+    {
+      "key": "nemici-barista-attacco",
+      "file": "nemici/barista-attacco.svg",
+      "w": 256,
+      "h": 256,
+      "area": "juke-joint",
+      "nemico": "bartender",
+      "nome": "Il Barista",
+      "boss": false,
+      "posa": "attacco"
+    },
+    {
+      "key": "nemici-barista-colpito",
+      "file": "nemici/barista-colpito.svg",
+      "w": 256,
+      "h": 256,
+      "area": "juke-joint",
+      "nemico": "bartender",
+      "nome": "Il Barista",
+      "boss": false,
+      "posa": "colpito"
+    },
+    {
+      "key": "nemici-barista-sconfitto",
+      "file": "nemici/barista-sconfitto.svg",
+      "w": 256,
+      "h": 256,
+      "area": "juke-joint",
+      "nemico": "bartender",
+      "nome": "Il Barista",
+      "boss": false,
+      "posa": "sconfitto"
+    },
+    {
+      "key": "nemici-dadi-idle",
+      "file": "nemici/dadi-idle.svg",
+      "w": 256,
+      "h": 256,
+      "area": "juke-joint",
+      "nemico": "dice-man",
+      "nome": "Il Giocatore di dadi",
+      "boss": false,
+      "posa": "idle"
+    },
+    {
+      "key": "nemici-dadi-attacco",
+      "file": "nemici/dadi-attacco.svg",
+      "w": 256,
+      "h": 256,
+      "area": "juke-joint",
+      "nemico": "dice-man",
+      "nome": "Il Giocatore di dadi",
+      "boss": false,
+      "posa": "attacco"
+    },
+    {
+      "key": "nemici-dadi-colpito",
+      "file": "nemici/dadi-colpito.svg",
+      "w": 256,
+      "h": 256,
+      "area": "juke-joint",
+      "nemico": "dice-man",
+      "nome": "Il Giocatore di dadi",
+      "boss": false,
+      "posa": "colpito"
+    },
+    {
+      "key": "nemici-dadi-sconfitto",
+      "file": "nemici/dadi-sconfitto.svg",
+      "w": 256,
+      "h": 256,
+      "area": "juke-joint",
+      "nemico": "dice-man",
+      "nome": "Il Giocatore di dadi",
+      "boss": false,
+      "posa": "sconfitto"
+    },
+    {
+      "key": "nemici-cantante-idle",
+      "file": "nemici/cantante-idle.svg",
+      "w": 256,
+      "h": 256,
+      "area": "juke-joint",
+      "nemico": "singer",
+      "nome": "La Cantante",
+      "boss": false,
+      "posa": "idle"
+    },
+    {
+      "key": "nemici-cantante-attacco",
+      "file": "nemici/cantante-attacco.svg",
+      "w": 256,
+      "h": 256,
+      "area": "juke-joint",
+      "nemico": "singer",
+      "nome": "La Cantante",
+      "boss": false,
+      "posa": "attacco"
+    },
+    {
+      "key": "nemici-cantante-colpito",
+      "file": "nemici/cantante-colpito.svg",
+      "w": 256,
+      "h": 256,
+      "area": "juke-joint",
+      "nemico": "singer",
+      "nome": "La Cantante",
+      "boss": false,
+      "posa": "colpito"
+    },
+    {
+      "key": "nemici-cantante-sconfitto",
+      "file": "nemici/cantante-sconfitto.svg",
+      "w": 256,
+      "h": 256,
+      "area": "juke-joint",
+      "nemico": "singer",
+      "nome": "La Cantante",
+      "boss": false,
+      "posa": "sconfitto"
+    },
+    {
+      "key": "nemici-stonato-idle",
+      "file": "nemici/stonato-idle.svg",
+      "w": 384,
+      "h": 384,
+      "area": "juke-joint",
+      "nemico": "off-key",
+      "nome": "Lo Stonato",
+      "boss": true,
+      "posa": "idle"
+    },
+    {
+      "key": "nemici-stonato-attacco",
+      "file": "nemici/stonato-attacco.svg",
+      "w": 384,
+      "h": 384,
+      "area": "juke-joint",
+      "nemico": "off-key",
+      "nome": "Lo Stonato",
+      "boss": true,
+      "posa": "attacco"
+    },
+    {
+      "key": "nemici-stonato-colpito",
+      "file": "nemici/stonato-colpito.svg",
+      "w": 384,
+      "h": 384,
+      "area": "juke-joint",
+      "nemico": "off-key",
+      "nome": "Lo Stonato",
+      "boss": true,
+      "posa": "colpito"
+    },
+    {
+      "key": "nemici-stonato-sconfitto",
+      "file": "nemici/stonato-sconfitto.svg",
+      "w": 384,
+      "h": 384,
+      "area": "juke-joint",
+      "nemico": "off-key",
+      "nome": "Lo Stonato",
+      "boss": true,
+      "posa": "sconfitto"
+    },
+    {
+      "key": "nemici-scarpa-idle",
+      "file": "nemici/scarpa-idle.svg",
+      "w": 256,
+      "h": 256,
+      "area": "beale-street",
+      "nemico": "shoeshine",
+      "nome": "La Scarpa di Vernice",
+      "boss": false,
+      "posa": "idle"
+    },
+    {
+      "key": "nemici-scarpa-attacco",
+      "file": "nemici/scarpa-attacco.svg",
+      "w": 256,
+      "h": 256,
+      "area": "beale-street",
+      "nemico": "shoeshine",
+      "nome": "La Scarpa di Vernice",
+      "boss": false,
+      "posa": "attacco"
+    },
+    {
+      "key": "nemici-scarpa-colpito",
+      "file": "nemici/scarpa-colpito.svg",
+      "w": 256,
+      "h": 256,
+      "area": "beale-street",
+      "nemico": "shoeshine",
+      "nome": "La Scarpa di Vernice",
+      "boss": false,
+      "posa": "colpito"
+    },
+    {
+      "key": "nemici-scarpa-sconfitto",
+      "file": "nemici/scarpa-sconfitto.svg",
+      "w": 256,
+      "h": 256,
+      "area": "beale-street",
+      "nemico": "shoeshine",
+      "nome": "La Scarpa di Vernice",
+      "boss": false,
+      "posa": "sconfitto"
+    },
+    {
+      "key": "nemici-venditore-idle",
+      "file": "nemici/venditore-idle.svg",
+      "w": 256,
+      "h": 256,
+      "area": "beale-street",
+      "nemico": "street-vendor",
+      "nome": "Il Venditore ambulante",
+      "boss": false,
+      "posa": "idle"
+    },
+    {
+      "key": "nemici-venditore-attacco",
+      "file": "nemici/venditore-attacco.svg",
+      "w": 256,
+      "h": 256,
+      "area": "beale-street",
+      "nemico": "street-vendor",
+      "nome": "Il Venditore ambulante",
+      "boss": false,
+      "posa": "attacco"
+    },
+    {
+      "key": "nemici-venditore-colpito",
+      "file": "nemici/venditore-colpito.svg",
+      "w": 256,
+      "h": 256,
+      "area": "beale-street",
+      "nemico": "street-vendor",
+      "nome": "Il Venditore ambulante",
+      "boss": false,
+      "posa": "colpito"
+    },
+    {
+      "key": "nemici-venditore-sconfitto",
+      "file": "nemici/venditore-sconfitto.svg",
+      "w": 256,
+      "h": 256,
+      "area": "beale-street",
+      "nemico": "street-vendor",
+      "nome": "Il Venditore ambulante",
+      "boss": false,
+      "posa": "sconfitto"
+    },
+    {
+      "key": "nemici-tromba-idle",
+      "file": "nemici/tromba-idle.svg",
+      "w": 256,
+      "h": 256,
+      "area": "beale-street",
+      "nemico": "horn-player",
+      "nome": "Il Trombettista",
+      "boss": false,
+      "posa": "idle"
+    },
+    {
+      "key": "nemici-tromba-attacco",
+      "file": "nemici/tromba-attacco.svg",
+      "w": 256,
+      "h": 256,
+      "area": "beale-street",
+      "nemico": "horn-player",
+      "nome": "Il Trombettista",
+      "boss": false,
+      "posa": "attacco"
+    },
+    {
+      "key": "nemici-tromba-colpito",
+      "file": "nemici/tromba-colpito.svg",
+      "w": 256,
+      "h": 256,
+      "area": "beale-street",
+      "nemico": "horn-player",
+      "nome": "Il Trombettista",
+      "boss": false,
+      "posa": "colpito"
+    },
+    {
+      "key": "nemici-tromba-sconfitto",
+      "file": "nemici/tromba-sconfitto.svg",
+      "w": 256,
+      "h": 256,
+      "area": "beale-street",
+      "nemico": "horn-player",
+      "nome": "Il Trombettista",
+      "boss": false,
+      "posa": "sconfitto"
+    },
+    {
+      "key": "nemici-re-di-beale-idle",
+      "file": "nemici/re-di-beale-idle.svg",
+      "w": 384,
+      "h": 384,
+      "area": "beale-street",
+      "nemico": "king-of-beale",
+      "nome": "Il Re di Beale Street",
+      "boss": true,
+      "posa": "idle"
+    },
+    {
+      "key": "nemici-re-di-beale-attacco",
+      "file": "nemici/re-di-beale-attacco.svg",
+      "w": 384,
+      "h": 384,
+      "area": "beale-street",
+      "nemico": "king-of-beale",
+      "nome": "Il Re di Beale Street",
+      "boss": true,
+      "posa": "attacco"
+    },
+    {
+      "key": "nemici-re-di-beale-colpito",
+      "file": "nemici/re-di-beale-colpito.svg",
+      "w": 384,
+      "h": 384,
+      "area": "beale-street",
+      "nemico": "king-of-beale",
+      "nome": "Il Re di Beale Street",
+      "boss": true,
+      "posa": "colpito"
+    },
+    {
+      "key": "nemici-re-di-beale-sconfitto",
+      "file": "nemici/re-di-beale-sconfitto.svg",
+      "w": 384,
+      "h": 384,
+      "area": "beale-street",
+      "nemico": "king-of-beale",
+      "nome": "Il Re di Beale Street",
+      "boss": true,
+      "posa": "sconfitto"
+    },
+    {
+      "key": "nemici-corvo-idle",
+      "file": "nemici/corvo-idle.svg",
+      "w": 256,
+      "h": 256,
+      "area": "delta-crossroads",
+      "nemico": "crow",
+      "nome": "Il Corvo",
+      "boss": false,
+      "posa": "idle"
+    },
+    {
+      "key": "nemici-corvo-attacco",
+      "file": "nemici/corvo-attacco.svg",
+      "w": 256,
+      "h": 256,
+      "area": "delta-crossroads",
+      "nemico": "crow",
+      "nome": "Il Corvo",
+      "boss": false,
+      "posa": "attacco"
+    },
+    {
+      "key": "nemici-corvo-colpito",
+      "file": "nemici/corvo-colpito.svg",
+      "w": 256,
+      "h": 256,
+      "area": "delta-crossroads",
+      "nemico": "crow",
+      "nome": "Il Corvo",
+      "boss": false,
+      "posa": "colpito"
+    },
+    {
+      "key": "nemici-corvo-sconfitto",
+      "file": "nemici/corvo-sconfitto.svg",
+      "w": 256,
+      "h": 256,
+      "area": "delta-crossroads",
+      "nemico": "crow",
+      "nome": "Il Corvo",
+      "boss": false,
+      "posa": "sconfitto"
+    },
+    {
+      "key": "nemici-spaventapasseri-idle",
+      "file": "nemici/spaventapasseri-idle.svg",
+      "w": 256,
+      "h": 256,
+      "area": "delta-crossroads",
+      "nemico": "sharecropper",
+      "nome": "Lo Spaventapasseri",
+      "boss": false,
+      "posa": "idle"
+    },
+    {
+      "key": "nemici-spaventapasseri-attacco",
+      "file": "nemici/spaventapasseri-attacco.svg",
+      "w": 256,
+      "h": 256,
+      "area": "delta-crossroads",
+      "nemico": "sharecropper",
+      "nome": "Lo Spaventapasseri",
+      "boss": false,
+      "posa": "attacco"
+    },
+    {
+      "key": "nemici-spaventapasseri-colpito",
+      "file": "nemici/spaventapasseri-colpito.svg",
+      "w": 256,
+      "h": 256,
+      "area": "delta-crossroads",
+      "nemico": "sharecropper",
+      "nome": "Lo Spaventapasseri",
+      "boss": false,
+      "posa": "colpito"
+    },
+    {
+      "key": "nemici-spaventapasseri-sconfitto",
+      "file": "nemici/spaventapasseri-sconfitto.svg",
+      "w": 256,
+      "h": 256,
+      "area": "delta-crossroads",
+      "nemico": "sharecropper",
+      "nome": "Lo Spaventapasseri",
+      "boss": false,
+      "posa": "sconfitto"
+    },
+    {
+      "key": "nemici-campana-idle",
+      "file": "nemici/campana-idle.svg",
+      "w": 256,
+      "h": 256,
+      "area": "delta-crossroads",
+      "nemico": "preacher",
+      "nome": "Il Predicatore",
+      "boss": false,
+      "posa": "idle"
+    },
+    {
+      "key": "nemici-campana-attacco",
+      "file": "nemici/campana-attacco.svg",
+      "w": 256,
+      "h": 256,
+      "area": "delta-crossroads",
+      "nemico": "preacher",
+      "nome": "Il Predicatore",
+      "boss": false,
+      "posa": "attacco"
+    },
+    {
+      "key": "nemici-campana-colpito",
+      "file": "nemici/campana-colpito.svg",
+      "w": 256,
+      "h": 256,
+      "area": "delta-crossroads",
+      "nemico": "preacher",
+      "nome": "Il Predicatore",
+      "boss": false,
+      "posa": "colpito"
+    },
+    {
+      "key": "nemici-campana-sconfitto",
+      "file": "nemici/campana-sconfitto.svg",
+      "w": 256,
+      "h": 256,
+      "area": "delta-crossroads",
+      "nemico": "preacher",
+      "nome": "Il Predicatore",
+      "boss": false,
+      "posa": "sconfitto"
+    },
+    {
+      "key": "nemici-ombra-idle",
+      "file": "nemici/ombra-idle.svg",
+      "w": 384,
+      "h": 384,
+      "area": "delta-crossroads",
+      "nemico": "delta-shade",
+      "nome": "L'Ombra del Delta",
+      "boss": true,
+      "posa": "idle"
+    },
+    {
+      "key": "nemici-ombra-attacco",
+      "file": "nemici/ombra-attacco.svg",
+      "w": 384,
+      "h": 384,
+      "area": "delta-crossroads",
+      "nemico": "delta-shade",
+      "nome": "L'Ombra del Delta",
+      "boss": true,
+      "posa": "attacco"
+    },
+    {
+      "key": "nemici-ombra-colpito",
+      "file": "nemici/ombra-colpito.svg",
+      "w": 384,
+      "h": 384,
+      "area": "delta-crossroads",
+      "nemico": "delta-shade",
+      "nome": "L'Ombra del Delta",
+      "boss": true,
+      "posa": "colpito"
+    },
+    {
+      "key": "nemici-ombra-sconfitto",
+      "file": "nemici/ombra-sconfitto.svg",
+      "w": 384,
+      "h": 384,
+      "area": "delta-crossroads",
+      "nemico": "delta-shade",
+      "nome": "L'Ombra del Delta",
+      "boss": true,
+      "posa": "sconfitto"
+    },
+    {
+      "key": "nemici-rullante-idle",
+      "file": "nemici/rullante-idle.svg",
+      "w": 256,
+      "h": 256,
+      "area": "chicago-club",
+      "nemico": "drummer",
+      "nome": "Il Batterista",
+      "boss": false,
+      "posa": "idle"
+    },
+    {
+      "key": "nemici-rullante-attacco",
+      "file": "nemici/rullante-attacco.svg",
+      "w": 256,
+      "h": 256,
+      "area": "chicago-club",
+      "nemico": "drummer",
+      "nome": "Il Batterista",
+      "boss": false,
+      "posa": "attacco"
+    },
+    {
+      "key": "nemici-rullante-colpito",
+      "file": "nemici/rullante-colpito.svg",
+      "w": 256,
+      "h": 256,
+      "area": "chicago-club",
+      "nemico": "drummer",
+      "nome": "Il Batterista",
+      "boss": false,
+      "posa": "colpito"
+    },
+    {
+      "key": "nemici-rullante-sconfitto",
+      "file": "nemici/rullante-sconfitto.svg",
+      "w": 256,
+      "h": 256,
+      "area": "chicago-club",
+      "nemico": "drummer",
+      "nome": "Il Batterista",
+      "boss": false,
+      "posa": "sconfitto"
+    },
+    {
+      "key": "nemici-contrabbasso-idle",
+      "file": "nemici/contrabbasso-idle.svg",
+      "w": 256,
+      "h": 256,
+      "area": "chicago-club",
+      "nemico": "bassist",
+      "nome": "Il Bassista",
+      "boss": false,
+      "posa": "idle"
+    },
+    {
+      "key": "nemici-contrabbasso-attacco",
+      "file": "nemici/contrabbasso-attacco.svg",
+      "w": 256,
+      "h": 256,
+      "area": "chicago-club",
+      "nemico": "bassist",
+      "nome": "Il Bassista",
+      "boss": false,
+      "posa": "attacco"
+    },
+    {
+      "key": "nemici-contrabbasso-colpito",
+      "file": "nemici/contrabbasso-colpito.svg",
+      "w": 256,
+      "h": 256,
+      "area": "chicago-club",
+      "nemico": "bassist",
+      "nome": "Il Bassista",
+      "boss": false,
+      "posa": "colpito"
+    },
+    {
+      "key": "nemici-contrabbasso-sconfitto",
+      "file": "nemici/contrabbasso-sconfitto.svg",
+      "w": 256,
+      "h": 256,
+      "area": "chicago-club",
+      "nemico": "bassist",
+      "nome": "Il Bassista",
+      "boss": false,
+      "posa": "sconfitto"
+    },
+    {
+      "key": "nemici-chitarra-idle",
+      "file": "nemici/chitarra-idle.svg",
+      "w": 256,
+      "h": 256,
+      "area": "chicago-club",
+      "nemico": "guitarist",
+      "nome": "La Chitarra",
+      "boss": false,
+      "posa": "idle"
+    },
+    {
+      "key": "nemici-chitarra-attacco",
+      "file": "nemici/chitarra-attacco.svg",
+      "w": 256,
+      "h": 256,
+      "area": "chicago-club",
+      "nemico": "guitarist",
+      "nome": "La Chitarra",
+      "boss": false,
+      "posa": "attacco"
+    },
+    {
+      "key": "nemici-chitarra-colpito",
+      "file": "nemici/chitarra-colpito.svg",
+      "w": 256,
+      "h": 256,
+      "area": "chicago-club",
+      "nemico": "guitarist",
+      "nome": "La Chitarra",
+      "boss": false,
+      "posa": "colpito"
+    },
+    {
+      "key": "nemici-chitarra-sconfitto",
+      "file": "nemici/chitarra-sconfitto.svg",
+      "w": 256,
+      "h": 256,
+      "area": "chicago-club",
+      "nemico": "guitarist",
+      "nome": "La Chitarra",
+      "boss": false,
+      "posa": "sconfitto"
+    },
+    {
+      "key": "nemici-amplificatore-idle",
+      "file": "nemici/amplificatore-idle.svg",
+      "w": 384,
+      "h": 384,
+      "area": "chicago-club",
+      "nemico": "stage-boss",
+      "nome": "Il Padrone del Palco",
+      "boss": true,
+      "posa": "idle"
+    },
+    {
+      "key": "nemici-amplificatore-attacco",
+      "file": "nemici/amplificatore-attacco.svg",
+      "w": 384,
+      "h": 384,
+      "area": "chicago-club",
+      "nemico": "stage-boss",
+      "nome": "Il Padrone del Palco",
+      "boss": true,
+      "posa": "attacco"
+    },
+    {
+      "key": "nemici-amplificatore-colpito",
+      "file": "nemici/amplificatore-colpito.svg",
+      "w": 384,
+      "h": 384,
+      "area": "chicago-club",
+      "nemico": "stage-boss",
+      "nome": "Il Padrone del Palco",
+      "boss": true,
+      "posa": "colpito"
+    },
+    {
+      "key": "nemici-amplificatore-sconfitto",
+      "file": "nemici/amplificatore-sconfitto.svg",
+      "w": 384,
+      "h": 384,
+      "area": "chicago-club",
+      "nemico": "stage-boss",
+      "nome": "Il Padrone del Palco",
+      "boss": true,
+      "posa": "sconfitto"
+    },
+    {
+      "key": "nemici-sassofono-idle",
+      "file": "nemici/sassofono-idle.svg",
+      "w": 256,
+      "h": 256,
+      "area": "after-hours",
+      "nemico": "blow-bends",
+      "nome": "Il Sassofonista",
+      "boss": false,
+      "posa": "idle"
+    },
+    {
+      "key": "nemici-sassofono-attacco",
+      "file": "nemici/sassofono-attacco.svg",
+      "w": 256,
+      "h": 256,
+      "area": "after-hours",
+      "nemico": "blow-bends",
+      "nome": "Il Sassofonista",
+      "boss": false,
+      "posa": "attacco"
+    },
+    {
+      "key": "nemici-sassofono-colpito",
+      "file": "nemici/sassofono-colpito.svg",
+      "w": 256,
+      "h": 256,
+      "area": "after-hours",
+      "nemico": "blow-bends",
+      "nome": "Il Sassofonista",
+      "boss": false,
+      "posa": "colpito"
+    },
+    {
+      "key": "nemici-sassofono-sconfitto",
+      "file": "nemici/sassofono-sconfitto.svg",
+      "w": 256,
+      "h": 256,
+      "area": "after-hours",
+      "nemico": "blow-bends",
+      "nome": "Il Sassofonista",
+      "boss": false,
+      "posa": "sconfitto"
+    },
+    {
+      "key": "nemici-trombone-idle",
+      "file": "nemici/trombone-idle.svg",
+      "w": 256,
+      "h": 256,
+      "area": "after-hours",
+      "nemico": "overblows",
+      "nome": "Il Trombone",
+      "boss": false,
+      "posa": "idle"
+    },
+    {
+      "key": "nemici-trombone-attacco",
+      "file": "nemici/trombone-attacco.svg",
+      "w": 256,
+      "h": 256,
+      "area": "after-hours",
+      "nemico": "overblows",
+      "nome": "Il Trombone",
+      "boss": false,
+      "posa": "attacco"
+    },
+    {
+      "key": "nemici-trombone-colpito",
+      "file": "nemici/trombone-colpito.svg",
+      "w": 256,
+      "h": 256,
+      "area": "after-hours",
+      "nemico": "overblows",
+      "nome": "Il Trombone",
+      "boss": false,
+      "posa": "colpito"
+    },
+    {
+      "key": "nemici-trombone-sconfitto",
+      "file": "nemici/trombone-sconfitto.svg",
+      "w": 256,
+      "h": 256,
+      "area": "after-hours",
+      "nemico": "overblows",
+      "nome": "Il Trombone",
+      "boss": false,
+      "posa": "sconfitto"
+    },
+    {
+      "key": "nemici-pianoforte-idle",
+      "file": "nemici/pianoforte-idle.svg",
+      "w": 256,
+      "h": 256,
+      "area": "after-hours",
+      "nemico": "tongue-block",
+      "nome": "Il Pianista",
+      "boss": false,
+      "posa": "idle"
+    },
+    {
+      "key": "nemici-pianoforte-attacco",
+      "file": "nemici/pianoforte-attacco.svg",
+      "w": 256,
+      "h": 256,
+      "area": "after-hours",
+      "nemico": "tongue-block",
+      "nome": "Il Pianista",
+      "boss": false,
+      "posa": "attacco"
+    },
+    {
+      "key": "nemici-pianoforte-colpito",
+      "file": "nemici/pianoforte-colpito.svg",
+      "w": 256,
+      "h": 256,
+      "area": "after-hours",
+      "nemico": "tongue-block",
+      "nome": "Il Pianista",
+      "boss": false,
+      "posa": "colpito"
+    },
+    {
+      "key": "nemici-pianoforte-sconfitto",
+      "file": "nemici/pianoforte-sconfitto.svg",
+      "w": 256,
+      "h": 256,
+      "area": "after-hours",
+      "nemico": "tongue-block",
+      "nome": "Il Pianista",
+      "boss": false,
+      "posa": "sconfitto"
+    },
+    {
+      "key": "nemici-luna-idle",
+      "file": "nemici/luna-idle.svg",
+      "w": 384,
+      "h": 384,
+      "area": "after-hours",
+      "nemico": "midnight-whistle",
+      "nome": "Il Fischio di Mezzanotte",
+      "boss": true,
+      "posa": "idle"
+    },
+    {
+      "key": "nemici-luna-attacco",
+      "file": "nemici/luna-attacco.svg",
+      "w": 384,
+      "h": 384,
+      "area": "after-hours",
+      "nemico": "midnight-whistle",
+      "nome": "Il Fischio di Mezzanotte",
+      "boss": true,
+      "posa": "attacco"
+    },
+    {
+      "key": "nemici-luna-colpito",
+      "file": "nemici/luna-colpito.svg",
+      "w": 384,
+      "h": 384,
+      "area": "after-hours",
+      "nemico": "midnight-whistle",
+      "nome": "Il Fischio di Mezzanotte",
+      "boss": true,
+      "posa": "colpito"
+    },
+    {
+      "key": "nemici-luna-sconfitto",
+      "file": "nemici/luna-sconfitto.svg",
+      "w": 384,
+      "h": 384,
+      "area": "after-hours",
+      "nemico": "midnight-whistle",
+      "nome": "Il Fischio di Mezzanotte",
+      "boss": true,
+      "posa": "sconfitto"
+    },
+    {
+      "key": "band-sam-suona",
+      "file": "band/sam-suona.svg",
+      "w": 256,
+      "h": 256,
+      "musicista": "Sam",
+      "strumento": "chitarra acustica",
+      "siUnisceDopo": "porch",
+      "posa": "suona"
+    },
+    {
+      "key": "band-sam-saluta",
+      "file": "band/sam-saluta.svg",
+      "w": 256,
+      "h": 256,
+      "musicista": "Sam",
+      "strumento": "chitarra acustica",
+      "siUnisceDopo": "porch",
+      "posa": "saluta"
+    },
+    {
+      "key": "band-earl-suona",
+      "file": "band/earl-suona.svg",
+      "w": 256,
+      "h": 256,
+      "musicista": "Earl",
+      "strumento": "contrabbasso",
+      "siUnisceDopo": "freight-train",
+      "posa": "suona"
+    },
+    {
+      "key": "band-earl-saluta",
+      "file": "band/earl-saluta.svg",
+      "w": 256,
+      "h": 256,
+      "musicista": "Earl",
+      "strumento": "contrabbasso",
+      "siUnisceDopo": "freight-train",
+      "posa": "saluta"
+    },
+    {
+      "key": "band-ruby-suona",
+      "file": "band/ruby-suona.svg",
+      "w": 256,
+      "h": 256,
+      "musicista": "Ruby",
+      "strumento": "pianoforte",
+      "siUnisceDopo": "juke-joint",
+      "posa": "suona"
+    },
+    {
+      "key": "band-ruby-saluta",
+      "file": "band/ruby-saluta.svg",
+      "w": 256,
+      "h": 256,
+      "musicista": "Ruby",
+      "strumento": "pianoforte",
+      "siUnisceDopo": "juke-joint",
+      "posa": "saluta"
+    },
+    {
+      "key": "band-tito-suona",
+      "file": "band/tito-suona.svg",
+      "w": 256,
+      "h": 256,
+      "musicista": "Tito",
+      "strumento": "batteria",
+      "siUnisceDopo": "beale-street",
+      "posa": "suona"
+    },
+    {
+      "key": "band-tito-saluta",
+      "file": "band/tito-saluta.svg",
+      "w": 256,
+      "h": 256,
+      "musicista": "Tito",
+      "strumento": "batteria",
+      "siUnisceDopo": "beale-street",
+      "posa": "saluta"
+    },
+    {
+      "key": "band-june-suona",
+      "file": "band/june-suona.svg",
+      "w": 256,
+      "h": 256,
+      "musicista": "June",
+      "strumento": "chitarra elettrica",
+      "siUnisceDopo": "delta-crossroads",
+      "posa": "suona"
+    },
+    {
+      "key": "band-june-saluta",
+      "file": "band/june-saluta.svg",
+      "w": 256,
+      "h": 256,
+      "musicista": "June",
+      "strumento": "chitarra elettrica",
+      "siUnisceDopo": "delta-crossroads",
+      "posa": "saluta"
+    },
+    {
+      "key": "sfondi-stazione-1-cielo",
+      "file": "sfondi/stazione-1-cielo.svg",
+      "w": 1280,
+      "h": 720,
+      "area": "station",
+      "livello": 1
+    },
+    {
+      "key": "sfondi-stazione-2-scena",
+      "file": "sfondi/stazione-2-scena.svg",
+      "w": 1280,
+      "h": 720,
+      "area": "station",
+      "livello": 2
+    },
+    {
+      "key": "sfondi-stazione-3-primo-piano",
+      "file": "sfondi/stazione-3-primo-piano.svg",
+      "w": 1280,
+      "h": 720,
+      "area": "station",
+      "livello": 3
+    },
+    {
+      "key": "sfondi-treno-1-cielo",
+      "file": "sfondi/treno-1-cielo.svg",
+      "w": 1280,
+      "h": 720,
+      "area": "freight-train",
+      "livello": 1
+    },
+    {
+      "key": "sfondi-treno-2-scena",
+      "file": "sfondi/treno-2-scena.svg",
+      "w": 1280,
+      "h": 720,
+      "area": "freight-train",
+      "livello": 2
+    },
+    {
+      "key": "sfondi-treno-3-primo-piano",
+      "file": "sfondi/treno-3-primo-piano.svg",
+      "w": 1280,
+      "h": 720,
+      "area": "freight-train",
+      "livello": 3
+    },
+    {
+      "key": "sfondi-juke-1-cielo",
+      "file": "sfondi/juke-1-cielo.svg",
+      "w": 1280,
+      "h": 720,
+      "area": "juke-joint",
+      "livello": 1
+    },
+    {
+      "key": "sfondi-juke-2-scena",
+      "file": "sfondi/juke-2-scena.svg",
+      "w": 1280,
+      "h": 720,
+      "area": "juke-joint",
+      "livello": 2
+    },
+    {
+      "key": "sfondi-juke-3-primo-piano",
+      "file": "sfondi/juke-3-primo-piano.svg",
+      "w": 1280,
+      "h": 720,
+      "area": "juke-joint",
+      "livello": 3
+    },
+    {
+      "key": "sfondi-beale-1-cielo",
+      "file": "sfondi/beale-1-cielo.svg",
+      "w": 1280,
+      "h": 720,
+      "area": "beale-street",
+      "livello": 1
+    },
+    {
+      "key": "sfondi-beale-2-scena",
+      "file": "sfondi/beale-2-scena.svg",
+      "w": 1280,
+      "h": 720,
+      "area": "beale-street",
+      "livello": 2
+    },
+    {
+      "key": "sfondi-beale-3-primo-piano",
+      "file": "sfondi/beale-3-primo-piano.svg",
+      "w": 1280,
+      "h": 720,
+      "area": "beale-street",
+      "livello": 3
+    },
+    {
+      "key": "sfondi-crocevia-1-cielo",
+      "file": "sfondi/crocevia-1-cielo.svg",
+      "w": 1280,
+      "h": 720,
+      "area": "delta-crossroads",
+      "livello": 1
+    },
+    {
+      "key": "sfondi-crocevia-2-scena",
+      "file": "sfondi/crocevia-2-scena.svg",
+      "w": 1280,
+      "h": 720,
+      "area": "delta-crossroads",
+      "livello": 2
+    },
+    {
+      "key": "sfondi-crocevia-3-primo-piano",
+      "file": "sfondi/crocevia-3-primo-piano.svg",
+      "w": 1280,
+      "h": 720,
+      "area": "delta-crossroads",
+      "livello": 3
+    },
+    {
+      "key": "sfondi-chicago-1-cielo",
+      "file": "sfondi/chicago-1-cielo.svg",
+      "w": 1280,
+      "h": 720,
+      "area": "chicago-club",
+      "livello": 1
+    },
+    {
+      "key": "sfondi-chicago-2-scena",
+      "file": "sfondi/chicago-2-scena.svg",
+      "w": 1280,
+      "h": 720,
+      "area": "chicago-club",
+      "livello": 2
+    },
+    {
+      "key": "sfondi-chicago-3-primo-piano",
+      "file": "sfondi/chicago-3-primo-piano.svg",
+      "w": 1280,
+      "h": 720,
+      "area": "chicago-club",
+      "livello": 3
+    },
+    {
+      "key": "sfondi-dopo-chiusura-1-cielo",
+      "file": "sfondi/dopo-chiusura-1-cielo.svg",
+      "w": 1280,
+      "h": 720,
+      "area": "after-hours",
+      "livello": 1
+    },
+    {
+      "key": "sfondi-dopo-chiusura-2-scena",
+      "file": "sfondi/dopo-chiusura-2-scena.svg",
+      "w": 1280,
+      "h": 720,
+      "area": "after-hours",
+      "livello": 2
+    },
+    {
+      "key": "sfondi-dopo-chiusura-3-primo-piano",
+      "file": "sfondi/dopo-chiusura-3-primo-piano.svg",
+      "w": 1280,
+      "h": 720,
+      "area": "after-hours",
+      "livello": 3
     }
   ]
 }

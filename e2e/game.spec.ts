@@ -41,10 +41,12 @@ test("la calibrazione del ritardo misura e salva lo scarto", async ({ page }) =>
   await page.evaluate(() => {
     const sc = window.__game.scene.getScene("latency");
     const pending = [...sc.clicks];
+    (window as any).__offsets = [];
     const tick = () => {
       const now = window.__engine().now;
       if (pending.length && now >= pending[0] + 0.12) {
-        pending.shift();
+        // su una macchina lenta i frame arrivano in ritardo: si registra lo scarto vero
+        (window as any).__offsets.push(now - pending.shift()!);
         window.dispatchEvent(new KeyboardEvent("keydown", { key: "4" }));
         setTimeout(() => window.dispatchEvent(new KeyboardEvent("keyup", { key: "4" })), 150);
       }
@@ -54,7 +56,9 @@ test("la calibrazione del ritardo misura e salva lo scarto", async ({ page }) =>
   });
   await page.waitForFunction(() => JSON.parse(localStorage.getItem("duello-dance-save")!).settings.latency !== null, null, { timeout: 20_000 });
   const latency = await page.evaluate(() => JSON.parse(localStorage.getItem("duello-dance-save")!).settings.latency);
+  const offsets: number[] = (await page.evaluate(() => (window as any).__offsets)).sort((a: number, b: number) => a - b);
+  const median = (offsets[3] + offsets[4]) / 2;
   expect(latency).toBeGreaterThan(0.1);
-  expect(latency).toBeLessThan(0.17);
+  expect(Math.abs(latency - median)).toBeLessThan(0.03);
   expect(await page.evaluate(() => window.__engine().inputLatency)).toBe(latency);
 });

@@ -1,6 +1,6 @@
 {
  "schemaVersion": 1,
- "contentVersion": "0.2",
+ "contentVersion": "0.3",
  "generated": "2026-10-03",
  "source": "content/percorso-didattico.md",
  "layout": {
@@ -105,6 +105,66 @@
    ]
   }
  },
+ "onboarding": [
+  {
+   "id": "which-harp",
+   "title": {
+    "it": "Che armonica serve",
+    "en": "Which harmonica you need"
+   },
+   "steps": [
+    {
+     "it": "Un'armonica diatonica a 10 fori, accordatura Richter (la più comune). Per iniziare va benissimo in Do.",
+     "en": "A 10-hole diatonic harmonica in standard Richter tuning (the most common). One in C is perfect to start."
+    },
+    {
+     "it": "Puoi aggiungere le altre armoniche che hai nell'Arsenale: il gioco adatta tutte le frasi alla tonalità scelta.",
+     "en": "Add any other harps you own to your Arsenal: the game adapts every phrase to the key you pick."
+    }
+   ],
+   "mistakes": []
+  },
+  {
+   "id": "hold-harp",
+   "title": {
+    "it": "Come si tiene",
+    "en": "How to hold it"
+   },
+   "steps": [
+    {
+     "it": "I numeri dei fori guardano in alto e il foro 1 (il più grave) sta a sinistra.",
+     "en": "The hole numbers face up and hole 1 (the lowest) is on the left."
+    },
+    {
+     "it": "Tienila con la mano sinistra tra pollice e indice; la destra fa da coppa dietro.",
+     "en": "Hold it in your left hand between thumb and index finger; your right hand cups behind it."
+    }
+   ],
+   "mistakes": []
+  },
+  {
+   "id": "setup",
+   "title": {
+    "it": "Prima di suonare",
+    "en": "Before you play"
+   },
+   "steps": [
+    {
+     "it": "Usa le cuffie: così la base del gioco non entra nel microfono.",
+     "en": "Use headphones so the game's backing track doesn't leak into the microphone."
+    },
+    {
+     "it": "Tieni il telefono o il computer a 30–50 cm, sempre alla stessa distanza.",
+     "en": "Keep the phone or computer 30–50 cm away, always at the same distance."
+    },
+    {
+     "it": "Fai la calibrazione: suona il foro 4 soffiato quando il gioco te lo chiede, così misura volume e ritardo.",
+     "en": "Run calibration: play hole 4 blow when asked, so the game can measure volume and delay."
+    }
+   ],
+   "mistakes": []
+  }
+ ],
  "areas": [
   {
    "id": "porch",
@@ -156,6 +216,7 @@
        "tab": "4↑ - 5↑ - |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "easy",
        "events": [
         {
          "type": "note",
@@ -190,6 +251,7 @@
        "tab": "4↑ 5↑ 6↑ - |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "easy",
        "events": [
         {
          "type": "note",
@@ -237,6 +299,7 @@
        "tab": "6↑ 5↑ 4↑ - |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "easy",
        "events": [
         {
          "type": "note",
@@ -278,6 +341,106 @@
          "dur": 2.0
         }
        ]
+      },
+      {
+       "id": "draft-4",
+       "tab": "4↑ 5↑ 6↑ 5↑ | 4↑ 5↑ 4↑ - |",
+       "beatsPerBar": 4,
+       "lengthBeats": 8.0,
+       "tier": "hard",
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 12
+          }
+         ],
+         "start": 0.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 5,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 16
+          }
+         ],
+         "start": 1.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 6,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 19
+          }
+         ],
+         "start": 2.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 5,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 16
+          }
+         ],
+         "start": 3.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 12
+          }
+         ],
+         "start": 4.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 5,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 16
+          }
+         ],
+         "start": 5.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 12
+          }
+         ],
+         "start": 6.0,
+         "dur": 2.0
+        }
+       ]
       }
      ]
     },
@@ -297,6 +460,7 @@
        "tab": "4↓ - 5↓ - |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "easy",
        "events": [
         {
          "type": "note",
@@ -331,6 +495,7 @@
        "tab": "4↓ 5↓ 6↓ - |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "easy",
        "events": [
         {
          "type": "note",
@@ -378,6 +543,7 @@
        "tab": "6↓ 5↓ 4↓ - |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "easy",
        "events": [
         {
          "type": "note",
@@ -438,6 +604,7 @@
        "tab": "4↑ 4↓ 4↑ 4↓ |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "medium",
        "events": [
         {
          "type": "note",
@@ -498,6 +665,7 @@
        "tab": "4↑ 4↓ 5↑ - |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "easy",
        "events": [
         {
          "type": "note",
@@ -545,6 +713,7 @@
        "tab": "5↑ 5↓ 6↑ - |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "easy",
        "events": [
         {
          "type": "note",
@@ -592,6 +761,7 @@
        "tab": "6↑ 6↓ 6↑ 5↓ |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "medium",
        "events": [
         {
          "type": "note",
@@ -646,6 +816,106 @@
          "dur": 1.0
         }
        ]
+      },
+      {
+       "id": "bellows-5",
+       "tab": "4↑ 4↓ 5↑ 5↓ | 6↑ 6↓ 6↑ - |",
+       "beatsPerBar": 4,
+       "lengthBeats": 8.0,
+       "tier": "hard",
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 12
+          }
+         ],
+         "start": 0.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 14
+          }
+         ],
+         "start": 1.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 5,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 16
+          }
+         ],
+         "start": 2.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 5,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 17
+          }
+         ],
+         "start": 3.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 6,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 19
+          }
+         ],
+         "start": 4.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 6,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 21
+          }
+         ],
+         "start": 5.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 6,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 19
+          }
+         ],
+         "start": 6.0,
+         "dur": 2.0
+        }
+       ]
       }
      ]
     }
@@ -674,6 +944,7 @@
         "tab": "4↑ - - - | 4↓ - - - |",
         "beatsPerBar": 4,
         "lengthBeats": 8.0,
+        "tier": "medium",
         "events": [
          {
           "type": "note",
@@ -708,6 +979,7 @@
         "tab": "5↑ - - - | 6↑ - - - |",
         "beatsPerBar": 4,
         "lengthBeats": 8.0,
+        "tier": "medium",
         "events": [
          {
           "type": "note",
@@ -756,6 +1028,7 @@
         "tab": "5↑ 4↓ 4↑ 4↓ | 5↑ 5↑ 5↑ - | 4↓ 4↓ 4↓ - | 5↑ 6↑ 6↑ - |",
         "beatsPerBar": 4,
         "lengthBeats": 16.0,
+        "tier": "hard",
         "events": [
          {
           "type": "note",
@@ -934,6 +1207,7 @@
         "tab": "5↑ 5↑ 5↑ - | 5↑ 5↑ 5↑ - | 5↑ 6↑ 4↑ 4↓ | 5↑ - - - |",
         "beatsPerBar": 4,
         "lengthBeats": 16.0,
+        "tier": "hard",
         "events": [
          {
           "type": "note",
@@ -1096,6 +1370,7 @@
         "tab": "4↑ 4↓ 5↑ 4↑ | 4↑ 4↓ 5↑ 4↑ | 5↑ 5↓ 6↑ - | 5↑ 5↓ 6↑ - | (6↑ 6↓) (6↑ 5↓) 5↑ 4↑ | (6↑ 6↓) (6↑ 5↓) 5↑ 4↑ | 4↑ 3↑ 4↑ - | 4↑ 3↑ 4↑ - |",
         "beatsPerBar": 4,
         "lengthBeats": 32.0,
+        "tier": "hard",
         "events": [
          {
           "type": "note",
@@ -1528,7 +1803,85 @@
      "requireSingleNote": true,
      "timingWindow": "wide"
     }
-   }
+   },
+   "lessons": [
+    {
+     "id": "single-note",
+     "title": {
+      "it": "Una nota sola",
+      "en": "One single note"
+     },
+     "steps": [
+      {
+       "it": "Labbra a \"o\", morbide, come per bere da una cannuccia.",
+       "en": "Lips in a soft \"o\", as if drinking through a straw."
+      },
+      {
+       "it": "Metti l'armonica bene in bocca: tocca la parte interna, umida, delle labbra.",
+       "en": "Put the harp well into your mouth: it should touch the moist inner part of your lips."
+      },
+      {
+       "it": "Soffia sul foro 4. Se il gioco ti mostra due fori accesi, stringi un poco le labbra.",
+       "en": "Blow into hole 4. If the game lights up two holes, narrow your lips a little."
+      }
+     ],
+     "mistakes": [
+      {
+       "problem": {
+        "it": "Senti due note insieme.",
+        "en": "You hear two notes at once."
+       },
+       "fix": {
+        "it": "Stringi le labbra o sposta l'armonica di pochissimo a destra o a sinistra.",
+        "en": "Narrow your lips or nudge the harp slightly left or right."
+       }
+      },
+      {
+       "problem": {
+        "it": "Il suono è debole e pieno d'aria.",
+        "en": "The sound is weak and airy."
+       },
+       "fix": {
+        "it": "Spingi l'armonica più in profondità tra le labbra.",
+        "en": "Push the harp deeper between your lips."
+       }
+      }
+     ],
+     "gameShows": {
+      "it": "I fori si accendono su ciò che suoni.",
+      "en": "Holes light up as you play."
+     }
+    },
+    {
+     "id": "breathe",
+     "title": {
+      "it": "Respira attraverso l'armonica",
+      "en": "Breathe through the harp"
+     },
+     "steps": [
+      {
+       "it": "Non soffiare forte: respira come faresti normalmente, ma attraverso lo strumento.",
+       "en": "Don't blow hard: breathe as you normally would, just through the instrument."
+      },
+      {
+       "it": "Alterna soffio e aspiro: così non resti mai senza fiato.",
+       "en": "Alternate blow and draw so you never run out of breath."
+      }
+     ],
+     "mistakes": [
+      {
+       "problem": {
+        "it": "Le guance si gonfiano.",
+        "en": "Your cheeks puff out."
+       },
+       "fix": {
+        "it": "Il fiato parte dalla pancia, non dalle guance: tienile rilassate.",
+        "en": "Breath comes from your belly, not your cheeks: keep them relaxed."
+       }
+      }
+     ]
+    }
+   ]
   },
   {
    "id": "station",
@@ -1592,6 +1945,7 @@
        "tab": "4↑ 4↓ 5↑ 5↓ | 6↑ 6↓ 7↓ 7↑ |",
        "beatsPerBar": 4,
        "lengthBeats": 8.0,
+       "tier": "hard",
        "events": [
         {
          "type": "note",
@@ -1704,6 +2058,7 @@
        "tab": "7↑ 7↓ 6↓ 6↑ | 5↓ 5↑ 4↓ 4↑ |",
        "beatsPerBar": 4,
        "lengthBeats": 8.0,
+       "tier": "hard",
        "events": [
         {
          "type": "note",
@@ -1829,6 +2184,7 @@
        "tab": "4↑ 5↑ 6↑ 7↑ |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "medium",
        "events": [
         {
          "type": "note",
@@ -1889,6 +2245,7 @@
        "tab": "7↑ 6↑ 5↑ 4↑ |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "medium",
        "events": [
         {
          "type": "note",
@@ -1949,6 +2306,7 @@
        "tab": "4↓ 5↓ 6↓ - |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "easy",
        "events": [
         {
          "type": "note",
@@ -1996,6 +2354,7 @@
        "tab": "4↑ 6↑ 5↑ 7↑ |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "medium",
        "events": [
         {
          "type": "note",
@@ -2069,6 +2428,7 @@
        "tab": "1↑ 2↑ 3↑ 4↑ |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "medium",
        "events": [
         {
          "type": "note",
@@ -2129,6 +2489,7 @@
        "tab": "1↓ 2↓ 3↓ 4↓ |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "medium",
        "events": [
         {
          "type": "note",
@@ -2189,6 +2550,7 @@
        "tab": "7↑ 8↑ 9↑ 10↑ |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "medium",
        "events": [
         {
          "type": "note",
@@ -2249,6 +2611,7 @@
        "tab": "7↑ 8↓ 8↑ 9↓ | 9↑ - - - |",
        "beatsPerBar": 4,
        "lengthBeats": 8.0,
+       "tier": "medium",
        "events": [
         {
          "type": "note",
@@ -2335,6 +2698,7 @@
        "tab": "4↓· 4↓· 4↓· 4↓· |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "medium",
        "events": [
         {
          "type": "note",
@@ -2399,6 +2763,7 @@
        "tab": "5↑· 5↑· 4↓ - |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "easy",
        "events": [
         {
          "type": "note",
@@ -2448,6 +2813,7 @@
        "tab": "4↑ 4↓ 5↑ 5↓ | 6↑· 6↑· 6↑ - |",
        "beatsPerBar": 4,
        "lengthBeats": 8.0,
+       "tier": "hard",
        "events": [
         {
          "type": "note",
@@ -2575,6 +2941,7 @@
         "tab": "5↑ 5↑ 5↓ 6↑ | 6↑ 5↓ 5↑ 4↓ | 4↑ 4↑ 4↓ 5↑ | 5↑ - 4↓ 4↓ | 5↑ 5↑ 5↓ 6↑ | 6↑ 5↓ 5↑ 4↓ | 4↑ 4↑ 4↓ 5↑ | 4↓ - 4↑ 4↑ |",
         "beatsPerBar": 4,
         "lengthBeats": 32.0,
+        "tier": "hard",
         "events": [
          {
           "type": "note",
@@ -2987,6 +3354,7 @@
         "tab": "4↑ 4↓ . . | 5↑ 6↑ 6↑ 6↓ | 6↑ 5↑ 4↑ 4↓ | 5↑ 5↑ 4↓ 4↑ | 4↓ - - - |",
         "beatsPerBar": 4,
         "lengthBeats": 20.0,
+        "tier": "hard",
         "events": [
          {
           "type": "note",
@@ -3201,6 +3569,7 @@
         "tab": "(4↑ 4↓) (5↑ 5↓) (6↑ 6↓) (7↓ 7↑) | (7↑ 7↓) (6↓ 6↑) (5↓ 5↑) (4↓ 4↑) |",
         "beatsPerBar": 4,
         "lengthBeats": 8.0,
+        "tier": "hard",
         "events": [
          {
           "type": "note",
@@ -3420,7 +3789,85 @@
      "minNoteAccuracy": 0.8,
      "timingWindow": "narrowing"
     }
-   }
+   },
+   "lessons": [
+    {
+     "id": "scale",
+     "title": {
+      "it": "La scala",
+      "en": "The scale"
+     },
+     "steps": [
+      {
+       "it": "La scala è: 4↑ 4↓ 5↑ 5↓ 6↑ 6↓ 7↓ 7↑.",
+       "en": "The scale is: 4↑ 4↓ 5↑ 5↓ 6↑ 6↓ 7↓ 7↑."
+      },
+      {
+       "it": "Attento al 7: qui l'aspiro viene prima del soffio.",
+       "en": "Watch out for 7: here draw comes before blow."
+      }
+     ],
+     "mistakes": [
+      {
+       "problem": {
+        "it": "Al foro 7 la scala suona \"storta\".",
+        "en": "The scale sounds wrong at hole 7."
+       },
+       "fix": {
+        "it": "Inverti: prima 7↓, poi 7↑.",
+        "en": "Swap them: first 7↓, then 7↑."
+       }
+      }
+     ]
+    },
+    {
+     "id": "leaps",
+     "title": {
+      "it": "I salti",
+      "en": "Leaps"
+     },
+     "steps": [
+      {
+       "it": "Muovi l'armonica, non la testa: le labbra restano ferme e morbide.",
+       "en": "Move the harp, not your head: your lips stay still and relaxed."
+      }
+     ],
+     "mistakes": []
+    },
+    {
+     "id": "articulation",
+     "title": {
+      "it": "Legato e staccato",
+      "en": "Legato and staccato"
+     },
+     "steps": [
+      {
+       "it": "Legato: un solo respiro continuo che passa da un foro all'altro.",
+       "en": "Legato: one continuous breath gliding from hole to hole."
+      },
+      {
+       "it": "Staccato: separa le note con la lingua, sussurrando \"ta\" o \"ka\" dentro l'armonica.",
+       "en": "Staccato: separate notes with your tongue, whispering \"ta\" or \"ka\" into the harp."
+      }
+     ],
+     "mistakes": [
+      {
+       "problem": {
+        "it": "Lo staccato esce a scatti di fiato.",
+        "en": "Your staccato comes out as puffs of air."
+       },
+       "fix": {
+        "it": "Il fiato resta continuo: è la lingua che apre e chiude.",
+        "en": "Keep the air steady: it's the tongue that opens and closes."
+       }
+      }
+     ],
+     "gameShows": {
+      "it": "Le note staccate hanno un piccolo spazio vuoto prima della successiva.",
+      "en": "Staccato notes show a small gap before the next one."
+     }
+    }
+   ]
   },
   {
    "id": "freight-train",
@@ -3497,6 +3944,7 @@
        "tab": "1-2-3↑ - - - |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "easy",
        "events": [
         {
          "type": "chord",
@@ -3530,6 +3978,7 @@
        "tab": "1-2-3↓ - - - |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "easy",
        "events": [
         {
          "type": "chord",
@@ -3563,6 +4012,7 @@
        "tab": "4-5-6↑ - 4-5-6↓ - |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "easy",
        "events": [
         {
          "type": "chord",
@@ -3634,6 +4084,7 @@
        "tab": "1-2-3↓ 1-2-3↓ 1-2-3↑ 1-2-3↑ | 1-2-3↓ 1-2-3↓ 1-2-3↑ 1-2-3↑ | 1-2-3↓ 1-2-3↓ 1-2-3↑ 1-2-3↑ | 1-2-3↓ 1-2-3↓ 1-2-3↑ 1-2-3↑ |",
        "beatsPerBar": 4,
        "lengthBeats": 16.0,
+       "tier": "hard",
        "events": [
         {
          "type": "chord",
@@ -4046,6 +4497,7 @@
        "tab": "(1-2-3↓ 1-2-3↓) (1-2-3↑ 1-2-3↑) (1-2-3↓ 1-2-3↓) (1-2-3↑ 1-2-3↑) |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "hard",
        "events": [
         {
          "type": "chord",
@@ -4258,6 +4710,7 @@
        "tab": "(1-2-3↓ 1-2-3↓ 1-2-3↑) (1-2-3↓ 1-2-3↓ 1-2-3↑) (1-2-3↓ 1-2-3↓ 1-2-3↑) (1-2-3↓ 1-2-3↓ 1-2-3↑) |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "hard",
        "events": [
         {
          "type": "chord",
@@ -4570,6 +5023,7 @@
        "tab": "(1-2-3↓ . 1-2-3↓) (1-2-3↑ . 1-2-3↑) (1-2-3↓ . 1-2-3↓) (1-2-3↑ . 1-2-3↑) |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "hard",
        "events": [
         {
          "type": "chord",
@@ -4796,6 +5250,7 @@
        "tab": "4↓~5↓ - - - |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "easy",
        "events": [
         {
          "type": "trill",
@@ -4823,6 +5278,7 @@
        "tab": "4-5↓ - . . | 4-5↓ - . . |",
        "beatsPerBar": 4,
        "lengthBeats": 8.0,
+       "tier": "medium",
        "events": [
         {
          "type": "chord",
@@ -4891,6 +5347,7 @@
         "tab": "(1-2-3↓ 1-2-3↓) (1-2-3↑ 1-2-3↑) (1-2-3↓ 1-2-3↓) (1-2-3↑ 1-2-3↑) |",
         "beatsPerBar": 4,
         "lengthBeats": 4.0,
+        "tier": "hard",
         "events": [
          {
           "type": "chord",
@@ -5109,6 +5566,7 @@
         "tab": "(1-2-3↓ 1-2-3↓) (1-2-3↑ 1-2-3↑) (1-2-3↓ 1-2-3↓) (1-2-3↑ 1-2-3↑) | (1-2-3↓ 1-2-3↓) (1-2-3↑ 1-2-3↑) (1-2-3↓ 1-2-3↓) (1-2-3↑ 1-2-3↑) | 4-5↓ - - . |",
         "beatsPerBar": 4,
         "lengthBeats": 12.0,
+        "tier": "hard",
         "events": [
          {
           "type": "chord",
@@ -5546,6 +6004,7 @@
         "tab": "1-2-3↓ 4↑ 1-2-3↓ 4↓ | 1-2-3↓ 5↑ 1-2-3↓ 4↓ | 4↓~5↓ - - - |",
         "beatsPerBar": 4,
         "lengthBeats": 12.0,
+        "tier": "hard",
         "events": [
          {
           "type": "chord",
@@ -5729,7 +6188,70 @@
      "chordMinMatchingNotes": 2,
      "timingWindow": "medium"
     }
-   }
+   },
+   "lessons": [
+    {
+     "id": "chords",
+     "title": {
+      "it": "Gli accordi",
+      "en": "Chords"
+     },
+     "steps": [
+      {
+       "it": "Apri la bocca un po' di più e copri tre fori: 1-2-3.",
+       "en": "Open your mouth a little wider and cover three holes: 1-2-3."
+      },
+      {
+       "it": "Soffiato suona allegro, aspirato suona \"blues\": sono i due accordi della base.",
+       "en": "Blown sounds bright, drawn sounds bluesy: they are the two chords of the groove."
+      }
+     ],
+     "mistakes": []
+    },
+    {
+     "id": "train-rhythm",
+     "title": {
+      "it": "Il ritmo del treno",
+      "en": "The train rhythm"
+     },
+     "steps": [
+      {
+       "it": "Aspira-aspira, soffia-soffia, sempre uguale, come le ruote sui binari.",
+       "en": "Draw-draw, blow-blow, over and over, like wheels on the track."
+      },
+      {
+       "it": "Prima in quarti, poi in ottavi, poi in terzine; lo shuffle è una terzina senza la nota di mezzo: lungo-corto.",
+       "en": "First quarters, then eighths, then triplets; shuffle is a triplet missing its middle note: long-short."
+      }
+     ],
+     "mistakes": [
+      {
+       "problem": {
+        "it": "Il treno accelera da solo.",
+        "en": "The train speeds up on its own."
+       },
+       "fix": {
+        "it": "Segui il click del metronomo e sussurra \"ta-ka\" dentro l'armonica.",
+        "en": "Follow the metronome click and whisper \"ta-ka\" into the harp."
+       }
+      }
+     ]
+    },
+    {
+     "id": "trill",
+     "title": {
+      "it": "Il trillo",
+      "en": "The trill"
+     },
+     "steps": [
+      {
+       "it": "Alterna 4↓ e 5↓ il più veloce possibile, muovendo l'armonica (o la testa) avanti e indietro.",
+       "en": "Alternate 4↓ and 5↓ as fast as you can, rocking the harp (or your head) back and forth."
+      }
+     ],
+     "mistakes": []
+    }
+   ]
   },
   {
    "id": "juke-joint",
@@ -5782,6 +6304,7 @@
        "tab": "4↓ - 4↓' - |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "easy",
        "events": [
         {
          "type": "note",
@@ -5816,6 +6339,7 @@
        "tab": "4↓' - - - |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "easy",
        "events": [
         {
          "type": "note",
@@ -5850,6 +6374,7 @@
        "tab": "4↓' 4↓ - - |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "easy",
        "events": [
         {
          "type": "note",
@@ -5884,6 +6409,7 @@
        "tab": "(4↓' 4↓) 4↑ - - |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "easy",
        "events": [
         {
          "type": "note",
@@ -5931,6 +6457,7 @@
        "tab": "(4↓' 4↓) 5↓ 4↓ - |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "medium",
        "events": [
         {
          "type": "note",
@@ -5991,6 +6518,7 @@
        "tab": "{4↓'}4↓ - {4↓'}4↓ - |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "easy",
        "events": [
         {
          "type": "note",
@@ -6037,6 +6565,7 @@
        "tab": "{4↓'}4↓ 4↑ {4↓'}4↓ 5↓ |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "medium",
        "events": [
         {
          "type": "note",
@@ -6126,6 +6655,7 @@
        "tab": "6↓ 6↓' 6↑ - |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "easy",
        "events": [
         {
          "type": "note",
@@ -6173,6 +6703,7 @@
        "tab": "1↓' 1↓ 1↑ - |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "easy",
        "events": [
         {
          "type": "note",
@@ -6214,6 +6745,106 @@
          "dur": 2.0
         }
        ]
+      },
+      {
+       "id": "singer-3",
+       "tab": "6↓ 6↓' 6↑ 5↓ | 4↓ 4↓' 4↑ - |",
+       "beatsPerBar": 4,
+       "lengthBeats": 8.0,
+       "tier": "hard",
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 6,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 21
+          }
+         ],
+         "start": 0.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 6,
+           "dir": "draw",
+           "bend": 1,
+           "semitone": 20
+          }
+         ],
+         "start": 1.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 6,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 19
+          }
+         ],
+         "start": 2.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 5,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 17
+          }
+         ],
+         "start": 3.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 14
+          }
+         ],
+         "start": 4.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "draw",
+           "bend": 1,
+           "semitone": 13
+          }
+         ],
+         "start": 5.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 12
+          }
+         ],
+         "start": 6.0,
+         "dur": 2.0
+        }
+       ]
       }
      ]
     }
@@ -6242,6 +6873,7 @@
         "tab": "4↓' . 4↓' . | 4↓' . 4↓' . |",
         "beatsPerBar": 4,
         "lengthBeats": 8.0,
+        "tier": "medium",
         "events": [
          {
           "type": "note",
@@ -6316,6 +6948,7 @@
         "tab": "4↑ 4↓' 4↓ - | 5↓ 4↓ 4↓' 4↑ |",
         "beatsPerBar": 4,
         "lengthBeats": 8.0,
+        "tier": "hard",
         "events": [
          {
           "type": "note",
@@ -6415,6 +7048,7 @@
         "tab": "6↓' 6↑ 5↓ 4↓ | 4↓' 4↑ - - |",
         "beatsPerBar": 4,
         "lengthBeats": 8.0,
+        "tier": "medium",
         "events": [
          {
           "type": "note",
@@ -6511,6 +7145,7 @@
         "tab": "(4↓' 4↓) 5↓ (4↓' 4↓) 4↑ | 1↓' 1↓ 1↑ - |",
         "beatsPerBar": 4,
         "lengthBeats": 8.0,
+        "tier": "hard",
         "events": [
          {
           "type": "note",
@@ -6640,7 +7275,70 @@
      "bendToleranceCents": 30,
      "bendMinHoldMs": 300
     }
-   }
+   },
+   "lessons": [
+    {
+     "id": "first-bend",
+     "title": {
+      "it": "Il primo bend",
+      "en": "Your first bend"
+     },
+     "steps": [
+      {
+       "it": "Suona 4↓ pulito.",
+       "en": "Play a clean 4↓."
+      },
+      {
+       "it": "Mentre aspiri, cambia la vocale in bocca da \"i\" a \"u\" e abbassa la mascella, come per dire \"iiu\".",
+       "en": "While drawing, change the vowel in your mouth from \"ee\" to \"oo\" and drop your jaw, as if saying \"ee-oo\"."
+      },
+      {
+       "it": "Senti la nota scendere: tienila lì finché l'indicatore resta sul bersaglio, poi torna su.",
+       "en": "Feel the note drop: hold it while the meter stays on target, then release."
+      }
+     ],
+     "mistakes": [
+      {
+       "problem": {
+        "it": "Aspiri più forte e non cambia niente.",
+        "en": "You draw harder and nothing happens."
+       },
+       "fix": {
+        "it": "Il bend non è forza: è la forma della bocca. Aspira piano.",
+        "en": "Bending isn't force, it's mouth shape. Draw gently."
+       }
+      },
+      {
+       "problem": {
+        "it": "Il suono si chiude e diventa aria.",
+        "en": "The sound chokes into air."
+       },
+       "fix": {
+        "it": "Hai bendato troppo: sul 4 basta mezzo tono. Rilascia un poco.",
+        "en": "You went too far: hole 4 only needs a half step. Ease off."
+       }
+      }
+     ],
+     "gameShows": {
+      "it": "L'indicatore del bend mostra quanto hai abbassato la nota.",
+      "en": "The bend meter shows how far you've lowered the note."
+     }
+    },
+    {
+     "id": "grace-note",
+     "title": {
+      "it": "L'acciaccatura",
+      "en": "The grace note"
+     },
+     "steps": [
+      {
+       "it": "Un bend lampo che si apre subito sulla nota: come un piccolo singhiozzo prima di 4↓.",
+       "en": "A lightning bend that snaps open onto the note: like a tiny hiccup before 4↓."
+      }
+     ],
+     "mistakes": []
+    }
+   ]
   },
   {
    "id": "beale-street",
@@ -6683,8 +7381,8 @@
     {
      "id": "shoeshine",
      "name": {
-      "it": "Il Lustrascarpe",
-      "en": "The Shoeshine"
+      "it": "La Scarpa di Vernice",
+      "en": "The Patent Shoe"
      },
      "trains": {
       "it": "sentire la nota casa",
@@ -6696,6 +7394,7 @@
        "tab": "2↓ - - - |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "easy",
        "events": [
         {
          "type": "note",
@@ -6717,6 +7416,7 @@
        "tab": "1↓ 2↓ - - |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "easy",
        "events": [
         {
          "type": "note",
@@ -6751,6 +7451,7 @@
        "tab": "2↓ 3↓ 4↓ - |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "easy",
        "events": [
         {
          "type": "note",
@@ -6811,6 +7512,7 @@
        "tab": "4↓ 5↓ 6↑ - | 6↑ 5↓ 4↓ - |",
        "beatsPerBar": 4,
        "lengthBeats": 8.0,
+       "tier": "medium",
        "events": [
         {
          "type": "note",
@@ -6897,6 +7599,7 @@
        "tab": "6↑ 5↓ 4↓ 4↑ | 3↓ 2↓ - - |",
        "beatsPerBar": 4,
        "lengthBeats": 8.0,
+       "tier": "medium",
        "events": [
         {
          "type": "note",
@@ -6983,6 +7686,7 @@
        "tab": "5↓>2↓ - - - |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "easy",
        "events": [
         {
          "type": "glissando",
@@ -7010,6 +7714,7 @@
        "tab": "6↑>4↑ - 4↓ - | 5↓>2↓ - - - |",
        "beatsPerBar": 4,
        "lengthBeats": 8.0,
+       "tier": "medium",
        "events": [
         {
          "type": "glissando",
@@ -7086,6 +7791,7 @@
        "tab": "2↓≈ - - - |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "easy",
        "events": [
         {
          "type": "note",
@@ -7108,6 +7814,7 @@
        "tab": "4↓≈ - - - |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "easy",
        "events": [
         {
          "type": "note",
@@ -7130,6 +7837,7 @@
        "tab": "6↑ 5↓ 4↓≈ - |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "easy",
        "events": [
         {
          "type": "note",
@@ -7178,6 +7886,7 @@
        "tab": "4↓w - 4↓w - |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "easy",
        "events": [
         {
          "type": "note",
@@ -7214,6 +7923,7 @@
        "tab": "4↑w 4↓w 5↑w 5↓w | 6↑w - - - |",
        "beatsPerBar": 4,
        "lengthBeats": 8.0,
+       "tier": "medium",
        "events": [
         {
          "type": "note",
@@ -7309,6 +8019,7 @@
        "tab": "2↓ - - - | 2↓ - - - | 2↓ - - - | 2↓ - - - | 4↑ - - - | 4↑ - - - | 2↓ - - - | 2↓ - - - | 4↓ - - - | 4↑ - - - | 2↓ - - - | 4↓ - - - |",
        "beatsPerBar": 4,
        "lengthBeats": 48.0,
+       "tier": "hard",
        "events": [
         {
          "type": "note",
@@ -7513,6 +8224,7 @@
         "tab": "1↓ 2↓ 1↓ 2↓ | 1↓ 2↓ 2↓ - |",
         "beatsPerBar": 4,
         "lengthBeats": 8.0,
+        "tier": "hard",
         "events": [
          {
           "type": "note",
@@ -7622,6 +8334,7 @@
         "tab": "2↓ 3↓ 4↑ 4↓' | 4↓ - - - |",
         "beatsPerBar": 4,
         "lengthBeats": 8.0,
+        "tier": "medium",
         "events": [
          {
           "type": "note",
@@ -7695,6 +8408,7 @@
         "tab": "4↓ 5↓ 6↑ 5↓ | 4↓ 4↓' 4↑ 3↓ | 2↓ - - - |",
         "beatsPerBar": 4,
         "lengthBeats": 12.0,
+        "tier": "hard",
         "events": [
          {
           "type": "note",
@@ -7830,6 +8544,7 @@
         "tab": "1-2-3↓ 1-2-3↓ 1-2-3↓ 1-2-3↓ | 1-2-3↓ 1-2-3↓ 1-2-3↓ 1-2-3↓ | 1-2-3↓ 1-2-3↓ 1-2-3↓ 1-2-3↓ | 1-2-3↓ 1-2-3↓ 1-2-3↓ 1-2-3↓ | 1-2-3↑ 1-2-3↑ 1-2-3↑ 1-2-3↑ | 1-2-3↑ 1-2-3↑ 1-2-3↑ 1-2-3↑ | 1-2-3↓ 1-2-3↓ 1-2-3↓ 1-2-3↓ | 1-2-3↓ 1-2-3↓ 1-2-3↓ 1-2-3↓ | 4-5-6↓ 4-5-6↓ 4-5-6↓ 4-5-6↓ | 1-2-3↑ 1-2-3↑ 1-2-3↑ 1-2-3↑ | 2↓ - - - | 1↓ - 4↓ - |",
         "beatsPerBar": 4,
         "lengthBeats": 48.0,
+        "tier": "hard",
         "events": [
          {
           "type": "chord",
@@ -8899,7 +9614,71 @@
      "homeNoteOnAccents": true,
      "vibratoDetection": "experimental"
     }
-   }
+   },
+   "lessons": [
+    {
+     "id": "second-position",
+     "title": {
+      "it": "La seconda posizione",
+      "en": "Second position"
+     },
+     "steps": [
+      {
+       "it": "Ora la nota \"casa\" è 2↓: le frasi partono e finiscono lì.",
+       "en": "Now the home note is 2↓: phrases start and end there."
+      },
+      {
+       "it": "Così l'armonica in Do suona un blues in Sol. Regola: armonica = tonalità della base meno una quinta.",
+       "en": "That makes a C harp play blues in G. Rule: harp key = backing key minus a fifth."
+      }
+     ],
+     "mistakes": []
+    },
+    {
+     "id": "twelve-bar",
+     "title": {
+      "it": "Il giro di 12 battute",
+      "en": "The 12-bar blues"
+     },
+     "steps": [
+      {
+       "it": "Tre accordi: I per 4 battute, IV per 2, I per 2, V per 1, IV per 1, I per 1, V per 1.",
+       "en": "Three chords: I for 4 bars, IV for 2, I for 2, V for 1, IV for 1, I for 1, V for 1."
+      },
+      {
+       "it": "Sull'armonica: I = 2↓, IV = 4↑, V = 4↓.",
+       "en": "On the harp: I = 2↓, IV = 4↑, V = 4↓."
+      }
+     ],
+     "mistakes": [],
+     "gameShows": {
+      "it": "Una barra in alto mostra in che battuta del giro sei.",
+      "en": "A bar at the top shows which bar of the 12 you're in."
+     }
+    },
+    {
+     "id": "effects",
+     "title": {
+      "it": "Vibrato, wah e glissato",
+      "en": "Vibrato, wah and glissando"
+     },
+     "steps": [
+      {
+       "it": "Vibrato: pulsa il fiato con la gola, come una risata leggera \"ha-ha-ha\".",
+       "en": "Vibrato: pulse the air with your throat, like a soft laugh \"ha-ha-ha\"."
+      },
+      {
+       "it": "Wah: chiudi le mani a coppa attorno all'armonica, poi aprile come una sordina di tromba.",
+       "en": "Wah: close your cupped hands around the harp, then open them like a trumpet mute."
+      },
+      {
+       "it": "Glissato: fai scivolare l'armonica tra le labbra senza fermarti sui fori in mezzo.",
+       "en": "Glissando: slide the harp across your lips without stopping on the holes in between."
+      }
+     ],
+     "mistakes": []
+    }
+   ]
   },
   {
    "id": "delta-crossroads",
@@ -8945,6 +9724,7 @@
        "tab": "3↓' 2↓ - - |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "easy",
        "events": [
         {
          "type": "note",
@@ -8979,6 +9759,7 @@
        "tab": "3↓ 3↓' 2↓ - |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "easy",
        "events": [
         {
          "type": "note",
@@ -9026,8 +9807,8 @@
     {
      "id": "sharecropper",
      "name": {
-      "it": "Il Coltivatore",
-      "en": "The Sharecropper"
+      "it": "Lo Spaventapasseri",
+      "en": "The Scarecrow"
      },
      "trains": {
       "it": "bend sul 2",
@@ -9039,6 +9820,7 @@
        "tab": "2↓'' 2↓ - - |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "easy",
        "events": [
         {
          "type": "note",
@@ -9073,6 +9855,7 @@
        "tab": "2↓' 2↓ 3↓' 2↓ |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "medium",
        "events": [
         {
          "type": "note",
@@ -9133,6 +9916,7 @@
        "tab": "2↓ 2↓'' 1↓ 1↓' | 1↑ - - - |",
        "beatsPerBar": 4,
        "lengthBeats": 8.0,
+       "tier": "medium",
        "events": [
         {
          "type": "note",
@@ -9206,6 +9990,7 @@
        "tab": "1↑ 1↓' 1↓ 2↓'' | 2↓ - - - |",
        "beatsPerBar": 4,
        "lengthBeats": 8.0,
+       "tier": "medium",
        "events": [
         {
          "type": "note",
@@ -9292,6 +10077,7 @@
        "tab": "1↑ 1↓ 2↑ 2↓'' | 3↑ 3↓'' 3↓ 4↑ |",
        "beatsPerBar": 4,
        "lengthBeats": 8.0,
+       "tier": "hard",
        "events": [
         {
          "type": "note",
@@ -9404,6 +10190,7 @@
        "tab": "2↓ 3↓'' 3↓ 4↓ | 5↑ 6↑ - - |",
        "beatsPerBar": 4,
        "lengthBeats": 8.0,
+       "tier": "medium",
        "events": [
         {
          "type": "note",
@@ -9494,6 +10281,7 @@
        "tab": "6↑ 5↑ 4↓ 3↓ | 3↓'' 2↓ - - |",
        "beatsPerBar": 4,
        "lengthBeats": 8.0,
+       "tier": "medium",
        "events": [
         {
          "type": "note",
@@ -9606,6 +10394,7 @@
         "tab": "4↑ 3↓ 3↓' 3↓'' | 3↓''' 2↓ - - |",
         "beatsPerBar": 4,
         "lengthBeats": 8.0,
+        "tier": "medium",
         "events": [
          {
           "type": "note",
@@ -9706,6 +10495,7 @@
         "tab": "3↑ | 4↑ - (5↑ 4↑) | 5↑ - 4↓ | 4↑ - 3↓'' | 3↑ - - |",
         "beatsPerBar": 3,
         "lengthBeats": 13.0,
+        "tier": "hard",
         "events": [
          {
           "type": "note",
@@ -9842,6 +10632,7 @@
         "tab": "2↓ 3↓' 3↓'' 2↓ | 2↓'' 2↓ - - | 4↓' 4↓ 3↓' 2↓ | 1↓ 2↓ - - |",
         "beatsPerBar": 4,
         "lengthBeats": 16.0,
+        "tier": "hard",
         "events": [
          {
           "type": "note",
@@ -10011,7 +10802,56 @@
      "bendMinHoldMs": 250,
      "distinctBendSteps": true
     }
-   }
+   },
+   "lessons": [
+    {
+     "id": "deep-bends",
+     "title": {
+      "it": "I bend profondi",
+      "en": "Deep bends"
+     },
+     "steps": [
+      {
+       "it": "Il foro 3 ha tre gradini: 3↓', 3↓'', 3↓'''. Il foro 2 ne ha due.",
+       "en": "Hole 3 has three steps: 3↓', 3↓'', 3↓'''. Hole 2 has two."
+      },
+      {
+       "it": "Più scendi, più la lingua si abbassa e il fiato va verso la gola, come per dire \"u\" sempre più scura.",
+       "en": "The lower you go, the lower your tongue and the further back the air, like an ever darker \"oo\"."
+      },
+      {
+       "it": "Fermati su ogni gradino: il gioco li conta uno per uno.",
+       "en": "Stop on every step: the game counts each one."
+      }
+     ],
+     "mistakes": [
+      {
+       "problem": {
+        "it": "Arrivi solo in fondo, senza fermarti.",
+        "en": "You only reach the bottom without stopping."
+       },
+       "fix": {
+        "it": "Rallenta: scendi di un gradino, tienilo, poi il successivo.",
+        "en": "Slow down: go one step, hold it, then the next."
+       }
+      }
+     ]
+    },
+    {
+     "id": "major-pentatonic",
+     "title": {
+      "it": "La pentatonica maggiore",
+      "en": "The major pentatonic"
+     },
+     "steps": [
+      {
+       "it": "2↓ 3↓'' 3↓ 4↓ 5↑ 6↑: un suono più allegro, da gospel, senza la nota blues 3↓'.",
+       "en": "2↓ 3↓'' 3↓ 4↓ 5↑ 6↑: a brighter, gospel-like sound, without the 3↓' blue note."
+      }
+     ],
+     "mistakes": []
+    }
+   ]
   },
   {
    "id": "riverboat",
@@ -10065,10 +10905,59 @@
      },
      "phrases": [
       {
+       "id": "pilot-0",
+       "tab": "4↓ 5↓ 4↓ - |",
+       "beatsPerBar": 4,
+       "lengthBeats": 4.0,
+       "tier": "easy",
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 14
+          }
+         ],
+         "start": 0.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 5,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 17
+          }
+         ],
+         "start": 1.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 14
+          }
+         ],
+         "start": 2.0,
+         "dur": 2.0
+        }
+       ]
+      },
+      {
        "id": "pilot-1",
        "tab": "4↓ 5↑ 5↓ 6↑ | 6↓ 7↓ 7↑ 8↓ |",
        "beatsPerBar": 4,
        "lengthBeats": 8.0,
+       "tier": "hard",
        "events": [
         {
          "type": "note",
@@ -10181,6 +11070,7 @@
        "tab": "8↓ 7↑ 7↓ 6↓ | 6↑ 5↓ 5↑ 4↓ |",
        "beatsPerBar": 4,
        "lengthBeats": 8.0,
+       "tier": "hard",
        "events": [
         {
          "type": "note",
@@ -10293,6 +11183,7 @@
        "tab": "7↑ 6↓ 6↑ 5↓ | 4↓ - - - |",
        "beatsPerBar": 4,
        "lengthBeats": 8.0,
+       "tier": "medium",
        "events": [
         {
          "type": "note",
@@ -10379,10 +11270,59 @@
      },
      "phrases": [
       {
+       "id": "fog-0",
+       "tab": "6↓ 6↓' 6↑ - |",
+       "beatsPerBar": 4,
+       "lengthBeats": 4.0,
+       "tier": "easy",
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 6,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 21
+          }
+         ],
+         "start": 0.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 6,
+           "dir": "draw",
+           "bend": 1,
+           "semitone": 20
+          }
+         ],
+         "start": 1.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 6,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 19
+          }
+         ],
+         "start": 2.0,
+         "dur": 2.0
+        }
+       ]
+      },
+      {
        "id": "fog-1",
        "tab": "4↓ 5↓ 6↑ 6↓' | 6↓ 7↑ 8↓ - |",
        "beatsPerBar": 4,
        "lengthBeats": 8.0,
+       "tier": "hard",
        "events": [
         {
          "type": "note",
@@ -10482,6 +11422,7 @@
        "tab": "8↓ 7↑ 6↓ 6↓' | 6↑ 5↓ 4↓ - |",
        "beatsPerBar": 4,
        "lengthBeats": 8.0,
+       "tier": "hard",
        "events": [
         {
          "type": "note",
@@ -10581,6 +11522,7 @@
        "tab": "5↓ 6↑ 6↓' 6↑ | 5↓ 4↓ - - |",
        "beatsPerBar": 4,
        "lengthBeats": 8.0,
+       "tier": "medium",
        "events": [
         {
          "type": "note",
@@ -10676,10 +11618,59 @@
      },
      "phrases": [
       {
+       "id": "fisherman-0",
+       "tab": "4↓ 4↑ 4↓ - |",
+       "beatsPerBar": 4,
+       "lengthBeats": 4.0,
+       "tier": "easy",
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 14
+          }
+         ],
+         "start": 0.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 12
+          }
+         ],
+         "start": 1.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 14
+          }
+         ],
+         "start": 2.0,
+         "dur": 2.0
+        }
+       ]
+      },
+      {
        "id": "fisherman-1",
        "tab": "1↓ 2↓'' 2↓ 3↓''' | 3↓'' 4↑ 4↓ - |",
        "beatsPerBar": 4,
        "lengthBeats": 8.0,
+       "tier": "hard",
        "events": [
         {
          "type": "note",
@@ -10779,6 +11770,7 @@
        "tab": "4↓ 4↑ 3↓'' 3↓''' | 2↓ 2↓'' 1↓ - |",
        "beatsPerBar": 4,
        "lengthBeats": 8.0,
+       "tier": "hard",
        "events": [
         {
          "type": "note",
@@ -10900,6 +11892,7 @@
         "tab": "4↓ - 5↓ 6↑ | 6↓' 6↓ 6↑ - | 5↓ 4↓ 5↓ 4↓ | 4↓ - - - |",
         "beatsPerBar": 4,
         "lengthBeats": 16.0,
+        "tier": "hard",
         "events": [
          {
           "type": "note",
@@ -11061,6 +12054,7 @@
         "tab": "1↓ 2↓'' 3↓''' 4↓ | 5↓ 6↓' 7↑ 8↓ | 8↓ - - - |",
         "beatsPerBar": 4,
         "lengthBeats": 12.0,
+        "tier": "hard",
         "events": [
          {
           "type": "note",
@@ -11200,6 +12194,7 @@
         "tab": "(4↓ 5↓) (6↑ 6↓') 6↓ 7↑ | 8↓ - 7↑ 6↓ | (6↓' 6↑) 5↓ 4↓ - | 1↓ 2↓'' 4↓ - |",
         "beatsPerBar": 4,
         "lengthBeats": 16.0,
+        "tier": "hard",
         "events": [
          {
           "type": "note",
@@ -11420,7 +12415,31 @@
      "bendToleranceCents": 30,
      "homeNoteOnAccents": true
     }
-   }
+   },
+   "lessons": [
+    {
+     "id": "third-position",
+     "title": {
+      "it": "La terza posizione",
+      "en": "Third position"
+     },
+     "steps": [
+      {
+       "it": "La nota casa diventa 4↓ (e 1↓, 8↓): l'armonica in Do suona in Re minore.",
+       "en": "The home note becomes 4↓ (and 1↓, 8↓): a C harp plays in D minor."
+      },
+      {
+       "it": "Regola: armonica = tonalità della base meno un tono.",
+       "en": "Rule: harp key = backing key minus a whole step."
+      },
+      {
+       "it": "Il bend 6↓' è la nota blues di questa posizione.",
+       "en": "The 6↓' bend is this position's blue note."
+      }
+     ],
+     "mistakes": []
+    }
+   ]
   },
   {
    "id": "chicago-club",
@@ -11597,7 +12616,35 @@
      "minInScaleRatio": 0.7,
      "minChangesHit": 0.5
     }
-   }
+   },
+   "lessons": [
+    {
+     "id": "improvise",
+     "title": {
+      "it": "Improvvisare",
+      "en": "Improvising"
+     },
+     "steps": [
+      {
+       "it": "Bastano poche note: 2↓ 3↓' 4↑ suonano già blues.",
+       "en": "A few notes are enough: 2↓ 3↓' 4↑ already sound like blues."
+      },
+      {
+       "it": "Ascolta quando cambia l'accordo e atterra sulla sua nota casa.",
+       "en": "Listen for the chord change and land on its home note."
+      },
+      {
+       "it": "Lascia spazio: suona, poi taci e lascia rispondere la band.",
+       "en": "Leave space: play, then stop and let the band answer."
+      }
+     ],
+     "mistakes": [],
+     "gameShows": {
+      "it": "Le note \"giuste\" per l'accordo del momento si illuminano di oro.",
+      "en": "Notes that fit the current chord glow gold."
+     }
+    }
+   ]
   },
   {
    "id": "after-hours",
@@ -11650,6 +12697,7 @@
        "tab": "8↑ 8↑' 7↑ - |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "easy",
        "events": [
         {
          "type": "note",
@@ -11697,6 +12745,7 @@
        "tab": "10↑ 10↑' 10↑'' 9↑ |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "medium",
        "events": [
         {
          "type": "note",
@@ -11757,6 +12806,7 @@
        "tab": "7↑ 8↓ 8↑ 9↓ | 9↑ 10↓ 10↑' 10↑ |",
        "beatsPerBar": 4,
        "lengthBeats": 8.0,
+       "tier": "hard",
        "events": [
         {
          "type": "note",
@@ -11882,6 +12932,7 @@
        "tab": "6↑ 6ob 6↓ - |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "easy",
        "events": [
         {
          "type": "note",
@@ -11930,6 +12981,7 @@
        "tab": "5↓ 5ob 6↑ - |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "easy",
        "events": [
         {
          "type": "note",
@@ -11978,6 +13030,7 @@
        "tab": "7↑ 7od 8↓ - |",
        "beatsPerBar": 4,
        "lengthBeats": 4.0,
+       "tier": "easy",
        "events": [
         {
          "type": "note",
@@ -12039,6 +13092,7 @@
        "tab": "1+4↑ - 1+4↓ - | 4+7↑ - - - |",
        "beatsPerBar": 4,
        "lengthBeats": 8.0,
+       "tier": "medium",
        "events": [
         {
          "type": "octave",
@@ -12114,7 +13168,55 @@
     },
     "phases": [],
     "status": "todo"
-   }
+   },
+   "lessons": [
+    {
+     "id": "blow-bends",
+     "title": {
+      "it": "Bend in soffio",
+      "en": "Blow bends"
+     },
+     "steps": [
+      {
+       "it": "Sui fori 8, 9 e 10 si benda soffiando: stessa idea \"i\" → \"u\", ma con il fiato più concentrato.",
+       "en": "On holes 8, 9 and 10 you bend while blowing: same \"ee\" to \"oo\" idea, with more focused air."
+      }
+     ],
+     "mistakes": []
+    },
+    {
+     "id": "overblows",
+     "title": {
+      "it": "Overblow",
+      "en": "Overblows"
+     },
+     "steps": [
+      {
+       "it": "Sui fori 4, 5 e 6 si ottiene una nota in più soffiando con la bocca in posizione di bend.",
+       "en": "On holes 4, 5 and 6 you get an extra note by blowing with your mouth in bend position."
+      },
+      {
+       "it": "Spesso serve un'armonica regolata (ance più vicine): è normale non riuscirci subito.",
+       "en": "It often needs a set-up harp (reeds gapped closer): not getting it at first is normal."
+      }
+     ],
+     "mistakes": []
+    },
+    {
+     "id": "tongue-blocking",
+     "title": {
+      "it": "Tongue blocking",
+      "en": "Tongue blocking"
+     },
+     "steps": [
+      {
+       "it": "Copri 4 fori con la bocca e appoggia la lingua su quelli centrali: suonano solo i due esterni, un'ottava.",
+       "en": "Cover 4 holes and rest your tongue on the middle ones: only the outer two sound, an octave apart."
+      }
+     ],
+     "mistakes": []
+    }
+   ]
   }
  ]
 }
