@@ -1,0 +1,23 @@
+{
+  "name": "duello-dance",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Duello d'Ance: un gioco di battaglie musicali che insegna l'armonica diatonica ascoltando il microfono.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "phaser": "3.90.0"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2",
+    "vite": "^8.3.2",
+    "vite-plugin-singlefile": "^2.3.3",
+    "vitest": "^5.0.3"
+  }
+}
