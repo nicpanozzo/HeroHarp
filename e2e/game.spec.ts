@@ -1,79 +1,5 @@
-import { test, expect, type Page } from "@playwright/test";
-import { GAME } from "./paths";
-
-declare global {
-  interface Window {
-    __game: any;
-    __engine: () => any;
-  }
-}
-
-/** Clic su un oggetto della scena Phaser cercato per nome. */
-async function click(page: Page, scene: string, name: string) {
-  const pos = await page.evaluate(
-    ([s, n]) => {
-      const g = window.__game;
-      const sc = g.scene.getScene(s);
-      const o = sc.children.getByName(n) ?? sc.children.list.flatMap((c: any) => c.list ?? []).find((c: any) => c.name === n);
-      const r = g.canvas.getBoundingClientRect();
-      return { x: r.left + (o.x * r.width) / g.config.width, y: r.top + (o.y * r.height) / g.config.height };
-    },
-    [scene, name],
-  );
-  await page.mouse.click(pos.x, pos.y);
-}
-
-async function start(page: Page) {
-  const errors: string[] = [];
-  page.on("pageerror", (e) => errors.push(e.message));
-  await page.goto(GAME);
-  await page.waitForFunction(() => window.__game?.scene.isActive("title"));
-  await click(page, "title", "start");
-  await page.waitForFunction(() => window.__game.scene.isActive("map"));
-  return errors;
-}
-
-/** Un giocatore automatico che suona con la tastiera le note giuste al momento giusto. */
-async function startBot(page: Page) {
-  await page.evaluate(() => {
-    const K = { b: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"], d: ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"] };
-    const key = (t: any) => (t.draw ? K.d : K.b)[t.hole - 1];
-    let held: string | null = null;
-    let releaseAt = 0;
-    const down = (k: string) => {
-      window.dispatchEvent(new KeyboardEvent("keydown", { key: k }));
-      held = k;
-    };
-    const up = () => {
-      if (held) window.dispatchEvent(new KeyboardEvent("keyup", { key: held }));
-      held = null;
-    };
-    const tick = () => {
-      const sc = window.__game.scene.getScene("battle");
-      if (!sc.sys.isActive()) return up();
-      const bt = sc.battle,
-        now = window.__engine().now,
-        r = bt.round;
-      if (held && now >= releaseAt) up();
-      if (!held && bt.phase === "response") {
-        const n = r.response.find((x: any) => !x.hit);
-        if (n && now >= n.time - 0.01) {
-          down(key(n.tab));
-          releaseAt = now + Math.max(0.15, n.dur * 0.8);
-        }
-      }
-      if (!held && bt.phase === "volley") {
-        const p = r.volley.find((x: any) => x.state === "pending" && Math.abs(now - x.time) < 0.12);
-        if (p) {
-          down(key(p.tab));
-          releaseAt = now + 0.2;
-        }
-      }
-      requestAnimationFrame(tick);
-    };
-    tick();
-  });
-}
+import { test, expect } from "@playwright/test";
+import { click, start, startBot } from "./helpers";
 
 test("il microfono finto viene riconosciuto come foro 4 soffiato", async ({ page }) => {
   const errors = await start(page);
@@ -102,4 +28,33 @@ test("le opzioni si salvano", async ({ page }) => {
   await click(page, "options", "opt-headphones");
   const saved = await page.evaluate(() => JSON.parse(localStorage.getItem("duello-dance-save")!).settings.headphones);
   expect(saved).toBe(true);
+});
+
+test("la calibrazione del ritardo misura e salva lo scarto", async ({ page }) => {
+  await start(page);
+  await click(page, "map", "mae-ok");
+  await click(page, "map", "options");
+  await click(page, "options", "opt-latency");
+  await page.waitForFunction(() => window.__game.scene.isActive("latency"));
+  await click(page, "latency", "lat-go");
+  // un giocatore che suona sempre 120 ms dopo ogni colpo (la tastiera non ha ritardo proprio)
+  await page.evaluate(() => {
+    const sc = window.__game.scene.getScene("latency");
+    const pending = [...sc.clicks];
+    const tick = () => {
+      const now = window.__engine().now;
+      if (pending.length && now >= pending[0] + 0.12) {
+        pending.shift();
+        window.dispatchEvent(new KeyboardEvent("keydown", { key: "4" }));
+        setTimeout(() => window.dispatchEvent(new KeyboardEvent("keyup", { key: "4" })), 150);
+      }
+      if (sc.sys.isActive()) requestAnimationFrame(tick);
+    };
+    tick();
+  });
+  await page.waitForFunction(() => JSON.parse(localStorage.getItem("duello-dance-save")!).settings.latency !== null, null, { timeout: 20_000 });
+  const latency = await page.evaluate(() => JSON.parse(localStorage.getItem("duello-dance-save")!).settings.latency);
+  expect(latency).toBeGreaterThan(0.1);
+  expect(latency).toBeLessThan(0.17);
+  expect(await page.evaluate(() => window.__engine().inputLatency)).toBe(latency);
 });

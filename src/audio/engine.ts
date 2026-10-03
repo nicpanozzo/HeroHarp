@@ -11,6 +11,8 @@ export type MicStatus = "off" | "on" | "denied" | "unsupported";
 
 // soglie tarate sul banco di prova (tests/suggerimenti-rilevatore.md nella cartella del progetto)
 export const DEFAULT_GATE = 0.002;
+/** Ritardo tipico tra suono e attacco riconosciuto, finché il giocatore non lo misura. */
+export const DEFAULT_LATENCY = 0.05;
 const MIN_CLARITY = 0.7;
 
 export class AudioEngine {
@@ -25,7 +27,8 @@ export class AudioEngine {
   private buf = new Float32Array(2048);
   micStatus: MicStatus = "off";
   /** Ritardo stimato tra il suono reale e la sua analisi (secondi). */
-  inputLatency = 0.05;
+  /** Secondi da togliere agli attacchi sentiti dal microfono (vedi la calibrazione del ritardo). */
+  inputLatency = DEFAULT_LATENCY;
   level = 0;
   /** Soglia di volume sotto cui il microfono è considerato in silenzio (tarata dalla calibrazione). */
   gate = DEFAULT_GATE;

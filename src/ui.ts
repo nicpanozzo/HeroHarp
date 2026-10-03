@@ -29,9 +29,17 @@ export function txt(
 }
 
 /** Pulsante da manifesto: rettangolo pieno con contorno d'inchiostro e ombra sfalsata. */
-export function button(scene: Phaser.Scene, x: number, y: number, label: string, onClick: () => void, w = 260, primary = true): Phaser.GameObjects.Container {
+export function button(
+  scene: Phaser.Scene,
+  x: number,
+  y: number,
+  label: string,
+  onClick: () => void,
+  w = 260,
+  primary = true,
+  h = 58,
+): Phaser.GameObjects.Container {
   const g = scene.add.graphics();
-  const h = 58;
   const draw = (hover: boolean) => {
     g.clear();
     g.fillStyle(C.inchiostro, 1).fillRect(-w / 2 + 5, -h / 2 + 5, w, h);

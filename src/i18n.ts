@@ -85,6 +85,26 @@ const STRINGS = {
   calNoMic: { it: "Il microfono non è attivo. Torna al titolo e premi Inizia.", en: "The microphone is off. Go back to the title and press Start." },
   retryCal: { it: "Ripeti", en: "Try again" },
   start2: { it: "Avvia", en: "Start" },
+  optLatency: { it: "Ritardo audio", en: "Audio delay" },
+  latTitle: { it: "Calibrazione del ritardo", en: "Delay calibration" },
+  latIntro: {
+    it: "Ogni dispositivo ha un piccolo ritardo tra il suono e il microfono. Dopo 4 colpi di attesa, suona una nota corta su ognuno degli 8 colpi accesi.",
+    en: "Every device has a small delay between sound and microphone. After 4 count-in clicks, play a short note on each of the 8 lit clicks.",
+  },
+  latCount: { it: "Pronto...", en: "Get ready..." },
+  latPlay: { it: "Suona su ogni colpo!", en: "Play on every click!" },
+  latDone: {
+    it: 'Fatto! Ritardo misurato: {ms} ms. Il giudizio "a tempo" ora ne tiene conto.',
+    en: "Done! Measured delay: {ms} ms. Timing is now judged with it in mind.",
+  },
+  latUneven: {
+    it: "I colpi erano un po' irregolari: se ti sembra sbagliato, ripeti con calma.",
+    en: "Your notes were a bit uneven: if it feels off, try again calmly.",
+  },
+  latFail: {
+    it: "Ho sentito solo {n} note su 8. Suona una nota corta e decisa su ogni colpo e riprova.",
+    en: "I only heard {n} of 8 notes. Play a short, clear note on every click and try again.",
+  },
 } satisfies Record<string, Record<Lang, string>>;
 
 export type StringId = keyof typeof STRINGS;
@@ -92,4 +112,5 @@ export type StringId = keyof typeof STRINGS;
 let lang: Lang = "it";
 export const setLang = (l: Lang) => (lang = l);
 export const getLang = () => lang;
-export const t = (id: StringId): string => STRINGS[id][lang];
+export const t = (id: StringId, vars: Record<string, string | number> = {}): string =>
+  STRINGS[id][lang].replace(/\{(\w+)\}/g, (m, k: string) => (k in vars ? String(vars[k]) : m));

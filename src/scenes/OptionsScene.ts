@@ -5,7 +5,7 @@ import { updateSettings } from "../settings";
 import { getEngine } from "../audio/engine";
 import { W, HEX, txt, button, paper, panel } from "../ui";
 
-/** Opzioni: base musicale, metronomo, cuffie, movimento, lingua, calibrazione del microfono. */
+/** Opzioni: base musicale, metronomo, cuffie, movimento, lingua, calibrazione del microfono e del ritardo. */
 export class OptionsScene extends Phaser.Scene {
   private from = "title";
 
@@ -26,14 +26,14 @@ export class OptionsScene extends Phaser.Scene {
     let y = 158;
     const row = (label: StringId, value: string, onClick: () => void, name: string, hint?: StringId) => {
       txt(this, 240, y, t(label), 24, HEX.inchiostro).setOrigin(0, 0.5);
-      button(this, W - 340, y, value, onClick, 220, false).setName(name);
+      button(this, W - 340, y, value, onClick, 220, false, 44).setName(name);
       if (hint)
         txt(this, 240, y + 38, t(hint), 16, HEX.inchiostro)
           .setOrigin(0, 0.5)
           .setWordWrapWidth(560)
           .setAlign("left")
           .setAlpha(0.75);
-      y += hint ? 92 : 64;
+      y += hint ? 84 : 56;
     };
     const onOff = (v: boolean) => (v ? t("on") : t("off"));
     const toggle = (k: "music" | "metronome" | "headphones" | "reduceMotion") => () => {
@@ -68,7 +68,11 @@ export class OptionsScene extends Phaser.Scene {
     );
 
     txt(this, 240, y, `${t("optMic")} · ${s.micGate === null ? t("notCalibrated") : t("calibrated")}`, 24, HEX.inchiostro).setOrigin(0, 0.5);
-    button(this, W - 340, y, t("calibrate"), () => this.scene.start("calibration", { from: this.from }), 220, false).setName("opt-calibrate");
+    button(this, W - 340, y, t("calibrate"), () => this.scene.start("calibration", { from: this.from }), 220, false, 44).setName("opt-calibrate");
+    y += 56;
+    const lat = s.latency === null ? t("notCalibrated") : `${Math.round(s.latency * 1000)} ms`;
+    txt(this, 240, y, `${t("optLatency")} · ${lat}`, 24, HEX.inchiostro).setOrigin(0, 0.5);
+    button(this, W - 340, y, t("calibrate"), () => this.scene.start("latency", { from: this.from }), 220, false, 44).setName("opt-latency");
 
     button(this, W / 2, 686, t("back"), () => this.scene.start(this.from), 260).setName("back");
   }

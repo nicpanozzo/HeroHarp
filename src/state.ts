@@ -14,6 +14,8 @@ export interface Settings {
   reduceMotion: boolean;
   /** Soglia di volume del microfono misurata dalla calibrazione (null = valore predefinito). */
   micGate: number | null;
+  /** Ritardo misurato tra colpo del metronomo e nota sentita, in secondi. */
+  latency: number | null;
 }
 
 export interface Save {
@@ -25,7 +27,15 @@ export interface Save {
 }
 
 const KEY = "duello-dance-save";
-export const DEFAULT_SETTINGS: Settings = { music: true, musicVolume: 0.8, metronome: true, headphones: false, reduceMotion: false, micGate: null };
+export const DEFAULT_SETTINGS: Settings = {
+  music: true,
+  musicVolume: 0.8,
+  metronome: true,
+  headphones: false,
+  reduceMotion: false,
+  micGate: null,
+  latency: null,
+};
 const defaults: Save = { lang: "it", keyId: "C", beaten: [], introSeen: false, settings: DEFAULT_SETTINGS };
 
 function load(): Save {

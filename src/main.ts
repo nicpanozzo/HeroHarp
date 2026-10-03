@@ -1,3 +1,4 @@
+import "./fonts";
 import Phaser from "phaser";
 import { BootScene } from "./scenes/BootScene";
 import { TitleScene } from "./scenes/TitleScene";
@@ -6,11 +7,12 @@ import { BattleScene } from "./scenes/BattleScene";
 import { ResultScene } from "./scenes/ResultScene";
 import { OptionsScene } from "./scenes/OptionsScene";
 import { CalibrationScene } from "./scenes/CalibrationScene";
+import { LatencyScene } from "./scenes/LatencyScene";
 import { installKeyboard } from "./input";
 import { W, H, C } from "./ui";
 import { getEngine } from "./audio/engine";
 
-// Aspetta i caratteri (se c'è rete), altrimenti parte con quelli di sistema.
+// Aspetta che i caratteri inclusi siano pronti prima di disegnare i testi.
 async function fontsReady(): Promise<void> {
   try {
     await Promise.race([
@@ -35,7 +37,7 @@ fontsReady().then(() => {
     height: H,
     backgroundColor: C.carta,
     scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
-    scene: [BootScene, TitleScene, MapScene, BattleScene, ResultScene, OptionsScene, CalibrationScene],
+    scene: [BootScene, TitleScene, MapScene, BattleScene, ResultScene, OptionsScene, CalibrationScene, LatencyScene],
   });
   // accesso per i test automatici e il debug dalla console
   Object.assign(window, { __game: game, __engine: getEngine });

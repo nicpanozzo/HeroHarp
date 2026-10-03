@@ -5,6 +5,6 @@ import { viteSingleFile } from "vite-plugin-singlefile";
 export default defineConfig({
   base: "./",
   plugins: [viteSingleFile()],
-  build: { chunkSizeWarningLimit: 3000 },
+  build: { chunkSizeWarningLimit: 3000, assetsInlineLimit: 100_000_000 },
   test: { include: ["tests/**/*.test.ts"] },
 });
