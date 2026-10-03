@@ -71,3 +71,16 @@ test("schermate", async ({ page }) => {
   await page.waitForFunction(() => window.__game.scene.isActive("result"), null, { timeout: 280_000 });
   await shot("12-vittoria", 1200);
 });
+
+test("schermata su telefono (orizzontale)", async ({ page }) => {
+  await page.setViewportSize({ width: 844, height: 390 });
+  await page.goto("file://" + resolve("dist/index.html"));
+  await active(page, "title");
+  await start(page);
+  await page.evaluate(() => window.__game.scene.getScene("journey").scene.start("battle", { enemyId: "singer" }));
+  await active(page, "battle");
+  await startBot(page);
+  await page.waitForFunction(() => window.__game.scene.getScene("battle").battle.phase === "volley", null, { timeout: 60_000 });
+  await page.waitForTimeout(500);
+  await page.screenshot({ path: `${OUT}/13-telefono-attacco.png` });
+});

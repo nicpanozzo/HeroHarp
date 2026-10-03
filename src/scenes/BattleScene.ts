@@ -13,11 +13,12 @@ import { HearingReadout } from "./readout";
 import { applySettings } from "../settings";
 
 // Pannello di battaglia (in basso): corsie verticali, una per foro, come nella guida di stile.
-const BOARD = { x: 300, y: 430, w: 680, h: 270 };
+const BOARD = { x: 300, y: 370, w: 680, h: 340 };
 const LANE_TOP = BOARD.y + 14;
 const HIT_Y = BOARD.y + BOARD.h - 62;
 /** Battiti che un colpo impiega a scendere fino alla linea. */
-const TRAVEL_BEATS = 3;
+// quattro battiti per leggere il foro prima di pararlo
+const TRAVEL_BEATS = 4;
 const PLAYER = { x: 175, y: 470 };
 const ENEMY = { x: 1110, y: 440 };
 
@@ -211,12 +212,36 @@ export class BattleScene extends Phaser.Scene {
     this.projectiles.forEach((p) => p.destroy());
     this.projectiles.clear();
     for (const p of r.volley) {
-      const c = this.add.container(this.laneX(p.lane), LANE_TOP);
-      c.add(this.add.image(0, 0, p.tab.bend ? "ui-colpo-bend" : p.tab.draw ? "ui-colpo-aspirato" : "ui-colpo-soffio").setDisplaySize(56, 56));
-      if (p.tab.bend) c.add(txt(this, 0, 0, "'".repeat(p.tab.bend), 22, HEX.carta, "fori"));
+      const c = this.badge(p.tab).setPosition(this.laneX(p.lane), LANE_TOP);
       c.setVisible(false);
       this.projectiles.set(p.id, c);
     }
+  }
+
+  /**
+   * Il colpo che scende: il numero del foro grande su un gettone pieno.
+   * La forma dice la direzione (tondo = soffio, quadrato = aspirato), il colore la conferma; il bend ha l'anello viola.
+   * Stesso stile dei gettoni delle modalità del Juke Joint.
+   */
+  private badge(tab: PhraseNote["tab"]): Phaser.GameObjects.Container {
+    const R = 32;
+    const g = this.add.graphics();
+    const shape = (dx: number, color: number) => {
+      g.fillStyle(color, 1);
+      if (tab.draw) g.fillRoundedRect(-R + dx, -R + dx, 2 * R, 2 * R, 10);
+      else g.fillCircle(dx, dx, R);
+    };
+    shape(5, C.inchiostro);
+    shape(0, tab.draw ? C.indaco : C.ottone);
+    g.lineStyle(tab.bend ? 7 : 4, tab.bend ? C.prugna : C.inchiostro, 1);
+    if (tab.draw) g.strokeRoundedRect(-R, -R, 2 * R, 2 * R, 10);
+    else g.strokeCircle(0, 0, R);
+    const label = `${tab.hole}${"'".repeat(tab.bend)}`;
+    const num = txt(this, 0, 1, label, label.length > 2 ? 30 : 42, tab.draw ? HEX.carta : HEX.inchiostro, "fori");
+    // freccia in un bollino d'inchiostro nell'angolo
+    const dot = this.add.circle(R - 4, -R + 4, 15, C.inchiostro);
+    const arrow = txt(this, R - 4, -R + 4, tab.draw ? "↓" : "↑", 22, tab.draw ? HEX.indacoChiaro : HEX.ottone, "fori");
+    return this.add.container(0, 0, [g, num, dot, arrow]);
   }
 
   private animateBeat(now: number): void {
@@ -286,7 +311,7 @@ export class BattleScene extends Phaser.Scene {
     });
     // linea di parata tratteggiata
     for (let x = BOARD.x + 10; x < BOARD.x + BOARD.w - 10; x += 16) g.lineStyle(3, C.ottone, active ? 1 : 0.35).lineBetween(x, HIT_Y, x + 8, HIT_Y);
-    this.laneLabels ??= this.battle.lanes.map((hole, i) => txt(this, this.laneX(i), HIT_Y + 20, String(hole), 24, HEX.carta, "fori"));
+    this.laneLabels ??= this.battle.lanes.map((hole, i) => txt(this, this.laneX(i), HIT_Y + 26, String(hole), 34, HEX.carta, "fori"));
     this.laneLabels.forEach((l) => l.setAlpha(active ? 1 : 0.5));
   }
 
@@ -297,8 +322,11 @@ export class BattleScene extends Phaser.Scene {
       const c = this.projectiles.get(p.id);
       if (!c || p.state !== "pending") continue;
       const k = 1 - (p.time - now) / travel;
-      c.setVisible(b.phase === "volley" && k >= 0);
-      c.y = Phaser.Math.Linear(LANE_TOP + 20, HIT_Y, Phaser.Math.Clamp(k, 0, 1.15));
+      // i primi colpi si affacciano già nell'ultimo battito della risposta, così c'è tempo per leggerli
+      const show = k >= 0 && (b.phase === "volley" || b.phase === "response");
+      c.setVisible(show).setAlpha(b.phase === "volley" ? 1 : 0.6);
+      // a pixel interi: il numero resta nitido mentre scende
+      c.y = Math.round(Phaser.Math.Linear(LANE_TOP + 34, HIT_Y, Phaser.Math.Clamp(k, 0, 1.15)));
     }
   }
 
