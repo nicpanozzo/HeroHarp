@@ -8,7 +8,10 @@ const STRINGS = {
   harpKey: { it: "La tua armonica", en: "Your harmonica" },
   language: { it: "Lingua", en: "Language" },
   start: { it: "Inizia", en: "Start" },
-  micAsk: { it: "Il gioco ascolta la tua armonica: consenti l'uso del microfono.", en: "The game listens to your harmonica: allow microphone access." },
+  micAsk: {
+    it: "Il gioco ascolta la tua armonica: consenti l'uso del microfono. Con le cuffie riconosce meglio le note.",
+    en: "The game listens to your harmonica: allow microphone access. Headphones help it hear your notes.",
+  },
   micDenied: { it: "Microfono non disponibile. Puoi giocare con la tastiera: 1-0 soffio, Q-P aspirato.", en: "Microphone unavailable. You can play with the keyboard: 1-0 blow, Q-P draw." },
   keyboardHint: { it: "Tastiera: 1-0 soffio · Q-P aspirato", en: "Keyboard: 1-0 blow · Q-P draw" },
   area: { it: "Area 1", en: "Area 1" },

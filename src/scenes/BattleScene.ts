@@ -48,6 +48,7 @@ export class BattleScene extends Phaser.Scene {
   private beatTimes: number[] = [];
   private cleanup: (() => void)[] = [];
   private ending = false;
+  private playerTurn = false;
   private poseUntil = 0;
   private enemyPoseUntil = 0;
 
@@ -64,6 +65,7 @@ export class BattleScene extends Phaser.Scene {
     this.beatTimes = [];
     this.cleanup = [];
     this.ending = false;
+    this.playerTurn = false;
     this.poseUntil = this.enemyPoseUntil = 0;
   }
 
@@ -83,7 +85,14 @@ export class BattleScene extends Phaser.Scene {
     basi.avvia({ area: "portico", armonica: save.keyId as TonalitaArmonica, bpm: this.battle.bpm });
     engine.fx.tonica = basi.tonicaMidi;
     this.cleanup.push(() => basi.ferma(0.4));
-    this.cleanup.push(basi.suBattito((_, tm) => this.beatTimes.push(tm)));
+    this.cleanup.push(
+      basi.suBattito((n, tm) => {
+        this.beatTimes.push(tm);
+        // a base spenta il tempo lo tiene il metronomo
+        if (this.playerTurn) engine.click(tm, n === 0);
+      }),
+    );
+    engine.duckBand(false);
 
     // intestazione: vita del nemico a sinistra, la tua a destra (come nel mockup della guida)
     panel(this, 24, 16, W - 48, 74);
@@ -271,8 +280,9 @@ export class BattleScene extends Phaser.Scene {
         this.tweens.add({ targets: this.banner, scale: 1, duration: 250 });
         this.drawLanes(ev.phase === "volley");
         this.chipLayer.setAlpha(ev.phase === "volley" ? 0.3 : 1);
-        // mentre suoni tu, la base lascia spazio all'armonica
-        engine.basi.impostaRisposta(ev.phase === "response" || ev.phase === "volley");
+        // mentre suoni tu la base tace, così il microfono sente solo l'armonica
+        this.playerTurn = ev.phase === "response" || ev.phase === "volley";
+        engine.duckBand(this.playerTurn);
         if (ev.phase === "won" || ev.phase === "lost") this.finish(ev.phase === "won");
         break;
       }
@@ -358,6 +368,7 @@ export class BattleScene extends Phaser.Scene {
     this.ending = true;
     const engine = getEngine();
     engine.basi.ferma(0.6);
+    engine.duckBand(false);
     if (won) {
       engine.fx.vittoria(engine.now + 0.2);
       this.setEnemyPose("sconfitto", Infinity);

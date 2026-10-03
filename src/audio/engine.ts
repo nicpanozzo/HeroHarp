@@ -17,6 +17,8 @@ export class AudioEngine {
   readonly ctx: AudioContext;
   readonly tracker = new NoteTracker();
   private master: GainNode;
+  /** Volume della base: si azzera mentre suona il giocatore (vedi duckBand). */
+  private band: GainNode;
   readonly basi: GeneratoreBasi;
   readonly fx: EffettiSonori;
   private analyser: AnalyserNode | null = null;
@@ -33,7 +35,9 @@ export class AudioEngine {
     this.master = this.ctx.createGain();
     this.master.gain.value = 0.8;
     this.master.connect(this.ctx.destination);
-    this.basi = new GeneratoreBasi(this.ctx, this.master);
+    this.band = this.ctx.createGain();
+    this.band.connect(this.master);
+    this.basi = new GeneratoreBasi(this.ctx, this.band);
     this.fx = new EffettiSonori(this.ctx, this.master);
   }
 
@@ -71,6 +75,15 @@ export class AudioEngine {
     if (this.level < GATE) return this.tracker.feed(t, null, this.level);
     const p = yin(this.buf, this.ctx.sampleRate);
     this.tracker.feed(t, p && p.clarity > MIN_CLARITY ? hzToMidi(p.hz) : null, this.level);
+  }
+
+  /**
+   * Mentre il giocatore suona, la base tace e resta solo il metronomo (senza altezza).
+   * Il banco di prova ha misurato che una base dagli altoparlanti, forte quanto l'armonica,
+   * rende il riconoscimento inutilizzabile: contiene le stesse note dell'armonica.
+   */
+  duckBand(on: boolean, when = this.now): void {
+    this.band.gain.setTargetAtTime(on ? 0 : 1, when, 0.04);
   }
 
   private noise: AudioBuffer | null = null;
