@@ -1,0 +1,247 @@
+{
+  "versione": 1,
+  "palette": {
+    "carta": "#F1E4C8",
+    "carta2": "#E6D3AE",
+    "ink": "#1E1A17",
+    "ottone": "#E09A2B",
+    "indaco": "#3E6FB0",
+    "indacoChiaro": "#8FB3E6",
+    "prugna": "#7A3E9D",
+    "rosso": "#C8442F",
+    "salvia": "#8A9A5B",
+    "salviaChiara": "#BFD3B0",
+    "ocra": "#E8D9A8",
+    "legno": "#6B4A2B",
+    "legnoChiaro": "#9C6B3F",
+    "grigio": "#A9A49A",
+    "latta": "#9A9A92",
+    "pelle": "#8D5A3B",
+    "pelleMae": "#5E3B26"
+  },
+  "nota": "Chiave Phaser = percorso senza estensione con / sostituito da -, es. nemici-silenzio-idle. Caricare con this.load.svg(key, url, { width, height }).",
+  "file": [
+    {
+      "key": "personaggi-protagonista-idle",
+      "file": "personaggi/protagonista-idle.svg",
+      "w": 256,
+      "h": 256
+    },
+    {
+      "key": "personaggi-protagonista-suona",
+      "file": "personaggi/protagonista-suona.svg",
+      "w": 256,
+      "h": 256
+    },
+    {
+      "key": "personaggi-protagonista-colpito",
+      "file": "personaggi/protagonista-colpito.svg",
+      "w": 256,
+      "h": 256
+    },
+    {
+      "key": "personaggi-protagonista-vittoria",
+      "file": "personaggi/protagonista-vittoria.svg",
+      "w": 256,
+      "h": 256
+    },
+    {
+      "key": "personaggi-zia-mae-sorride",
+      "file": "personaggi/zia-mae-sorride.svg",
+      "w": 256,
+      "h": 256
+    },
+    {
+      "key": "personaggi-zia-mae-spiega",
+      "file": "personaggi/zia-mae-spiega.svg",
+      "w": 256,
+      "h": 256
+    },
+    {
+      "key": "nemici-spiffero-idle",
+      "file": "nemici/spiffero-idle.svg",
+      "w": 256,
+      "h": 256
+    },
+    {
+      "key": "nemici-spiffero-attacco",
+      "file": "nemici/spiffero-attacco.svg",
+      "w": 256,
+      "h": 256
+    },
+    {
+      "key": "nemici-spiffero-colpito",
+      "file": "nemici/spiffero-colpito.svg",
+      "w": 256,
+      "h": 256
+    },
+    {
+      "key": "nemici-spiffero-sconfitto",
+      "file": "nemici/spiffero-sconfitto.svg",
+      "w": 256,
+      "h": 256
+    },
+    {
+      "key": "nemici-sospiro-idle",
+      "file": "nemici/sospiro-idle.svg",
+      "w": 256,
+      "h": 256
+    },
+    {
+      "key": "nemici-sospiro-attacco",
+      "file": "nemici/sospiro-attacco.svg",
+      "w": 256,
+      "h": 256
+    },
+    {
+      "key": "nemici-sospiro-colpito",
+      "file": "nemici/sospiro-colpito.svg",
+      "w": 256,
+      "h": 256
+    },
+    {
+      "key": "nemici-sospiro-sconfitto",
+      "file": "nemici/sospiro-sconfitto.svg",
+      "w": 256,
+      "h": 256
+    },
+    {
+      "key": "nemici-mantice-idle",
+      "file": "nemici/mantice-idle.svg",
+      "w": 256,
+      "h": 256
+    },
+    {
+      "key": "nemici-mantice-attacco",
+      "file": "nemici/mantice-attacco.svg",
+      "w": 256,
+      "h": 256
+    },
+    {
+      "key": "nemici-mantice-colpito",
+      "file": "nemici/mantice-colpito.svg",
+      "w": 256,
+      "h": 256
+    },
+    {
+      "key": "nemici-mantice-sconfitto",
+      "file": "nemici/mantice-sconfitto.svg",
+      "w": 256,
+      "h": 256
+    },
+    {
+      "key": "nemici-silenzio-idle",
+      "file": "nemici/silenzio-idle.svg",
+      "w": 384,
+      "h": 384
+    },
+    {
+      "key": "nemici-silenzio-attacco",
+      "file": "nemici/silenzio-attacco.svg",
+      "w": 384,
+      "h": 384
+    },
+    {
+      "key": "nemici-silenzio-colpito",
+      "file": "nemici/silenzio-colpito.svg",
+      "w": 384,
+      "h": 384
+    },
+    {
+      "key": "nemici-silenzio-sconfitto",
+      "file": "nemici/silenzio-sconfitto.svg",
+      "w": 384,
+      "h": 384
+    },
+    {
+      "key": "sfondi-portico-1-cielo",
+      "file": "sfondi/portico-1-cielo.svg",
+      "w": 1280,
+      "h": 720
+    },
+    {
+      "key": "sfondi-portico-2-casa",
+      "file": "sfondi/portico-2-casa.svg",
+      "w": 1280,
+      "h": 720
+    },
+    {
+      "key": "sfondi-portico-3-primo-piano",
+      "file": "sfondi/portico-3-primo-piano.svg",
+      "w": 1280,
+      "h": 720
+    },
+    {
+      "key": "ui-soffio",
+      "file": "ui/soffio.svg",
+      "w": 128,
+      "h": 128
+    },
+    {
+      "key": "ui-aspirato",
+      "file": "ui/aspirato.svg",
+      "w": 128,
+      "h": 128
+    },
+    {
+      "key": "ui-bend-1",
+      "file": "ui/bend-1.svg",
+      "w": 128,
+      "h": 128
+    },
+    {
+      "key": "ui-bend-2",
+      "file": "ui/bend-2.svg",
+      "w": 128,
+      "h": 128
+    },
+    {
+      "key": "ui-bend-3",
+      "file": "ui/bend-3.svg",
+      "w": 128,
+      "h": 128
+    },
+    {
+      "key": "ui-accordo",
+      "file": "ui/accordo.svg",
+      "w": 256,
+      "h": 128
+    },
+    {
+      "key": "ui-colpo-soffio",
+      "file": "ui/colpo-soffio.svg",
+      "w": 64,
+      "h": 64
+    },
+    {
+      "key": "ui-colpo-aspirato",
+      "file": "ui/colpo-aspirato.svg",
+      "w": 64,
+      "h": 64
+    },
+    {
+      "key": "ui-colpo-bend",
+      "file": "ui/colpo-bend.svg",
+      "w": 64,
+      "h": 64
+    },
+    {
+      "key": "ui-cuore",
+      "file": "ui/cuore.svg",
+      "w": 64,
+      "h": 64
+    },
+    {
+      "key": "ui-nota-giusta",
+      "file": "ui/nota-giusta.svg",
+      "w": 96,
+      "h": 96
+    },
+    {
+      "key": "ui-nota-mancata",
+      "file": "ui/nota-mancata.svg",
+      "w": 96,
+      "h": 96
+    }
+  ]
+}

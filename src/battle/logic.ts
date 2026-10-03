@@ -1,23 +1,27 @@
 // Regole della battaglia, senza grafica né audio: così si possono testare.
 // Un round: conto alla rovescia → il nemico suona (Ascolta) → tu ripeti (Rispondi) → raffica da parare (Para!).
 
-import type { EnemyDef } from "../content/enemies";
-import { parseTab, tabToMidi, type HarpKey, type Tab } from "../harp";
+import type { EnemyDef, Phrase } from "../content/area1";
+import { tabToMidi, type HarpKey, type Tab } from "../harp";
 
 export type Phase = "countin" | "call" | "response" | "volley" | "won" | "lost";
 
 export interface PhraseNote {
   tab: Tab;
   midi: number;
-  /** Istante ideale (orologio audio). */
+  /** Istante ideale (orologio audio) e durata, in secondi. */
   time: number;
+  dur: number;
   hit?: boolean;
+  /** Nota lunga lasciata troppo presto: vale metà. */
+  short?: boolean;
 }
 
 export interface Projectile {
   id: number;
   tab: Tab;
   midi: number;
+  /** Indice della corsia (una per foro). */
   lane: number;
   /** Istante in cui arriva sulla linea di parata. */
   time: number;
@@ -27,6 +31,8 @@ export interface Projectile {
 export interface Round {
   number: number;
   beat: number;
+  bpm: number;
+  phraseId: string;
   countIn: number[];
   call: PhraseNote[];
   callEnd: number;
@@ -41,45 +47,77 @@ export type BattleEvent =
   | { type: "phase"; phase: Phase }
   | { type: "responseHit"; index: number; offset: number }
   | { type: "wrongNote"; midi: number }
+  | { type: "shortNote"; index: number }
   | { type: "enemyDamaged"; amount: number; accuracy: number; onTime: boolean; combo: number }
   | { type: "parry"; id: number }
   | { type: "playerDamaged"; id: number; amount: number }
-  | { type: "difficulty"; level: number; tempo: number };
+  | { type: "heal"; amount: number }
+  | { type: "bossPhase"; index: number }
+  | { type: "difficulty"; level: number; bpm: number };
 
 export const PLAYER_HP = 100;
+/** Le note lunghe almeno così (in battiti) vanno tenute. */
+const HOLD_BEATS = 2;
+
+export interface BattleOptions {
+  rng?: () => number;
+  /** Sposta l'inizio di un round sulla prossima battuta della base musicale. */
+  align?: (t: number) => number;
+}
 
 export class Battle {
-  readonly lanes: Tab[];
+  /** Fori usati da questo nemico, uno per corsia di difesa. */
+  readonly lanes: number[];
+  private readonly volleyTabs: Tab[];
   phase: Phase = "countin";
   playerHp = PLAYER_HP;
   enemyHp: number;
+  bossPhase = 0;
   level = 0;
-  tempo = 1;
+  bpm: number;
   combo = 0;
   round!: Round;
+  stats = { notesExpected: 0, notesHit: 0, parried: 0, missed: 0, rounds: 0 };
+  private rng: () => number;
+  private align: (t: number) => number;
   private roundNo = 0;
   private respIndex = 0;
   private nextId = 0;
+  private offsets: number[] = [];
+  private queue: Phrase[] = [];
+  private sustain: { index: number; until: number } | null = null;
+  private silentSince: number | null = null;
+  private healedBeats = 0;
   private events: BattleEvent[] = [];
-  /** Statistiche per la schermata finale. */
-  stats = { notesExpected: 0, notesHit: 0, parried: 0, missed: 0, rounds: 0 };
 
   constructor(
     readonly enemy: EnemyDef,
     readonly key: HarpKey,
-    private rng: () => number = Math.random,
+    opts: BattleOptions = {},
   ) {
+    this.rng = opts.rng ?? Math.random;
+    this.align = opts.align ?? ((t) => t);
     this.enemyHp = enemy.hp;
-    this.lanes = enemy.volleyNotes.map(parseTab);
+    this.bpm = enemy.phases[0].bpm[0];
+    const seen = new Map<string, Tab>();
+    for (const ph of enemy.phases)
+      for (const phrase of ph.phrases)
+        for (const seg of phrase) for (const n of seg.notes) seen.set(`${n.tab.hole}${n.tab.draw}${n.tab.bend}`, n.tab);
+    this.volleyTabs = [...seen.values()].sort((a, b) => a.hole - b.hole || Number(a.draw) - Number(b.draw));
+    this.lanes = [...new Set(this.volleyTabs.map((t) => t.hole))];
   }
 
   get beat(): number {
-    return 60 / (this.enemy.bpm * this.tempo);
+    return 60 / this.bpm;
   }
 
   /** Margine per la parata, in secondi. Generoso: il gioco è per principianti. */
   get parryWindow(): number {
     return Math.max(0.25, 0.4 * this.beat);
+  }
+
+  get currentPhase() {
+    return this.enemy.phases[this.bossPhase];
   }
 
   drain(): BattleEvent[] {
@@ -88,35 +126,46 @@ export class Battle {
     return e;
   }
 
-  startRound(t0: number): Round {
+  private nextPhrase(): Phrase {
+    if (this.queue.length === 0) {
+      const list = this.currentPhase.phrases;
+      this.queue = [...list[Math.min(this.level, list.length - 1)]];
+    }
+    return this.queue.shift()!;
+  }
+
+  startRound(at: number): Round {
+    const t0 = this.align(at);
     const beat = this.beat;
-    const phrase = this.enemy.phrases[this.level].map(parseTab);
-    const bars = Math.ceil(phrase.length / 4) * 4;
+    const phrase = this.nextPhrase();
     const countIn = [0, 1, 2, 3].map((i) => t0 + i * beat);
     const callStart = t0 + 4 * beat;
     const mk = (start: number): PhraseNote[] =>
-      phrase.map((tab, i) => ({ tab, midi: tabToMidi(tab, this.key), time: start + i * beat }));
+      phrase.notes.map((n) => ({ tab: n.tab, midi: tabToMidi(n.tab, this.key), time: start + n.start * beat, dur: n.dur * beat }));
     const call = mk(callStart);
-    const callEnd = callStart + bars * beat;
+    const callEnd = callStart + phrase.beats * beat;
     const response = mk(callEnd);
     // due battiti di tolleranza per chi è in ritardo
-    const responseEnd = callEnd + bars * beat + 2 * beat;
+    const responseEnd = callEnd + phrase.beats * beat + 2 * beat;
     const volleyStart = responseEnd + beat;
-    const spacing = this.level < 2 ? 2 * beat : beat;
+    const spacing = this.level < 1 ? 2 * beat : beat;
     const volley: Projectile[] = [];
     let prev = -1;
     for (let i = 0; i < this.enemy.volleySize; i++) {
-      let lane = Math.floor(this.rng() * this.lanes.length);
-      if (lane === prev) lane = (lane + 1) % this.lanes.length;
-      prev = lane;
-      const tab = this.lanes[lane];
-      volley.push({ id: this.nextId++, tab, midi: tabToMidi(tab, this.key), lane, time: volleyStart + 2 * beat + i * spacing, state: "pending" });
+      let k = Math.floor(this.rng() * this.volleyTabs.length);
+      if (k === prev) k = (k + 1) % this.volleyTabs.length;
+      prev = k;
+      const tab = this.volleyTabs[k];
+      volley.push({ id: this.nextId++, tab, midi: tabToMidi(tab, this.key), lane: this.lanes.indexOf(tab.hole), time: volleyStart + 2 * beat + i * spacing, state: "pending" });
     }
     const end = volley[volley.length - 1].time + this.parryWindow + beat;
     this.roundNo++;
     this.respIndex = 0;
     this.offsets = [];
-    this.round = { number: this.roundNo, beat, countIn, call, callEnd, response, responseEnd, volleyStart, volley, end };
+    this.sustain = null;
+    this.silentSince = null;
+    this.healedBeats = 0;
+    this.round = { number: this.roundNo, beat, bpm: this.bpm, phraseId: phrase.id, countIn, call, callEnd, response, responseEnd, volleyStart, volley, end };
     this.setPhase("countin");
     return this.round;
   }
@@ -124,12 +173,12 @@ export class Battle {
   /** Un attacco di nota rilevato (dal microfono o dalla tastiera). */
   onset(midi: number, time: number): void {
     if (this.phase !== "response") return;
-    const r = this.round;
-    const exp = r.response[this.respIndex];
+    const exp = this.round.response[this.respIndex];
     if (!exp) return;
     if (midi === exp.midi) {
       exp.hit = true;
       this.offsets.push(time - exp.time);
+      if (exp.dur >= HOLD_BEATS * this.round.beat - 1e-6) this.sustain = { index: this.respIndex, until: time + 0.6 * exp.dur };
       this.events.push({ type: "responseHit", index: this.respIndex, offset: time - exp.time });
       this.respIndex++;
     } else {
@@ -143,9 +192,14 @@ export class Battle {
     const r = this.round;
     if (this.phase === "countin" && now >= r.countIn[3] + r.beat) this.setPhase("call");
     if (this.phase === "call" && now >= r.callEnd - 0.1 * r.beat) this.setPhase("response");
-    if (this.phase === "response" && (now >= r.responseEnd || this.respIndex >= r.response.length)) {
-      this.finishResponse(now);
-      if ((this.phase as Phase) === "won") return;
+    if (this.phase === "response") {
+      this.checkSustain(now, heldMidi);
+      this.checkSilence(now, heldMidi);
+      const done = this.respIndex >= r.response.length && !this.sustain;
+      if (now >= r.responseEnd || done) {
+        this.finishResponse(now);
+        if ((this.phase as Phase) === "won") return;
+      }
     }
     if (this.phase === "volley") {
       for (const p of r.volley) {
@@ -162,26 +216,64 @@ export class Battle {
           if (this.playerHp <= 0) return this.setPhase("lost");
         }
       }
-      if (now >= r.end) this.startRound(now + 0.2);
+      if (now >= r.end) this.startRound(now);
     }
+  }
+
+  private checkSustain(now: number, heldMidi: number | null): void {
+    const s = this.sustain;
+    if (!s) return;
+    const exp = this.round.response[s.index];
+    if (now >= s.until) this.sustain = null;
+    else if (heldMidi !== exp.midi) {
+      exp.short = true;
+      this.sustain = null;
+      this.events.push({ type: "shortNote", index: s.index });
+    }
+  }
+
+  /** Il Silenzio recupera vita per ogni battito in cui non suoni durante la risposta. */
+  private checkSilence(now: number, heldMidi: number | null): void {
+    if (!this.enemy.healsOnSilence) return;
+    const r = this.round;
+    if (heldMidi !== null || now < r.callEnd + r.beat) {
+      this.silentSince = null;
+      this.healedBeats = 0;
+      return;
+    }
+    this.silentSince ??= now;
+    const beats = Math.floor((now - this.silentSince) / r.beat);
+    const cap = this.phaseCap();
+    if (beats > this.healedBeats && this.enemyHp < cap) {
+      const amount = Math.min(2, cap - this.enemyHp);
+      this.enemyHp += amount;
+      this.healedBeats = beats;
+      this.events.push({ type: "heal", amount });
+    }
+  }
+
+  /** Vita massima nella fase attuale del boss: non si guarisce oltre. */
+  private phaseCap(): number {
+    return Math.round(this.enemy.hp * (1 - this.bossPhase / this.enemy.phases.length));
   }
 
   private finishResponse(now: number): void {
     const r = this.round;
-    const hits = r.response.filter((n) => n.hit).length;
-    const accuracy = hits / r.response.length;
+    const score = r.response.reduce((s, n) => s + (n.hit ? (n.short ? 0.5 : 1) : 0), 0);
+    const accuracy = score / r.response.length;
     this.stats.notesExpected += r.response.length;
-    this.stats.notesHit += hits;
+    this.stats.notesHit += r.response.filter((n) => n.hit && !n.short).length;
     this.stats.rounds++;
     // "a tempo" se tutte le note sono arrivate entro mezzo battito dal punto ideale
     const onTime = accuracy === 1 && this.offsets.every((o) => Math.abs(o) <= 0.5 * r.beat);
     this.combo = accuracy === 1 ? this.combo + 1 : 0;
-    const base = this.enemy.hp / 4;
+    const base = this.enemy.hp / (this.enemy.boss ? 8 : 4);
     const amount = Math.round(base * accuracy * (onTime ? 1.25 : 1) * (1 + 0.15 * Math.max(0, this.combo - 1)));
     this.enemyHp = Math.max(0, this.enemyHp - amount);
     this.events.push({ type: "enemyDamaged", amount, accuracy, onTime, combo: this.combo });
     this.adapt(accuracy);
     if (this.enemyHp <= 0) return this.setPhase("won");
+    this.advanceBossPhase();
     // se hai finito prima, la raffica arriva prima (di battiti interi, per restare a tempo)
     const shift = Math.max(0, Math.floor((r.responseEnd - now) / r.beat)) * r.beat;
     if (shift > 0) {
@@ -192,21 +284,30 @@ export class Battle {
     this.setPhase("volley");
   }
 
-  private offsets: number[] = [];
+  private advanceBossPhase(): void {
+    const n = this.enemy.phases.length;
+    const next = Math.min(n - 1, Math.floor((1 - this.enemyHp / this.enemy.hp) * n));
+    if (next > this.bossPhase) {
+      this.bossPhase = next;
+      this.level = 0;
+      this.queue = [];
+      this.bpm = this.currentPhase.bpm[0];
+      this.events.push({ type: "bossPhase", index: next });
+    }
+  }
 
   private adapt(accuracy: number): void {
-    const before = [this.level, this.tempo];
-    const maxLevel = this.enemy.phrases.length - 1;
+    const before = [this.level, this.bpm];
+    const [lo, hi] = this.currentPhase.bpm;
+    const maxLevel = this.currentPhase.phrases.length - 1;
     if (accuracy >= 0.9) {
       if (this.level < maxLevel) this.level++;
-      else this.tempo = Math.min(1.2, +(this.tempo * 1.05).toFixed(3));
+      else this.bpm = Math.min(hi, this.bpm + 4);
     } else if (accuracy < 0.5) {
       if (this.level > 0) this.level--;
-      this.tempo = Math.max(0.7, +(this.tempo * 0.9).toFixed(3));
+      this.bpm = Math.max(lo - 10, this.bpm - 6);
     }
-    if (before[0] !== this.level || before[1] !== this.tempo) {
-      this.events.push({ type: "difficulty", level: this.level, tempo: this.tempo });
-    }
+    if (before[0] !== this.level || before[1] !== this.bpm) this.events.push({ type: "difficulty", level: this.level, bpm: this.bpm });
   }
 
   private setPhase(p: Phase): void {

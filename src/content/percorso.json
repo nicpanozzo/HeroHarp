@@ -1,0 +1,8885 @@
+{
+ "schemaVersion": 1,
+ "contentVersion": "0.1",
+ "generated": "2026-10-03",
+ "source": "content/percorso-didattico.md",
+ "layout": {
+  "name": "richter",
+  "blowSemitones": [
+   0,
+   4,
+   7,
+   12,
+   16,
+   19,
+   24,
+   28,
+   31,
+   36
+  ],
+  "drawSemitones": [
+   2,
+   7,
+   11,
+   14,
+   17,
+   21,
+   23,
+   26,
+   29,
+   33
+  ],
+  "maxDrawBend": [
+   1,
+   2,
+   3,
+   1,
+   0,
+   1,
+   0,
+   0,
+   0,
+   0
+  ],
+  "maxBlowBend": [
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   1,
+   1,
+   2
+  ],
+  "overblow": "drawSemitones[h]+1 (fori 1-6)",
+  "overdraw": "blowSemitones[h]+1 (fori 7-10)",
+  "keyHole1Midi": {
+   "G": 55,
+   "Ab": 56,
+   "A": 57,
+   "Bb": 58,
+   "B": 59,
+   "C": 60,
+   "Db": 61,
+   "D": 62,
+   "Eb": 63,
+   "E": 64,
+   "F": 65,
+   "F#": 66
+  },
+  "note": "semitone = semitoni sopra il foro 1 soffiato; midi = keyHole1Midi[tonalità] + semitone"
+ },
+ "equivalentNotes": [
+  [
+   {
+    "hole": 2,
+    "dir": "draw",
+    "bend": 0
+   },
+   {
+    "hole": 3,
+    "dir": "blow",
+    "bend": 0
+   }
+  ]
+ ],
+ "phraseLengthTiers": {
+  "easy": {
+   "notes": [
+    2,
+    3
+   ]
+  },
+  "medium": {
+   "notes": [
+    4,
+    6
+   ]
+  },
+  "hard": {
+   "notes": [
+    6,
+    8
+   ]
+  }
+ },
+ "areas": [
+  {
+   "id": "porch",
+   "order": 1,
+   "name": {
+    "it": "Il portico di casa",
+    "en": "The Front Porch"
+   },
+   "technique": {
+    "it": "Nota singola, soffio e aspiro, fori 4–6",
+    "en": "Single notes, blow and draw, holes 4–6"
+   },
+   "goal": {
+    "it": "Suonare una sola nota pulita per volta e respirare attraverso lo strumento.",
+    "en": "Play one clean note at a time and breathe through the instrument."
+   },
+   "tips": [
+    {
+     "it": "Labbra a \"o\" come per bere da una cannuccia; se senti due note, stringi un po'.",
+     "en": "Lips in an \"o\" as if drinking through a straw; if you hear two notes, purse a little more."
+    }
+   ],
+   "bpm": [
+    70,
+    90
+   ],
+   "newNotes": [
+    "4↑",
+    "4↓",
+    "5↑",
+    "5↓",
+    "6↑",
+    "6↓"
+   ],
+   "enemies": [
+    {
+     "id": "draft",
+     "name": {
+      "it": "Lo Spiffero",
+      "en": "The Draft"
+     },
+     "trains": {
+      "it": "solo soffio, fori 4–6",
+      "en": "blow only, holes 4–6"
+     },
+     "phrases": [
+      {
+       "id": "draft-1",
+       "tab": "4↑ - 5↑ - |",
+       "beatsPerBar": 4,
+       "lengthBeats": 4.0,
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 12
+          }
+         ],
+         "start": 0.0,
+         "dur": 2.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 5,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 16
+          }
+         ],
+         "start": 2.0,
+         "dur": 2.0
+        }
+       ]
+      },
+      {
+       "id": "draft-2",
+       "tab": "4↑ 5↑ 6↑ - |",
+       "beatsPerBar": 4,
+       "lengthBeats": 4.0,
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 12
+          }
+         ],
+         "start": 0.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 5,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 16
+          }
+         ],
+         "start": 1.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 6,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 19
+          }
+         ],
+         "start": 2.0,
+         "dur": 2.0
+        }
+       ]
+      },
+      {
+       "id": "draft-3",
+       "tab": "6↑ 5↑ 4↑ - |",
+       "beatsPerBar": 4,
+       "lengthBeats": 4.0,
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 6,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 19
+          }
+         ],
+         "start": 0.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 5,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 16
+          }
+         ],
+         "start": 1.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 12
+          }
+         ],
+         "start": 2.0,
+         "dur": 2.0
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "sigh",
+     "name": {
+      "it": "Il Sospiro",
+      "en": "The Sigh"
+     },
+     "trains": {
+      "it": "solo aspiro, fori 4–6",
+      "en": "draw only, holes 4–6"
+     },
+     "phrases": [
+      {
+       "id": "sigh-1",
+       "tab": "4↓ - 5↓ - |",
+       "beatsPerBar": 4,
+       "lengthBeats": 4.0,
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 14
+          }
+         ],
+         "start": 0.0,
+         "dur": 2.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 5,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 17
+          }
+         ],
+         "start": 2.0,
+         "dur": 2.0
+        }
+       ]
+      },
+      {
+       "id": "sigh-2",
+       "tab": "4↓ 5↓ 6↓ - |",
+       "beatsPerBar": 4,
+       "lengthBeats": 4.0,
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 14
+          }
+         ],
+         "start": 0.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 5,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 17
+          }
+         ],
+         "start": 1.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 6,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 21
+          }
+         ],
+         "start": 2.0,
+         "dur": 2.0
+        }
+       ]
+      },
+      {
+       "id": "sigh-3",
+       "tab": "6↓ 5↓ 4↓ - |",
+       "beatsPerBar": 4,
+       "lengthBeats": 4.0,
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 6,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 21
+          }
+         ],
+         "start": 0.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 5,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 17
+          }
+         ],
+         "start": 1.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 14
+          }
+         ],
+         "start": 2.0,
+         "dur": 2.0
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "bellows",
+     "name": {
+      "it": "Il Mantice",
+      "en": "The Bellows"
+     },
+     "trains": {
+      "it": "alternanza soffio/aspiro",
+      "en": "alternating blow/draw"
+     },
+     "phrases": [
+      {
+       "id": "bellows-1",
+       "tab": "4↑ 4↓ 4↑ 4↓ |",
+       "beatsPerBar": 4,
+       "lengthBeats": 4.0,
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 12
+          }
+         ],
+         "start": 0.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 14
+          }
+         ],
+         "start": 1.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 12
+          }
+         ],
+         "start": 2.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 14
+          }
+         ],
+         "start": 3.0,
+         "dur": 1.0
+        }
+       ]
+      },
+      {
+       "id": "bellows-2",
+       "tab": "4↑ 4↓ 5↑ - |",
+       "beatsPerBar": 4,
+       "lengthBeats": 4.0,
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 12
+          }
+         ],
+         "start": 0.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 14
+          }
+         ],
+         "start": 1.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 5,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 16
+          }
+         ],
+         "start": 2.0,
+         "dur": 2.0
+        }
+       ]
+      },
+      {
+       "id": "bellows-3",
+       "tab": "5↑ 5↓ 6↑ - |",
+       "beatsPerBar": 4,
+       "lengthBeats": 4.0,
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 5,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 16
+          }
+         ],
+         "start": 0.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 5,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 17
+          }
+         ],
+         "start": 1.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 6,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 19
+          }
+         ],
+         "start": 2.0,
+         "dur": 2.0
+        }
+       ]
+      },
+      {
+       "id": "bellows-4",
+       "tab": "6↑ 6↓ 6↑ 5↓ |",
+       "beatsPerBar": 4,
+       "lengthBeats": 4.0,
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 6,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 19
+          }
+         ],
+         "start": 0.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 6,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 21
+          }
+         ],
+         "start": 1.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 6,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 19
+          }
+         ],
+         "start": 2.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 5,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 17
+          }
+         ],
+         "start": 3.0,
+         "dur": 1.0
+        }
+       ]
+      }
+     ]
+    }
+   ],
+   "boss": {
+    "id": "silence",
+    "name": {
+     "it": "Il Silenzio",
+     "en": "The Silence"
+    },
+    "description": {
+     "it": "Un'ombra che mangia i suoni: se smetti di suonare troppo a lungo, recupera vita.",
+     "en": "A shadow that eats sound: stop playing too long and it heals."
+    },
+    "phases": [
+     {
+      "phase": 1,
+      "mode": "call_response",
+      "bpm": [
+       70,
+       80
+      ],
+      "phrases": [
+       {
+        "id": "silence-1a",
+        "tab": "4↑ - - - | 4↓ - - - |",
+        "beatsPerBar": 4,
+        "lengthBeats": 8.0,
+        "events": [
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 12
+           }
+          ],
+          "start": 0.0,
+          "dur": 4.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 14
+           }
+          ],
+          "start": 4.0,
+          "dur": 4.0
+         }
+        ]
+       },
+       {
+        "id": "silence-1b",
+        "tab": "5↑ - - - | 6↑ - - - |",
+        "beatsPerBar": 4,
+        "lengthBeats": 8.0,
+        "events": [
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 16
+           }
+          ],
+          "start": 0.0,
+          "dur": 4.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 6,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 19
+           }
+          ],
+          "start": 4.0,
+          "dur": 4.0
+         }
+        ]
+       }
+      ],
+      "description": {
+       "it": "Note tenute senza cali di volume.",
+       "en": "Hold notes without dropping volume."
+      }
+     },
+     {
+      "phase": 2,
+      "mode": "call_response",
+      "bpm": [
+       80,
+       90
+      ],
+      "phrases": [
+       {
+        "id": "silence-2a",
+        "tab": "5↑ 4↓ 4↑ 4↓ | 5↑ 5↑ 5↑ - | 4↓ 4↓ 4↓ - | 5↑ 6↑ 6↑ - |",
+        "beatsPerBar": 4,
+        "lengthBeats": 16.0,
+        "events": [
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 16
+           }
+          ],
+          "start": 0.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 14
+           }
+          ],
+          "start": 1.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 12
+           }
+          ],
+          "start": 2.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 14
+           }
+          ],
+          "start": 3.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 16
+           }
+          ],
+          "start": 4.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 16
+           }
+          ],
+          "start": 5.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 16
+           }
+          ],
+          "start": 6.0,
+          "dur": 2.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 14
+           }
+          ],
+          "start": 8.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 14
+           }
+          ],
+          "start": 9.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 14
+           }
+          ],
+          "start": 10.0,
+          "dur": 2.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 16
+           }
+          ],
+          "start": 12.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 6,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 19
+           }
+          ],
+          "start": 13.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 6,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 19
+           }
+          ],
+          "start": 14.0,
+          "dur": 2.0
+         }
+        ],
+        "title": "Mary Had a Little Lamb"
+       },
+       {
+        "id": "silence-2b",
+        "tab": "5↑ 5↑ 5↑ - | 5↑ 5↑ 5↑ - | 5↑ 6↑ 4↑ 4↓ | 5↑ - - - |",
+        "beatsPerBar": 4,
+        "lengthBeats": 16.0,
+        "events": [
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 16
+           }
+          ],
+          "start": 0.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 16
+           }
+          ],
+          "start": 1.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 16
+           }
+          ],
+          "start": 2.0,
+          "dur": 2.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 16
+           }
+          ],
+          "start": 4.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 16
+           }
+          ],
+          "start": 5.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 16
+           }
+          ],
+          "start": 6.0,
+          "dur": 2.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 16
+           }
+          ],
+          "start": 8.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 6,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 19
+           }
+          ],
+          "start": 9.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 12
+           }
+          ],
+          "start": 10.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 14
+           }
+          ],
+          "start": 11.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 16
+           }
+          ],
+          "start": 12.0,
+          "dur": 4.0
+         }
+        ],
+        "title": "Jingle Bells"
+       }
+      ]
+     },
+     {
+      "phase": 3,
+      "mode": "call_response",
+      "bpm": [
+       80,
+       90
+      ],
+      "phrases": [
+       {
+        "id": "silence-3",
+        "tab": "4↑ 4↓ 5↑ 4↑ | 4↑ 4↓ 5↑ 4↑ | 5↑ 5↓ 6↑ - | 5↑ 5↓ 6↑ - | (6↑ 6↓) (6↑ 5↓) 5↑ 4↑ | (6↑ 6↓) (6↑ 5↓) 5↑ 4↑ | 4↑ 3↑ 4↑ - | 4↑ 3↑ 4↑ - |",
+        "beatsPerBar": 4,
+        "lengthBeats": 32.0,
+        "events": [
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 12
+           }
+          ],
+          "start": 0.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 14
+           }
+          ],
+          "start": 1.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 16
+           }
+          ],
+          "start": 2.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 12
+           }
+          ],
+          "start": 3.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 12
+           }
+          ],
+          "start": 4.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 14
+           }
+          ],
+          "start": 5.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 16
+           }
+          ],
+          "start": 6.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 12
+           }
+          ],
+          "start": 7.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 16
+           }
+          ],
+          "start": 8.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 17
+           }
+          ],
+          "start": 9.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 6,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 19
+           }
+          ],
+          "start": 10.0,
+          "dur": 2.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 16
+           }
+          ],
+          "start": 12.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 17
+           }
+          ],
+          "start": 13.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 6,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 19
+           }
+          ],
+          "start": 14.0,
+          "dur": 2.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 6,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 19
+           }
+          ],
+          "start": 16.0,
+          "dur": 0.5
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 6,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 21
+           }
+          ],
+          "start": 16.5,
+          "dur": 0.5
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 6,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 19
+           }
+          ],
+          "start": 17.0,
+          "dur": 0.5
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 17
+           }
+          ],
+          "start": 17.5,
+          "dur": 0.5
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 16
+           }
+          ],
+          "start": 18.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 12
+           }
+          ],
+          "start": 19.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 6,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 19
+           }
+          ],
+          "start": 20.0,
+          "dur": 0.5
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 6,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 21
+           }
+          ],
+          "start": 20.5,
+          "dur": 0.5
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 6,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 19
+           }
+          ],
+          "start": 21.0,
+          "dur": 0.5
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 17
+           }
+          ],
+          "start": 21.5,
+          "dur": 0.5
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 16
+           }
+          ],
+          "start": 22.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 12
+           }
+          ],
+          "start": 23.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 12
+           }
+          ],
+          "start": 24.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 3,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 7
+           }
+          ],
+          "start": 25.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 12
+           }
+          ],
+          "start": 26.0,
+          "dur": 2.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 12
+           }
+          ],
+          "start": 28.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 3,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 7
+           }
+          ],
+          "start": 29.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 12
+           }
+          ],
+          "start": 30.0,
+          "dur": 2.0
+         }
+        ],
+        "title": {
+         "it": "Fra Martino",
+         "en": "Frère Jacques"
+        }
+       }
+      ],
+      "entryTest": true
+     }
+    ],
+    "criteria": {
+     "minNoteAccuracy": 0.8,
+     "requireSingleNote": true,
+     "timingWindow": "wide"
+    }
+   }
+  },
+  {
+   "id": "station",
+   "order": 2,
+   "name": {
+    "it": "La stazione",
+    "en": "The Station"
+   },
+   "technique": {
+    "it": "Scala di Do completa (fori 4–7), salti, poi fori bassi e alti",
+    "en": "Full major scale (holes 4–7), leaps, then low and high holes"
+   },
+   "goal": {
+    "it": "La scala maggiore nell'ottava centrale, l'inversione al foro 7, i salti tra fori lontani.",
+    "en": "The major scale in the middle octave, the hole-7 reversal, leaps between distant holes."
+   },
+   "tips": [
+    {
+     "it": "Al foro 7 il soffio è più acuto dell'aspiro: nella scala l'ordine si inverte.",
+     "en": "On hole 7 the blow note is higher than the draw: the order flips in the scale."
+    },
+    {
+     "it": "In basso mancano due note e in alto una: arriveranno con i bend.",
+     "en": "Two notes are missing down low and one up high: bends will unlock them."
+    }
+   ],
+   "bpm": [
+    80,
+    140
+   ],
+   "newNotes": [
+    "7↓",
+    "7↑",
+    "1↑",
+    "1↓",
+    "2↑",
+    "2↓",
+    "3↑",
+    "3↓",
+    "8↓",
+    "8↑",
+    "9↓",
+    "9↑",
+    "10↓",
+    "10↑"
+   ],
+   "enemies": [
+    {
+     "id": "ticket-clerk",
+     "name": {
+      "it": "Il Bigliettaio",
+      "en": "The Ticket Clerk"
+     },
+     "trains": {
+      "it": "scala su e giù",
+      "en": "scale up and down"
+     },
+     "phrases": [
+      {
+       "id": "clerk-1",
+       "tab": "4↑ 4↓ 5↑ 5↓ | 6↑ 6↓ 7↓ 7↑ |",
+       "beatsPerBar": 4,
+       "lengthBeats": 8.0,
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 12
+          }
+         ],
+         "start": 0.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 14
+          }
+         ],
+         "start": 1.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 5,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 16
+          }
+         ],
+         "start": 2.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 5,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 17
+          }
+         ],
+         "start": 3.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 6,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 19
+          }
+         ],
+         "start": 4.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 6,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 21
+          }
+         ],
+         "start": 5.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 7,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 23
+          }
+         ],
+         "start": 6.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 7,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 24
+          }
+         ],
+         "start": 7.0,
+         "dur": 1.0
+        }
+       ]
+      },
+      {
+       "id": "clerk-2",
+       "tab": "7↑ 7↓ 6↓ 6↑ | 5↓ 5↑ 4↓ 4↑ |",
+       "beatsPerBar": 4,
+       "lengthBeats": 8.0,
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 7,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 24
+          }
+         ],
+         "start": 0.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 7,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 23
+          }
+         ],
+         "start": 1.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 6,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 21
+          }
+         ],
+         "start": 2.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 6,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 19
+          }
+         ],
+         "start": 3.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 5,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 17
+          }
+         ],
+         "start": 4.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 5,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 16
+          }
+         ],
+         "start": 5.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 14
+          }
+         ],
+         "start": 6.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 12
+          }
+         ],
+         "start": 7.0,
+         "dur": 1.0
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "porter",
+     "name": {
+      "it": "Il Facchino",
+      "en": "The Porter"
+     },
+     "trains": {
+      "it": "salti (arpeggi)",
+      "en": "leaps (arpeggios)"
+     },
+     "phrases": [
+      {
+       "id": "porter-1",
+       "tab": "4↑ 5↑ 6↑ 7↑ |",
+       "beatsPerBar": 4,
+       "lengthBeats": 4.0,
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 12
+          }
+         ],
+         "start": 0.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 5,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 16
+          }
+         ],
+         "start": 1.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 6,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 19
+          }
+         ],
+         "start": 2.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 7,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 24
+          }
+         ],
+         "start": 3.0,
+         "dur": 1.0
+        }
+       ]
+      },
+      {
+       "id": "porter-2",
+       "tab": "7↑ 6↑ 5↑ 4↑ |",
+       "beatsPerBar": 4,
+       "lengthBeats": 4.0,
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 7,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 24
+          }
+         ],
+         "start": 0.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 6,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 19
+          }
+         ],
+         "start": 1.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 5,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 16
+          }
+         ],
+         "start": 2.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 12
+          }
+         ],
+         "start": 3.0,
+         "dur": 1.0
+        }
+       ]
+      },
+      {
+       "id": "porter-3",
+       "tab": "4↓ 5↓ 6↓ - |",
+       "beatsPerBar": 4,
+       "lengthBeats": 4.0,
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 14
+          }
+         ],
+         "start": 0.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 5,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 17
+          }
+         ],
+         "start": 1.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 6,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 21
+          }
+         ],
+         "start": 2.0,
+         "dur": 2.0
+        }
+       ]
+      },
+      {
+       "id": "porter-4",
+       "tab": "4↑ 6↑ 5↑ 7↑ |",
+       "beatsPerBar": 4,
+       "lengthBeats": 4.0,
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 12
+          }
+         ],
+         "start": 0.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 6,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 19
+          }
+         ],
+         "start": 1.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 5,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 16
+          }
+         ],
+         "start": 2.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 7,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 24
+          }
+         ],
+         "start": 3.0,
+         "dur": 1.0
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "stationmaster",
+     "name": {
+      "it": "Il Capostazione",
+      "en": "The Stationmaster"
+     },
+     "trains": {
+      "it": "fori bassi e alti",
+      "en": "low and high holes"
+     },
+     "phrases": [
+      {
+       "id": "stationmaster-1",
+       "tab": "1↑ 2↑ 3↑ 4↑ |",
+       "beatsPerBar": 4,
+       "lengthBeats": 4.0,
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 1,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 0
+          }
+         ],
+         "start": 0.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 2,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 4
+          }
+         ],
+         "start": 1.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 3,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 7
+          }
+         ],
+         "start": 2.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 12
+          }
+         ],
+         "start": 3.0,
+         "dur": 1.0
+        }
+       ]
+      },
+      {
+       "id": "stationmaster-2",
+       "tab": "1↓ 2↓ 3↓ 4↓ |",
+       "beatsPerBar": 4,
+       "lengthBeats": 4.0,
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 1,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 2
+          }
+         ],
+         "start": 0.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 2,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 7
+          }
+         ],
+         "start": 1.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 3,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 11
+          }
+         ],
+         "start": 2.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 14
+          }
+         ],
+         "start": 3.0,
+         "dur": 1.0
+        }
+       ]
+      },
+      {
+       "id": "stationmaster-3",
+       "tab": "7↑ 8↑ 9↑ 10↑ |",
+       "beatsPerBar": 4,
+       "lengthBeats": 4.0,
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 7,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 24
+          }
+         ],
+         "start": 0.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 8,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 28
+          }
+         ],
+         "start": 1.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 9,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 31
+          }
+         ],
+         "start": 2.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 10,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 36
+          }
+         ],
+         "start": 3.0,
+         "dur": 1.0
+        }
+       ]
+      },
+      {
+       "id": "stationmaster-4",
+       "tab": "7↑ 8↓ 8↑ 9↓ | 9↑ - - - |",
+       "beatsPerBar": 4,
+       "lengthBeats": 8.0,
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 7,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 24
+          }
+         ],
+         "start": 0.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 8,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 26
+          }
+         ],
+         "start": 1.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 8,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 28
+          }
+         ],
+         "start": 2.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 9,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 29
+          }
+         ],
+         "start": 3.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 9,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 31
+          }
+         ],
+         "start": 4.0,
+         "dur": 4.0
+        }
+       ]
+      }
+     ]
+    }
+   ],
+   "boss": {
+    "id": "mad-metronome",
+    "name": {
+     "it": "Il Metronomo impazzito",
+     "en": "The Mad Metronome"
+    },
+    "description": {
+     "it": "Accelera a ogni fase. Se resti a tempo, rallenta e prende danno.",
+     "en": "Speeds up every phase. Stay on the beat and it slows down and takes damage."
+    },
+    "phases": [
+     {
+      "phase": 1,
+      "mode": "call_response",
+      "bpm": [
+       80,
+       80
+      ],
+      "phrases": [
+       {
+        "id": "metronome-1",
+        "tab": "5↑ 5↑ 5↓ 6↑ | 6↑ 5↓ 5↑ 4↓ | 4↑ 4↑ 4↓ 5↑ | 5↑ - 4↓ 4↓ | 5↑ 5↑ 5↓ 6↑ | 6↑ 5↓ 5↑ 4↓ | 4↑ 4↑ 4↓ 5↑ | 4↓ - 4↑ 4↑ |",
+        "beatsPerBar": 4,
+        "lengthBeats": 32.0,
+        "events": [
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 16
+           }
+          ],
+          "start": 0.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 16
+           }
+          ],
+          "start": 1.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 17
+           }
+          ],
+          "start": 2.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 6,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 19
+           }
+          ],
+          "start": 3.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 6,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 19
+           }
+          ],
+          "start": 4.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 17
+           }
+          ],
+          "start": 5.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 16
+           }
+          ],
+          "start": 6.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 14
+           }
+          ],
+          "start": 7.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 12
+           }
+          ],
+          "start": 8.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 12
+           }
+          ],
+          "start": 9.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 14
+           }
+          ],
+          "start": 10.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 16
+           }
+          ],
+          "start": 11.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 16
+           }
+          ],
+          "start": 12.0,
+          "dur": 2.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 14
+           }
+          ],
+          "start": 14.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 14
+           }
+          ],
+          "start": 15.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 16
+           }
+          ],
+          "start": 16.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 16
+           }
+          ],
+          "start": 17.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 17
+           }
+          ],
+          "start": 18.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 6,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 19
+           }
+          ],
+          "start": 19.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 6,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 19
+           }
+          ],
+          "start": 20.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 17
+           }
+          ],
+          "start": 21.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 16
+           }
+          ],
+          "start": 22.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 14
+           }
+          ],
+          "start": 23.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 12
+           }
+          ],
+          "start": 24.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 12
+           }
+          ],
+          "start": 25.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 14
+           }
+          ],
+          "start": 26.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 16
+           }
+          ],
+          "start": 27.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 14
+           }
+          ],
+          "start": 28.0,
+          "dur": 2.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 12
+           }
+          ],
+          "start": 30.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 12
+           }
+          ],
+          "start": 31.0,
+          "dur": 1.0
+         }
+        ],
+        "title": {
+         "it": "Inno alla gioia",
+         "en": "Ode to Joy"
+        }
+       }
+      ]
+     },
+     {
+      "phase": 2,
+      "mode": "call_response",
+      "bpm": [
+       100,
+       120
+      ],
+      "phrases": [
+       {
+        "id": "metronome-2",
+        "tab": "4↑ 4↓ . . | 5↑ 6↑ 6↑ 6↓ | 6↑ 5↑ 4↑ 4↓ | 5↑ 5↑ 4↓ 4↑ | 4↓ - - - |",
+        "beatsPerBar": 4,
+        "lengthBeats": 20.0,
+        "events": [
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 12
+           }
+          ],
+          "start": 0.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 14
+           }
+          ],
+          "start": 1.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 16
+           }
+          ],
+          "start": 4.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 6,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 19
+           }
+          ],
+          "start": 5.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 6,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 19
+           }
+          ],
+          "start": 6.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 6,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 21
+           }
+          ],
+          "start": 7.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 6,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 19
+           }
+          ],
+          "start": 8.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 16
+           }
+          ],
+          "start": 9.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 12
+           }
+          ],
+          "start": 10.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 14
+           }
+          ],
+          "start": 11.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 16
+           }
+          ],
+          "start": 12.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 16
+           }
+          ],
+          "start": 13.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 14
+           }
+          ],
+          "start": 14.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 12
+           }
+          ],
+          "start": 15.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 14
+           }
+          ],
+          "start": 16.0,
+          "dur": 4.0
+         }
+        ],
+        "title": "Oh! Susanna"
+       }
+      ]
+     },
+     {
+      "phase": 3,
+      "mode": "call_response",
+      "bpm": [
+       120,
+       140
+      ],
+      "phrases": [
+       {
+        "id": "metronome-3",
+        "tab": "(4↑ 4↓) (5↑ 5↓) (6↑ 6↓) (7↓ 7↑) | (7↑ 7↓) (6↓ 6↑) (5↓ 5↑) (4↓ 4↑) |",
+        "beatsPerBar": 4,
+        "lengthBeats": 8.0,
+        "events": [
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 12
+           }
+          ],
+          "start": 0.0,
+          "dur": 0.5
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 14
+           }
+          ],
+          "start": 0.5,
+          "dur": 0.5
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 16
+           }
+          ],
+          "start": 1.0,
+          "dur": 0.5
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 17
+           }
+          ],
+          "start": 1.5,
+          "dur": 0.5
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 6,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 19
+           }
+          ],
+          "start": 2.0,
+          "dur": 0.5
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 6,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 21
+           }
+          ],
+          "start": 2.5,
+          "dur": 0.5
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 7,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 23
+           }
+          ],
+          "start": 3.0,
+          "dur": 0.5
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 7,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 24
+           }
+          ],
+          "start": 3.5,
+          "dur": 0.5
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 7,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 24
+           }
+          ],
+          "start": 4.0,
+          "dur": 0.5
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 7,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 23
+           }
+          ],
+          "start": 4.5,
+          "dur": 0.5
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 6,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 21
+           }
+          ],
+          "start": 5.0,
+          "dur": 0.5
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 6,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 19
+           }
+          ],
+          "start": 5.5,
+          "dur": 0.5
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 17
+           }
+          ],
+          "start": 6.0,
+          "dur": 0.5
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 16
+           }
+          ],
+          "start": 6.5,
+          "dur": 0.5
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 14
+           }
+          ],
+          "start": 7.0,
+          "dur": 0.5
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 12
+           }
+          ],
+          "start": 7.5,
+          "dur": 0.5
+         }
+        ]
+       }
+      ],
+      "entryTest": true
+     }
+    ],
+    "criteria": {
+     "minNoteAccuracy": 0.8,
+     "timingWindow": "narrowing"
+    }
+   }
+  },
+  {
+   "id": "freight-train",
+   "order": 3,
+   "name": {
+    "it": "Il treno merci",
+    "en": "The Freight Train"
+   },
+   "technique": {
+    "it": "Accordi, ritmo \"treno\", trillo",
+    "en": "Chords, train rhythm, trill"
+   },
+   "goal": {
+    "it": "Suonare più fori insieme di proposito, tenere il groove del treno, fare il trillo.",
+    "en": "Play several holes together on purpose, keep the train groove, trill."
+   },
+   "bpm": [
+    90,
+    130
+   ],
+   "newNotes": [
+    "1-2-3↑",
+    "4-5-6↑",
+    "1-2-3↓",
+    "4-5-6↓",
+    "4↓~5↓"
+   ],
+   "chordVocabulary": [
+    {
+     "tab": "1-2-3↑",
+     "role": "shield",
+     "nameInC": "C"
+    },
+    {
+     "tab": "4-5-6↑",
+     "role": "shield",
+     "nameInC": "C"
+    },
+    {
+     "tab": "1-2-3↓",
+     "role": "area_attack",
+     "nameInC": "G"
+    },
+    {
+     "tab": "1-2-3-4↓",
+     "role": "area_attack",
+     "nameInC": "G"
+    },
+    {
+     "tab": "4-5-6↓",
+     "role": "area_attack",
+     "nameInC": "Dm"
+    },
+    {
+     "tab": "4-5↓",
+     "role": "whistle",
+     "nameInC": "D+F"
+    }
+   ],
+   "enemies": [
+    {
+     "id": "stoker",
+     "name": {
+      "it": "Il Fuochista",
+      "en": "The Stoker"
+     },
+     "trains": {
+      "it": "accordi tenuti",
+      "en": "held chords"
+     },
+     "phrases": [
+      {
+       "id": "stoker-1",
+       "tab": "1-2-3↑ - - - |",
+       "beatsPerBar": 4,
+       "lengthBeats": 4.0,
+       "events": [
+        {
+         "type": "chord",
+         "notes": [
+          {
+           "hole": 1,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 0
+          },
+          {
+           "hole": 2,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 4
+          },
+          {
+           "hole": 3,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 7
+          }
+         ],
+         "start": 0.0,
+         "dur": 4.0
+        }
+       ]
+      },
+      {
+       "id": "stoker-2",
+       "tab": "1-2-3↓ - - - |",
+       "beatsPerBar": 4,
+       "lengthBeats": 4.0,
+       "events": [
+        {
+         "type": "chord",
+         "notes": [
+          {
+           "hole": 1,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 2
+          },
+          {
+           "hole": 2,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 7
+          },
+          {
+           "hole": 3,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 11
+          }
+         ],
+         "start": 0.0,
+         "dur": 4.0
+        }
+       ]
+      },
+      {
+       "id": "stoker-3",
+       "tab": "4-5-6↑ - 4-5-6↓ - |",
+       "beatsPerBar": 4,
+       "lengthBeats": 4.0,
+       "events": [
+        {
+         "type": "chord",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 12
+          },
+          {
+           "hole": 5,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 16
+          },
+          {
+           "hole": 6,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 19
+          }
+         ],
+         "start": 0.0,
+         "dur": 2.0
+        },
+        {
+         "type": "chord",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 14
+          },
+          {
+           "hole": 5,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 17
+          },
+          {
+           "hole": 6,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 21
+          }
+         ],
+         "start": 2.0,
+         "dur": 2.0
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "hobo",
+     "name": {
+      "it": "Il Vagabondo",
+      "en": "The Hobo"
+     },
+     "trains": {
+      "it": "ritmo treno lento",
+      "en": "slow train rhythm"
+     },
+     "phrases": [
+      {
+       "id": "hobo-1",
+       "tab": "1-2-3↓ 1-2-3↓ 1-2-3↑ 1-2-3↑ | 1-2-3↓ 1-2-3↓ 1-2-3↑ 1-2-3↑ | 1-2-3↓ 1-2-3↓ 1-2-3↑ 1-2-3↑ | 1-2-3↓ 1-2-3↓ 1-2-3↑ 1-2-3↑ |",
+       "beatsPerBar": 4,
+       "lengthBeats": 16.0,
+       "events": [
+        {
+         "type": "chord",
+         "notes": [
+          {
+           "hole": 1,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 2
+          },
+          {
+           "hole": 2,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 7
+          },
+          {
+           "hole": 3,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 11
+          }
+         ],
+         "start": 0.0,
+         "dur": 1.0
+        },
+        {
+         "type": "chord",
+         "notes": [
+          {
+           "hole": 1,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 2
+          },
+          {
+           "hole": 2,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 7
+          },
+          {
+           "hole": 3,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 11
+          }
+         ],
+         "start": 1.0,
+         "dur": 1.0
+        },
+        {
+         "type": "chord",
+         "notes": [
+          {
+           "hole": 1,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 0
+          },
+          {
+           "hole": 2,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 4
+          },
+          {
+           "hole": 3,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 7
+          }
+         ],
+         "start": 2.0,
+         "dur": 1.0
+        },
+        {
+         "type": "chord",
+         "notes": [
+          {
+           "hole": 1,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 0
+          },
+          {
+           "hole": 2,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 4
+          },
+          {
+           "hole": 3,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 7
+          }
+         ],
+         "start": 3.0,
+         "dur": 1.0
+        },
+        {
+         "type": "chord",
+         "notes": [
+          {
+           "hole": 1,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 2
+          },
+          {
+           "hole": 2,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 7
+          },
+          {
+           "hole": 3,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 11
+          }
+         ],
+         "start": 4.0,
+         "dur": 1.0
+        },
+        {
+         "type": "chord",
+         "notes": [
+          {
+           "hole": 1,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 2
+          },
+          {
+           "hole": 2,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 7
+          },
+          {
+           "hole": 3,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 11
+          }
+         ],
+         "start": 5.0,
+         "dur": 1.0
+        },
+        {
+         "type": "chord",
+         "notes": [
+          {
+           "hole": 1,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 0
+          },
+          {
+           "hole": 2,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 4
+          },
+          {
+           "hole": 3,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 7
+          }
+         ],
+         "start": 6.0,
+         "dur": 1.0
+        },
+        {
+         "type": "chord",
+         "notes": [
+          {
+           "hole": 1,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 0
+          },
+          {
+           "hole": 2,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 4
+          },
+          {
+           "hole": 3,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 7
+          }
+         ],
+         "start": 7.0,
+         "dur": 1.0
+        },
+        {
+         "type": "chord",
+         "notes": [
+          {
+           "hole": 1,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 2
+          },
+          {
+           "hole": 2,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 7
+          },
+          {
+           "hole": 3,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 11
+          }
+         ],
+         "start": 8.0,
+         "dur": 1.0
+        },
+        {
+         "type": "chord",
+         "notes": [
+          {
+           "hole": 1,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 2
+          },
+          {
+           "hole": 2,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 7
+          },
+          {
+           "hole": 3,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 11
+          }
+         ],
+         "start": 9.0,
+         "dur": 1.0
+        },
+        {
+         "type": "chord",
+         "notes": [
+          {
+           "hole": 1,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 0
+          },
+          {
+           "hole": 2,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 4
+          },
+          {
+           "hole": 3,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 7
+          }
+         ],
+         "start": 10.0,
+         "dur": 1.0
+        },
+        {
+         "type": "chord",
+         "notes": [
+          {
+           "hole": 1,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 0
+          },
+          {
+           "hole": 2,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 4
+          },
+          {
+           "hole": 3,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 7
+          }
+         ],
+         "start": 11.0,
+         "dur": 1.0
+        },
+        {
+         "type": "chord",
+         "notes": [
+          {
+           "hole": 1,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 2
+          },
+          {
+           "hole": 2,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 7
+          },
+          {
+           "hole": 3,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 11
+          }
+         ],
+         "start": 12.0,
+         "dur": 1.0
+        },
+        {
+         "type": "chord",
+         "notes": [
+          {
+           "hole": 1,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 2
+          },
+          {
+           "hole": 2,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 7
+          },
+          {
+           "hole": 3,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 11
+          }
+         ],
+         "start": 13.0,
+         "dur": 1.0
+        },
+        {
+         "type": "chord",
+         "notes": [
+          {
+           "hole": 1,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 0
+          },
+          {
+           "hole": 2,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 4
+          },
+          {
+           "hole": 3,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 7
+          }
+         ],
+         "start": 14.0,
+         "dur": 1.0
+        },
+        {
+         "type": "chord",
+         "notes": [
+          {
+           "hole": 1,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 0
+          },
+          {
+           "hole": 2,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 4
+          },
+          {
+           "hole": 3,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 7
+          }
+         ],
+         "start": 15.0,
+         "dur": 1.0
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "whistle",
+     "name": {
+      "it": "Il Fischio",
+      "en": "The Whistle"
+     },
+     "trains": {
+      "it": "trillo e fischio del treno",
+      "en": "trill and train whistle"
+     },
+     "phrases": [
+      {
+       "id": "whistle-1",
+       "tab": "4↓~5↓ - - - |",
+       "beatsPerBar": 4,
+       "lengthBeats": 4.0,
+       "events": [
+        {
+         "type": "trill",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 14
+          },
+          {
+           "hole": 5,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 17
+          }
+         ],
+         "start": 0.0,
+         "dur": 4.0
+        }
+       ]
+      },
+      {
+       "id": "whistle-2",
+       "tab": "4-5↓ - . . | 4-5↓ - . . |",
+       "beatsPerBar": 4,
+       "lengthBeats": 8.0,
+       "events": [
+        {
+         "type": "chord",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 14
+          },
+          {
+           "hole": 5,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 17
+          }
+         ],
+         "start": 0.0,
+         "dur": 2.0
+        },
+        {
+         "type": "chord",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 14
+          },
+          {
+           "hole": 5,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 17
+          }
+         ],
+         "start": 4.0,
+         "dur": 2.0
+        }
+       ]
+      }
+     ]
+    }
+   ],
+   "boss": {
+    "id": "old-iron",
+    "name": {
+     "it": "La Locomotiva",
+     "en": "Old Iron"
+    },
+    "description": {
+     "it": "Parte lenta e accelera; le sue raffiche larghe si parano solo con accordi.",
+     "en": "Starts slow and speeds up; its wide volleys can only be blocked with chords."
+    },
+    "phases": [
+     {
+      "phase": 1,
+      "mode": "call_response",
+      "bpm": [
+       90,
+       90
+      ],
+      "phrases": [
+       {
+        "id": "old-iron-1",
+        "tab": "(1-2-3↓ 1-2-3↓) (1-2-3↑ 1-2-3↑) (1-2-3↓ 1-2-3↓) (1-2-3↑ 1-2-3↑) |",
+        "beatsPerBar": 4,
+        "lengthBeats": 4.0,
+        "events": [
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 2
+           },
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           },
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 11
+           }
+          ],
+          "start": 0.0,
+          "dur": 0.5
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 2
+           },
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           },
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 11
+           }
+          ],
+          "start": 0.5,
+          "dur": 0.5
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 0
+           },
+           {
+            "hole": 2,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 4
+           },
+           {
+            "hole": 3,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 7
+           }
+          ],
+          "start": 1.0,
+          "dur": 0.5
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 0
+           },
+           {
+            "hole": 2,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 4
+           },
+           {
+            "hole": 3,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 7
+           }
+          ],
+          "start": 1.5,
+          "dur": 0.5
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 2
+           },
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           },
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 11
+           }
+          ],
+          "start": 2.0,
+          "dur": 0.5
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 2
+           },
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           },
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 11
+           }
+          ],
+          "start": 2.5,
+          "dur": 0.5
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 0
+           },
+           {
+            "hole": 2,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 4
+           },
+           {
+            "hole": 3,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 7
+           }
+          ],
+          "start": 3.0,
+          "dur": 0.5
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 0
+           },
+           {
+            "hole": 2,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 4
+           },
+           {
+            "hole": 3,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 7
+           }
+          ],
+          "start": 3.5,
+          "dur": 0.5
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "phase": 2,
+      "mode": "call_response",
+      "bpm": [
+       110,
+       110
+      ],
+      "phrases": [
+       {
+        "id": "old-iron-2",
+        "tab": "(1-2-3↓ 1-2-3↓) (1-2-3↑ 1-2-3↑) (1-2-3↓ 1-2-3↓) (1-2-3↑ 1-2-3↑) | (1-2-3↓ 1-2-3↓) (1-2-3↑ 1-2-3↑) (1-2-3↓ 1-2-3↓) (1-2-3↑ 1-2-3↑) | 4-5↓ - - . |",
+        "beatsPerBar": 4,
+        "lengthBeats": 12.0,
+        "events": [
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 2
+           },
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           },
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 11
+           }
+          ],
+          "start": 0.0,
+          "dur": 0.5
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 2
+           },
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           },
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 11
+           }
+          ],
+          "start": 0.5,
+          "dur": 0.5
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 0
+           },
+           {
+            "hole": 2,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 4
+           },
+           {
+            "hole": 3,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 7
+           }
+          ],
+          "start": 1.0,
+          "dur": 0.5
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 0
+           },
+           {
+            "hole": 2,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 4
+           },
+           {
+            "hole": 3,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 7
+           }
+          ],
+          "start": 1.5,
+          "dur": 0.5
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 2
+           },
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           },
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 11
+           }
+          ],
+          "start": 2.0,
+          "dur": 0.5
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 2
+           },
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           },
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 11
+           }
+          ],
+          "start": 2.5,
+          "dur": 0.5
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 0
+           },
+           {
+            "hole": 2,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 4
+           },
+           {
+            "hole": 3,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 7
+           }
+          ],
+          "start": 3.0,
+          "dur": 0.5
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 0
+           },
+           {
+            "hole": 2,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 4
+           },
+           {
+            "hole": 3,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 7
+           }
+          ],
+          "start": 3.5,
+          "dur": 0.5
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 2
+           },
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           },
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 11
+           }
+          ],
+          "start": 4.0,
+          "dur": 0.5
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 2
+           },
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           },
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 11
+           }
+          ],
+          "start": 4.5,
+          "dur": 0.5
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 0
+           },
+           {
+            "hole": 2,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 4
+           },
+           {
+            "hole": 3,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 7
+           }
+          ],
+          "start": 5.0,
+          "dur": 0.5
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 0
+           },
+           {
+            "hole": 2,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 4
+           },
+           {
+            "hole": 3,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 7
+           }
+          ],
+          "start": 5.5,
+          "dur": 0.5
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 2
+           },
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           },
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 11
+           }
+          ],
+          "start": 6.0,
+          "dur": 0.5
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 2
+           },
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           },
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 11
+           }
+          ],
+          "start": 6.5,
+          "dur": 0.5
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 0
+           },
+           {
+            "hole": 2,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 4
+           },
+           {
+            "hole": 3,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 7
+           }
+          ],
+          "start": 7.0,
+          "dur": 0.5
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 0
+           },
+           {
+            "hole": 2,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 4
+           },
+           {
+            "hole": 3,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 7
+           }
+          ],
+          "start": 7.5,
+          "dur": 0.5
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 14
+           },
+           {
+            "hole": 5,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 17
+           }
+          ],
+          "start": 8.0,
+          "dur": 3.0
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "phase": 3,
+      "mode": "call_response",
+      "bpm": [
+       130,
+       130
+      ],
+      "phrases": [
+       {
+        "id": "old-iron-3",
+        "tab": "1-2-3↓ 4↑ 1-2-3↓ 4↓ | 1-2-3↓ 5↑ 1-2-3↓ 4↓ | 4↓~5↓ - - - |",
+        "beatsPerBar": 4,
+        "lengthBeats": 12.0,
+        "events": [
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 2
+           },
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           },
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 11
+           }
+          ],
+          "start": 0.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 12
+           }
+          ],
+          "start": 1.0,
+          "dur": 1.0
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 2
+           },
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           },
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 11
+           }
+          ],
+          "start": 2.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 14
+           }
+          ],
+          "start": 3.0,
+          "dur": 1.0
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 2
+           },
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           },
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 11
+           }
+          ],
+          "start": 4.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 16
+           }
+          ],
+          "start": 5.0,
+          "dur": 1.0
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 2
+           },
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           },
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 11
+           }
+          ],
+          "start": 6.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 14
+           }
+          ],
+          "start": 7.0,
+          "dur": 1.0
+         },
+         {
+          "type": "trill",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 14
+           },
+           {
+            "hole": 5,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 17
+           }
+          ],
+          "start": 8.0,
+          "dur": 4.0
+         }
+        ]
+       }
+      ],
+      "entryTest": true
+     }
+    ],
+    "criteria": {
+     "minNoteAccuracy": 0.8,
+     "chordMinMatchingNotes": 2,
+     "timingWindow": "medium"
+    }
+   }
+  },
+  {
+   "id": "juke-joint",
+   "order": 4,
+   "name": {
+    "it": "Il juke joint",
+    "en": "The Juke Joint"
+   },
+   "technique": {
+    "it": "Primo bend (1 semitono)",
+    "en": "First bend (1 semitone)"
+   },
+   "goal": {
+    "it": "Abbassare una nota aspirata di un semitono, tenerla e rilasciarla.",
+    "en": "Lower a draw note by one semitone, hold it and release it."
+   },
+   "tips": [
+    {
+     "it": "Passa dalla vocale \"i\" alla \"u\" mentre aspiri, senza aspirare più forte.",
+     "en": "Shift from an \"ee\" to an \"oo\" vowel while drawing, without drawing harder."
+    }
+   ],
+   "bpm": [
+    70,
+    90
+   ],
+   "newNotes": [
+    "4↓'",
+    "6↓'",
+    "1↓'"
+   ],
+   "enemies": [
+    {
+     "id": "bartender",
+     "name": {
+      "it": "Il Barista",
+      "en": "The Bartender"
+     },
+     "trains": {
+      "it": "trovare il bend e tenerlo",
+      "en": "find the bend and hold it"
+     },
+     "phrases": [
+      {
+       "id": "bartender-1",
+       "tab": "4↓ - 4↓' - |",
+       "beatsPerBar": 4,
+       "lengthBeats": 4.0,
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 14
+          }
+         ],
+         "start": 0.0,
+         "dur": 2.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "draw",
+           "bend": 1,
+           "semitone": 13
+          }
+         ],
+         "start": 2.0,
+         "dur": 2.0
+        }
+       ]
+      },
+      {
+       "id": "bartender-2",
+       "tab": "4↓' - - - |",
+       "beatsPerBar": 4,
+       "lengthBeats": 4.0,
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "draw",
+           "bend": 1,
+           "semitone": 13
+          }
+         ],
+         "start": 0.0,
+         "dur": 4.0
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "dice-man",
+     "name": {
+      "it": "Il Giocatore di dadi",
+      "en": "The Dice Man"
+     },
+     "trains": {
+      "it": "bend e rilascio",
+      "en": "bend and release"
+     },
+     "phrases": [
+      {
+       "id": "dice-1",
+       "tab": "4↓' 4↓ - - |",
+       "beatsPerBar": 4,
+       "lengthBeats": 4.0,
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "draw",
+           "bend": 1,
+           "semitone": 13
+          }
+         ],
+         "start": 0.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 14
+          }
+         ],
+         "start": 1.0,
+         "dur": 3.0
+        }
+       ]
+      },
+      {
+       "id": "dice-2",
+       "tab": "(4↓' 4↓) 4↑ - - |",
+       "beatsPerBar": 4,
+       "lengthBeats": 4.0,
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "draw",
+           "bend": 1,
+           "semitone": 13
+          }
+         ],
+         "start": 0.0,
+         "dur": 0.5
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 14
+          }
+         ],
+         "start": 0.5,
+         "dur": 0.5
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 12
+          }
+         ],
+         "start": 1.0,
+         "dur": 3.0
+        }
+       ]
+      },
+      {
+       "id": "dice-3",
+       "tab": "(4↓' 4↓) 5↓ 4↓ - |",
+       "beatsPerBar": 4,
+       "lengthBeats": 4.0,
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "draw",
+           "bend": 1,
+           "semitone": 13
+          }
+         ],
+         "start": 0.0,
+         "dur": 0.5
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 14
+          }
+         ],
+         "start": 0.5,
+         "dur": 0.5
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 5,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 17
+          }
+         ],
+         "start": 1.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 14
+          }
+         ],
+         "start": 2.0,
+         "dur": 2.0
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "singer",
+     "name": {
+      "it": "La Cantante",
+      "en": "The Singer"
+     },
+     "trains": {
+      "it": "bend su 6 e su 1",
+      "en": "bends on 6 and 1"
+     },
+     "phrases": [
+      {
+       "id": "singer-1",
+       "tab": "6↓ 6↓' 6↑ - |",
+       "beatsPerBar": 4,
+       "lengthBeats": 4.0,
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 6,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 21
+          }
+         ],
+         "start": 0.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 6,
+           "dir": "draw",
+           "bend": 1,
+           "semitone": 20
+          }
+         ],
+         "start": 1.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 6,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 19
+          }
+         ],
+         "start": 2.0,
+         "dur": 2.0
+        }
+       ]
+      },
+      {
+       "id": "singer-2",
+       "tab": "1↓' 1↓ 1↑ - |",
+       "beatsPerBar": 4,
+       "lengthBeats": 4.0,
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 1,
+           "dir": "draw",
+           "bend": 1,
+           "semitone": 1
+          }
+         ],
+         "start": 0.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 1,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 2
+          }
+         ],
+         "start": 1.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 1,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 0
+          }
+         ],
+         "start": 2.0,
+         "dur": 2.0
+        }
+       ]
+      }
+     ]
+    }
+   ],
+   "boss": {
+    "id": "off-key",
+    "name": {
+     "it": "Lo Stonato",
+     "en": "The Off-Key"
+    },
+    "description": {
+     "it": "Suona sempre calante e si para solo con note bendate.",
+     "en": "Always plays flat and can only be parried with bent notes."
+    },
+    "phases": [
+     {
+      "phase": 1,
+      "mode": "volley",
+      "bpm": [
+       70,
+       80
+      ],
+      "phrases": [
+       {
+        "id": "off-key-1",
+        "tab": "4↓' . 4↓' . | 4↓' . 4↓' . |",
+        "beatsPerBar": 4,
+        "lengthBeats": 8.0,
+        "events": [
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 1,
+            "semitone": 13
+           }
+          ],
+          "start": 0.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 1,
+            "semitone": 13
+           }
+          ],
+          "start": 2.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 1,
+            "semitone": 13
+           }
+          ],
+          "start": 4.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 1,
+            "semitone": 13
+           }
+          ],
+          "start": 6.0,
+          "dur": 1.0
+         }
+        ]
+       }
+      ],
+      "description": {
+       "it": "Raffica: solo 4↓' su ogni colpo.",
+       "en": "Volley: only 4↓' on every hit."
+      }
+     },
+     {
+      "phase": 2,
+      "mode": "call_response",
+      "bpm": [
+       80,
+       90
+      ],
+      "phrases": [
+       {
+        "id": "off-key-2a",
+        "tab": "4↑ 4↓' 4↓ - | 5↓ 4↓ 4↓' 4↑ |",
+        "beatsPerBar": 4,
+        "lengthBeats": 8.0,
+        "events": [
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 12
+           }
+          ],
+          "start": 0.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 1,
+            "semitone": 13
+           }
+          ],
+          "start": 1.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 14
+           }
+          ],
+          "start": 2.0,
+          "dur": 2.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 17
+           }
+          ],
+          "start": 4.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 14
+           }
+          ],
+          "start": 5.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 1,
+            "semitone": 13
+           }
+          ],
+          "start": 6.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 12
+           }
+          ],
+          "start": 7.0,
+          "dur": 1.0
+         }
+        ]
+       },
+       {
+        "id": "off-key-2b",
+        "tab": "6↓' 6↑ 5↓ 4↓ | 4↓' 4↑ - - |",
+        "beatsPerBar": 4,
+        "lengthBeats": 8.0,
+        "events": [
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 6,
+            "dir": "draw",
+            "bend": 1,
+            "semitone": 20
+           }
+          ],
+          "start": 0.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 6,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 19
+           }
+          ],
+          "start": 1.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 17
+           }
+          ],
+          "start": 2.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 14
+           }
+          ],
+          "start": 3.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 1,
+            "semitone": 13
+           }
+          ],
+          "start": 4.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 12
+           }
+          ],
+          "start": 5.0,
+          "dur": 3.0
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "phase": 3,
+      "mode": "call_response",
+      "bpm": [
+       80,
+       90
+      ],
+      "phrases": [
+       {
+        "id": "off-key-3",
+        "tab": "(4↓' 4↓) 5↓ (4↓' 4↓) 4↑ | 1↓' 1↓ 1↑ - |",
+        "beatsPerBar": 4,
+        "lengthBeats": 8.0,
+        "events": [
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 1,
+            "semitone": 13
+           }
+          ],
+          "start": 0.0,
+          "dur": 0.5
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 14
+           }
+          ],
+          "start": 0.5,
+          "dur": 0.5
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 17
+           }
+          ],
+          "start": 1.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 1,
+            "semitone": 13
+           }
+          ],
+          "start": 2.0,
+          "dur": 0.5
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 14
+           }
+          ],
+          "start": 2.5,
+          "dur": 0.5
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 12
+           }
+          ],
+          "start": 3.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "draw",
+            "bend": 1,
+            "semitone": 1
+           }
+          ],
+          "start": 4.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 2
+           }
+          ],
+          "start": 5.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 0
+           }
+          ],
+          "start": 6.0,
+          "dur": 2.0
+         }
+        ]
+       }
+      ],
+      "entryTest": true
+     }
+    ],
+    "criteria": {
+     "minNoteAccuracy": 0.8,
+     "bendToleranceCents": 30,
+     "bendMinHoldMs": 300
+    }
+   }
+  },
+  {
+   "id": "beale-street",
+   "order": 5,
+   "name": {
+    "it": "Beale Street",
+    "en": "Beale Street"
+   },
+   "technique": {
+    "it": "Seconda posizione (blues una quinta sopra la tonalità dell'armonica), vibrato",
+    "en": "Second position (blues a fifth above the harp's key), vibrato"
+   },
+   "goal": {
+    "it": "Usare 2↓ come nota \"casa\" e suonare blues su un'armonica in Do in Sol.",
+    "en": "Use 2↓ as the home note and play blues in G on a C harp."
+   },
+   "tips": [
+    {
+     "it": "Regola pratica: per una base in Sol prendi l'armonica in Do (tonalità della base meno una quinta).",
+     "en": "Rule of thumb: for a backing in G use a C harp (backing key minus a fifth)."
+    }
+   ],
+   "bpm": [
+    80,
+    110
+   ],
+   "feel": "shuffle",
+   "position": 2,
+   "homeNotes": [
+    "2↓",
+    "3↑",
+    "6↑",
+    "9↑"
+   ],
+   "newNotes": [
+    "2↓≈",
+    "4↓≈"
+   ],
+   "enemies": [
+    {
+     "id": "shoeshine",
+     "name": {
+      "it": "Il Lustrascarpe",
+      "en": "The Shoeshine"
+     },
+     "trains": {
+      "it": "sentire la nota casa",
+      "en": "feel the home note"
+     },
+     "phrases": [
+      {
+       "id": "shoeshine-1",
+       "tab": "2↓ - - - |",
+       "beatsPerBar": 4,
+       "lengthBeats": 4.0,
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 2,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 7
+          }
+         ],
+         "start": 0.0,
+         "dur": 4.0
+        }
+       ]
+      },
+      {
+       "id": "shoeshine-2",
+       "tab": "1↓ 2↓ - - |",
+       "beatsPerBar": 4,
+       "lengthBeats": 4.0,
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 1,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 2
+          }
+         ],
+         "start": 0.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 2,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 7
+          }
+         ],
+         "start": 1.0,
+         "dur": 3.0
+        }
+       ]
+      },
+      {
+       "id": "shoeshine-3",
+       "tab": "2↓ 3↓ 4↓ - |",
+       "beatsPerBar": 4,
+       "lengthBeats": 4.0,
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 2,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 7
+          }
+         ],
+         "start": 0.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 3,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 11
+          }
+         ],
+         "start": 1.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 14
+          }
+         ],
+         "start": 2.0,
+         "dur": 2.0
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "street-vendor",
+     "name": {
+      "it": "Il Venditore ambulante",
+      "en": "The Street Vendor"
+     },
+     "trains": {
+      "it": "riff senza bend",
+      "en": "riffs without bends"
+     },
+     "phrases": [
+      {
+       "id": "vendor-1",
+       "tab": "4↓ 5↓ 6↑ - | 6↑ 5↓ 4↓ - |",
+       "beatsPerBar": 4,
+       "lengthBeats": 8.0,
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 14
+          }
+         ],
+         "start": 0.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 5,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 17
+          }
+         ],
+         "start": 1.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 6,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 19
+          }
+         ],
+         "start": 2.0,
+         "dur": 2.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 6,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 19
+          }
+         ],
+         "start": 4.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 5,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 17
+          }
+         ],
+         "start": 5.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 14
+          }
+         ],
+         "start": 6.0,
+         "dur": 2.0
+        }
+       ]
+      },
+      {
+       "id": "vendor-2",
+       "tab": "6↑ 5↓ 4↓ 4↑ | 3↓ 2↓ - - |",
+       "beatsPerBar": 4,
+       "lengthBeats": 8.0,
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 6,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 19
+          }
+         ],
+         "start": 0.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 5,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 17
+          }
+         ],
+         "start": 1.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 14
+          }
+         ],
+         "start": 2.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 12
+          }
+         ],
+         "start": 3.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 3,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 11
+          }
+         ],
+         "start": 4.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 2,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 7
+          }
+         ],
+         "start": 5.0,
+         "dur": 3.0
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "horn-player",
+     "name": {
+      "it": "Il Trombettista",
+      "en": "The Horn Player"
+     },
+     "trains": {
+      "it": "vibrato e note lunghe",
+      "en": "vibrato and long notes"
+     },
+     "phrases": [
+      {
+       "id": "horn-1",
+       "tab": "2↓≈ - - - |",
+       "beatsPerBar": 4,
+       "lengthBeats": 4.0,
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 2,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 7
+          }
+         ],
+         "vibrato": true,
+         "start": 0.0,
+         "dur": 4.0
+        }
+       ]
+      },
+      {
+       "id": "horn-2",
+       "tab": "4↓≈ - - - |",
+       "beatsPerBar": 4,
+       "lengthBeats": 4.0,
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 14
+          }
+         ],
+         "vibrato": true,
+         "start": 0.0,
+         "dur": 4.0
+        }
+       ]
+      },
+      {
+       "id": "horn-3",
+       "tab": "6↑ 5↓ 4↓≈ - |",
+       "beatsPerBar": 4,
+       "lengthBeats": 4.0,
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 6,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 19
+          }
+         ],
+         "start": 0.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 5,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 17
+          }
+         ],
+         "start": 1.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 14
+          }
+         ],
+         "vibrato": true,
+         "start": 2.0,
+         "dur": 2.0
+        }
+       ]
+      }
+     ]
+    }
+   ],
+   "boss": {
+    "id": "king-of-beale",
+    "name": {
+     "it": "Il Re di Beale Street",
+     "en": "The King of Beale Street"
+    },
+    "description": {
+     "it": "Un musicista di strada spavaldo: ogni risposta giusta porta pubblico dalla tua parte.",
+     "en": "A cocky street player: every good answer wins the crowd over to your side."
+    },
+    "phases": [
+     {
+      "phase": 1,
+      "mode": "call_response",
+      "bpm": [
+       80,
+       90
+      ],
+      "phrases": [
+       {
+        "id": "beale-1",
+        "tab": "1↓ 2↓ 1↓ 2↓ | 1↓ 2↓ 2↓ - |",
+        "beatsPerBar": 4,
+        "lengthBeats": 8.0,
+        "events": [
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 2
+           }
+          ],
+          "start": 0.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           }
+          ],
+          "start": 1.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 2
+           }
+          ],
+          "start": 2.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           }
+          ],
+          "start": 3.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 2
+           }
+          ],
+          "start": 4.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           }
+          ],
+          "start": 5.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           }
+          ],
+          "start": 6.0,
+          "dur": 2.0
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "phase": 2,
+      "mode": "call_response",
+      "bpm": [
+       90,
+       100
+      ],
+      "phrases": [
+       {
+        "id": "beale-2a",
+        "tab": "2↓ 3↓ 4↑ 4↓' | 4↓ - - - |",
+        "beatsPerBar": 4,
+        "lengthBeats": 8.0,
+        "events": [
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           }
+          ],
+          "start": 0.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 11
+           }
+          ],
+          "start": 1.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 12
+           }
+          ],
+          "start": 2.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 1,
+            "semitone": 13
+           }
+          ],
+          "start": 3.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 14
+           }
+          ],
+          "start": 4.0,
+          "dur": 4.0
+         }
+        ]
+       },
+       {
+        "id": "beale-2b",
+        "tab": "4↓ 5↓ 6↑ 5↓ | 4↓ 4↓' 4↑ 3↓ | 2↓ - - - |",
+        "beatsPerBar": 4,
+        "lengthBeats": 12.0,
+        "events": [
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 14
+           }
+          ],
+          "start": 0.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 17
+           }
+          ],
+          "start": 1.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 6,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 19
+           }
+          ],
+          "start": 2.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 17
+           }
+          ],
+          "start": 3.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 14
+           }
+          ],
+          "start": 4.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 1,
+            "semitone": 13
+           }
+          ],
+          "start": 5.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 12
+           }
+          ],
+          "start": 6.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 11
+           }
+          ],
+          "start": 7.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           }
+          ],
+          "start": 8.0,
+          "dur": 4.0
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "phase": 3,
+      "mode": "call_response",
+      "bpm": [
+       90,
+       110
+      ],
+      "phrases": [
+       {
+        "id": "beale-3",
+        "tab": "1-2-3↓ 1-2-3↓ 1-2-3↓ 1-2-3↓ | 1-2-3↓ 1-2-3↓ 1-2-3↓ 1-2-3↓ | 1-2-3↓ 1-2-3↓ 1-2-3↓ 1-2-3↓ | 1-2-3↓ 1-2-3↓ 1-2-3↓ 1-2-3↓ | 1-2-3↑ 1-2-3↑ 1-2-3↑ 1-2-3↑ | 1-2-3↑ 1-2-3↑ 1-2-3↑ 1-2-3↑ | 1-2-3↓ 1-2-3↓ 1-2-3↓ 1-2-3↓ | 1-2-3↓ 1-2-3↓ 1-2-3↓ 1-2-3↓ | 4-5-6↓ 4-5-6↓ 4-5-6↓ 4-5-6↓ | 1-2-3↑ 1-2-3↑ 1-2-3↑ 1-2-3↑ | 2↓ - - - | 1↓ - 4↓ - |",
+        "beatsPerBar": 4,
+        "lengthBeats": 48.0,
+        "events": [
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 2
+           },
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           },
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 11
+           }
+          ],
+          "start": 0.0,
+          "dur": 1.0
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 2
+           },
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           },
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 11
+           }
+          ],
+          "start": 1.0,
+          "dur": 1.0
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 2
+           },
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           },
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 11
+           }
+          ],
+          "start": 2.0,
+          "dur": 1.0
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 2
+           },
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           },
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 11
+           }
+          ],
+          "start": 3.0,
+          "dur": 1.0
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 2
+           },
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           },
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 11
+           }
+          ],
+          "start": 4.0,
+          "dur": 1.0
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 2
+           },
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           },
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 11
+           }
+          ],
+          "start": 5.0,
+          "dur": 1.0
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 2
+           },
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           },
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 11
+           }
+          ],
+          "start": 6.0,
+          "dur": 1.0
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 2
+           },
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           },
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 11
+           }
+          ],
+          "start": 7.0,
+          "dur": 1.0
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 2
+           },
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           },
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 11
+           }
+          ],
+          "start": 8.0,
+          "dur": 1.0
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 2
+           },
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           },
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 11
+           }
+          ],
+          "start": 9.0,
+          "dur": 1.0
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 2
+           },
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           },
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 11
+           }
+          ],
+          "start": 10.0,
+          "dur": 1.0
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 2
+           },
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           },
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 11
+           }
+          ],
+          "start": 11.0,
+          "dur": 1.0
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 2
+           },
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           },
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 11
+           }
+          ],
+          "start": 12.0,
+          "dur": 1.0
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 2
+           },
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           },
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 11
+           }
+          ],
+          "start": 13.0,
+          "dur": 1.0
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 2
+           },
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           },
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 11
+           }
+          ],
+          "start": 14.0,
+          "dur": 1.0
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 2
+           },
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           },
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 11
+           }
+          ],
+          "start": 15.0,
+          "dur": 1.0
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 0
+           },
+           {
+            "hole": 2,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 4
+           },
+           {
+            "hole": 3,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 7
+           }
+          ],
+          "start": 16.0,
+          "dur": 1.0
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 0
+           },
+           {
+            "hole": 2,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 4
+           },
+           {
+            "hole": 3,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 7
+           }
+          ],
+          "start": 17.0,
+          "dur": 1.0
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 0
+           },
+           {
+            "hole": 2,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 4
+           },
+           {
+            "hole": 3,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 7
+           }
+          ],
+          "start": 18.0,
+          "dur": 1.0
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 0
+           },
+           {
+            "hole": 2,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 4
+           },
+           {
+            "hole": 3,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 7
+           }
+          ],
+          "start": 19.0,
+          "dur": 1.0
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 0
+           },
+           {
+            "hole": 2,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 4
+           },
+           {
+            "hole": 3,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 7
+           }
+          ],
+          "start": 20.0,
+          "dur": 1.0
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 0
+           },
+           {
+            "hole": 2,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 4
+           },
+           {
+            "hole": 3,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 7
+           }
+          ],
+          "start": 21.0,
+          "dur": 1.0
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 0
+           },
+           {
+            "hole": 2,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 4
+           },
+           {
+            "hole": 3,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 7
+           }
+          ],
+          "start": 22.0,
+          "dur": 1.0
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 0
+           },
+           {
+            "hole": 2,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 4
+           },
+           {
+            "hole": 3,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 7
+           }
+          ],
+          "start": 23.0,
+          "dur": 1.0
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 2
+           },
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           },
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 11
+           }
+          ],
+          "start": 24.0,
+          "dur": 1.0
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 2
+           },
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           },
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 11
+           }
+          ],
+          "start": 25.0,
+          "dur": 1.0
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 2
+           },
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           },
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 11
+           }
+          ],
+          "start": 26.0,
+          "dur": 1.0
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 2
+           },
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           },
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 11
+           }
+          ],
+          "start": 27.0,
+          "dur": 1.0
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 2
+           },
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           },
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 11
+           }
+          ],
+          "start": 28.0,
+          "dur": 1.0
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 2
+           },
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           },
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 11
+           }
+          ],
+          "start": 29.0,
+          "dur": 1.0
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 2
+           },
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           },
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 11
+           }
+          ],
+          "start": 30.0,
+          "dur": 1.0
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 2
+           },
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           },
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 11
+           }
+          ],
+          "start": 31.0,
+          "dur": 1.0
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 14
+           },
+           {
+            "hole": 5,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 17
+           },
+           {
+            "hole": 6,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 21
+           }
+          ],
+          "start": 32.0,
+          "dur": 1.0
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 14
+           },
+           {
+            "hole": 5,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 17
+           },
+           {
+            "hole": 6,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 21
+           }
+          ],
+          "start": 33.0,
+          "dur": 1.0
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 14
+           },
+           {
+            "hole": 5,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 17
+           },
+           {
+            "hole": 6,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 21
+           }
+          ],
+          "start": 34.0,
+          "dur": 1.0
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 14
+           },
+           {
+            "hole": 5,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 17
+           },
+           {
+            "hole": 6,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 21
+           }
+          ],
+          "start": 35.0,
+          "dur": 1.0
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 0
+           },
+           {
+            "hole": 2,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 4
+           },
+           {
+            "hole": 3,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 7
+           }
+          ],
+          "start": 36.0,
+          "dur": 1.0
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 0
+           },
+           {
+            "hole": 2,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 4
+           },
+           {
+            "hole": 3,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 7
+           }
+          ],
+          "start": 37.0,
+          "dur": 1.0
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 0
+           },
+           {
+            "hole": 2,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 4
+           },
+           {
+            "hole": 3,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 7
+           }
+          ],
+          "start": 38.0,
+          "dur": 1.0
+         },
+         {
+          "type": "chord",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 0
+           },
+           {
+            "hole": 2,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 4
+           },
+           {
+            "hole": 3,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 7
+           }
+          ],
+          "start": 39.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           }
+          ],
+          "start": 40.0,
+          "dur": 4.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 2
+           }
+          ],
+          "start": 44.0,
+          "dur": 2.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 14
+           }
+          ],
+          "start": 46.0,
+          "dur": 2.0
+         }
+        ],
+        "title": {
+         "it": "Giro di 12 battute",
+         "en": "12-bar blues"
+        },
+        "chords": [
+         "I",
+         "I",
+         "I",
+         "I",
+         "IV",
+         "IV",
+         "I",
+         "I",
+         "V",
+         "IV",
+         "I",
+         "V"
+        ]
+       }
+      ],
+      "entryTest": true
+     }
+    ],
+    "criteria": {
+     "minNoteAccuracy": 0.8,
+     "homeNoteOnAccents": true,
+     "vibratoDetection": "experimental"
+    }
+   }
+  },
+  {
+   "id": "delta-crossroads",
+   "order": 6,
+   "name": {
+    "it": "Il crocevia nel Delta",
+    "en": "The Delta Crossroads"
+   },
+   "technique": {
+    "it": "Bend profondi sui fori 2 e 3",
+    "en": "Deep bends on holes 2 and 3"
+   },
+   "goal": {
+    "it": "Fermarsi su ogni gradino del bend, non solo in fondo. Completare la scala bassa.",
+    "en": "Stop on every step of the bend, not just the bottom. Complete the low scale."
+   },
+   "bpm": [
+    60,
+    75
+   ],
+   "feel": "slow blues",
+   "newNotes": [
+    "3↓'",
+    "2↓'",
+    "2↓''",
+    "3↓''",
+    "3↓'''"
+   ],
+   "enemies": [
+    {
+     "id": "crow",
+     "name": {
+      "it": "Il Corvo",
+      "en": "The Crow"
+     },
+     "trains": {
+      "it": "primo gradino sul 3",
+      "en": "first step on hole 3"
+     },
+     "phrases": [
+      {
+       "id": "crow-1",
+       "tab": "3↓' 2↓ - - |",
+       "beatsPerBar": 4,
+       "lengthBeats": 4.0,
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 3,
+           "dir": "draw",
+           "bend": 1,
+           "semitone": 10
+          }
+         ],
+         "start": 0.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 2,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 7
+          }
+         ],
+         "start": 1.0,
+         "dur": 3.0
+        }
+       ]
+      },
+      {
+       "id": "crow-2",
+       "tab": "3↓ 3↓' 2↓ - |",
+       "beatsPerBar": 4,
+       "lengthBeats": 4.0,
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 3,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 11
+          }
+         ],
+         "start": 0.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 3,
+           "dir": "draw",
+           "bend": 1,
+           "semitone": 10
+          }
+         ],
+         "start": 1.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 2,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 7
+          }
+         ],
+         "start": 2.0,
+         "dur": 2.0
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "sharecropper",
+     "name": {
+      "it": "Il Coltivatore",
+      "en": "The Sharecropper"
+     },
+     "trains": {
+      "it": "bend sul 2",
+      "en": "bends on hole 2"
+     },
+     "phrases": [
+      {
+       "id": "sharecropper-1",
+       "tab": "2↓'' 2↓ - - |",
+       "beatsPerBar": 4,
+       "lengthBeats": 4.0,
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 2,
+           "dir": "draw",
+           "bend": 2,
+           "semitone": 5
+          }
+         ],
+         "start": 0.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 2,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 7
+          }
+         ],
+         "start": 1.0,
+         "dur": 3.0
+        }
+       ]
+      },
+      {
+       "id": "sharecropper-2",
+       "tab": "2↓' 2↓ 3↓' 2↓ |",
+       "beatsPerBar": 4,
+       "lengthBeats": 4.0,
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 2,
+           "dir": "draw",
+           "bend": 1,
+           "semitone": 6
+          }
+         ],
+         "start": 0.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 2,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 7
+          }
+         ],
+         "start": 1.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 3,
+           "dir": "draw",
+           "bend": 1,
+           "semitone": 10
+          }
+         ],
+         "start": 2.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 2,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 7
+          }
+         ],
+         "start": 3.0,
+         "dur": 1.0
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "preacher",
+     "name": {
+      "it": "Il Predicatore",
+      "en": "The Preacher"
+     },
+     "trains": {
+      "it": "scala bassa completa",
+      "en": "full low scale"
+     },
+     "phrases": [
+      {
+       "id": "preacher-1",
+       "tab": "1↑ 1↓ 2↑ 2↓'' | 3↑ 3↓'' 3↓ 4↑ |",
+       "beatsPerBar": 4,
+       "lengthBeats": 8.0,
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 1,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 0
+          }
+         ],
+         "start": 0.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 1,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 2
+          }
+         ],
+         "start": 1.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 2,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 4
+          }
+         ],
+         "start": 2.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 2,
+           "dir": "draw",
+           "bend": 2,
+           "semitone": 5
+          }
+         ],
+         "start": 3.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 3,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 7
+          }
+         ],
+         "start": 4.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 3,
+           "dir": "draw",
+           "bend": 2,
+           "semitone": 9
+          }
+         ],
+         "start": 5.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 3,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 11
+          }
+         ],
+         "start": 6.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 12
+          }
+         ],
+         "start": 7.0,
+         "dur": 1.0
+        }
+       ]
+      }
+     ]
+    }
+   ],
+   "boss": {
+    "id": "delta-shade",
+    "name": {
+     "it": "L'Ombra del Delta",
+     "en": "The Delta Shade"
+    },
+    "description": {
+     "it": "Ti aspetta a mezzanotte al crocevia; ogni colpo indica quanti semitoni bendare.",
+     "en": "Waits at the crossroads at midnight; each hit shows how many semitones to bend."
+    },
+    "phases": [
+     {
+      "phase": 1,
+      "mode": "call_response",
+      "bpm": [
+       60,
+       70
+      ],
+      "phrases": [
+       {
+        "id": "shade-1",
+        "tab": "4↑ 3↓ 3↓' 3↓'' | 3↓''' 2↓ - - |",
+        "beatsPerBar": 4,
+        "lengthBeats": 8.0,
+        "events": [
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 12
+           }
+          ],
+          "start": 0.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 11
+           }
+          ],
+          "start": 1.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 1,
+            "semitone": 10
+           }
+          ],
+          "start": 2.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 2,
+            "semitone": 9
+           }
+          ],
+          "start": 3.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 3,
+            "semitone": 8
+           }
+          ],
+          "start": 4.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           }
+          ],
+          "start": 5.0,
+          "dur": 3.0
+         }
+        ]
+       }
+      ],
+      "description": {
+       "it": "Discesa cromatica, gradini distinti.",
+       "en": "Chromatic descent, distinct steps."
+      }
+     },
+     {
+      "phase": 2,
+      "mode": "call_response",
+      "bpm": [
+       65,
+       75
+      ],
+      "phrases": [
+       {
+        "id": "shade-2",
+        "tab": "3↑ | 4↑ - (5↑ 4↑) | 5↑ - 4↓ | 4↑ - 3↓'' | 3↑ - - |",
+        "beatsPerBar": 3,
+        "lengthBeats": 13.0,
+        "events": [
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 3,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 7
+           }
+          ],
+          "start": 0.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 12
+           }
+          ],
+          "start": 1.0,
+          "dur": 2.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 16
+           }
+          ],
+          "start": 3.0,
+          "dur": 0.5
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 12
+           }
+          ],
+          "start": 3.5,
+          "dur": 0.5
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 5,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 16
+           }
+          ],
+          "start": 4.0,
+          "dur": 2.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 14
+           }
+          ],
+          "start": 6.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 12
+           }
+          ],
+          "start": 7.0,
+          "dur": 2.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 2,
+            "semitone": 9
+           }
+          ],
+          "start": 9.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 3,
+            "dir": "blow",
+            "bend": 0,
+            "semitone": 7
+           }
+          ],
+          "start": 10.0,
+          "dur": 3.0
+         }
+        ],
+        "title": "Amazing Grace"
+       }
+      ]
+     },
+     {
+      "phase": 3,
+      "mode": "call_response",
+      "bpm": [
+       65,
+       75
+      ],
+      "phrases": [
+       {
+        "id": "shade-3",
+        "tab": "2↓ 3↓' 3↓'' 2↓ | 2↓'' 2↓ - - | 4↓' 4↓ 3↓' 2↓ | 1↓ 2↓ - - |",
+        "beatsPerBar": 4,
+        "lengthBeats": 16.0,
+        "events": [
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           }
+          ],
+          "start": 0.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 1,
+            "semitone": 10
+           }
+          ],
+          "start": 1.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 2,
+            "semitone": 9
+           }
+          ],
+          "start": 2.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           }
+          ],
+          "start": 3.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 2,
+            "semitone": 5
+           }
+          ],
+          "start": 4.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           }
+          ],
+          "start": 5.0,
+          "dur": 3.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 1,
+            "semitone": 13
+           }
+          ],
+          "start": 8.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 4,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 14
+           }
+          ],
+          "start": 9.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 3,
+            "dir": "draw",
+            "bend": 1,
+            "semitone": 10
+           }
+          ],
+          "start": 10.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           }
+          ],
+          "start": 11.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 1,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 2
+           }
+          ],
+          "start": 12.0,
+          "dur": 1.0
+         },
+         {
+          "type": "note",
+          "notes": [
+           {
+            "hole": 2,
+            "dir": "draw",
+            "bend": 0,
+            "semitone": 7
+           }
+          ],
+          "start": 13.0,
+          "dur": 3.0
+         }
+        ]
+       }
+      ],
+      "entryTest": true
+     }
+    ],
+    "criteria": {
+     "minNoteAccuracy": 0.8,
+     "bendToleranceCents": 30,
+     "bendMinHoldMs": 250,
+     "distinctBendSteps": true
+    }
+   }
+  },
+  {
+   "id": "chicago-club",
+   "order": 7,
+   "name": {
+    "it": "Il club di Chicago",
+    "en": "The Chicago Club"
+   },
+   "technique": {
+    "it": "Blues a 12 battute, improvvisazione",
+    "en": "12-bar blues, improvisation"
+   },
+   "goal": {
+    "it": "Improvvisare su un giro blues: note della scala, cambi d'accordo centrati, spazio alla band.",
+    "en": "Improvise over a blues: scale notes, landing on chord changes, leaving room for the band."
+   },
+   "bpm": [
+    90,
+    120
+   ],
+   "feel": "shuffle",
+   "position": 2,
+   "jam": {
+    "progression": [
+     "I",
+     "I",
+     "I",
+     "I",
+     "IV",
+     "IV",
+     "I",
+     "I",
+     "V",
+     "IV",
+     "I",
+     "V"
+    ],
+    "allowedNotes": [
+     "1↓",
+     "2↓",
+     "3↓'",
+     "3↓''",
+     "4↑",
+     "4↓'",
+     "4↓",
+     "5↓",
+     "6↑",
+     "6↓",
+     "7↑",
+     "8↓",
+     "9↓",
+     "9↑"
+    ],
+    "passingNotes": [
+     "3↑",
+     "2↑",
+     "5↑"
+    ],
+    "targets": {
+     "I": [
+      "2↓",
+      "3↑",
+      "6↑",
+      "9↑",
+      "3↓'"
+     ],
+     "IV": [
+      "4↑",
+      "7↑"
+     ],
+     "V": [
+      "4↓",
+      "8↓",
+      "1↓"
+     ]
+    },
+    "targetOnDownbeatMultiplier": 2
+   },
+   "enemies": [
+    {
+     "id": "drummer",
+     "name": {
+      "it": "Il Batterista",
+      "en": "The Drummer"
+     },
+     "trains": {
+      "it": "improvvisare solo con 3 note sul primo giro",
+      "en": "improvise with only 3 notes for one chorus"
+     },
+     "phrases": [],
+     "tip": {
+      "it": "Note permesse: 2↓ 3↓' 4↑",
+      "en": "Allowed notes: 2↓ 3↓' 4↑"
+     }
+    },
+    {
+     "id": "bassist",
+     "name": {
+      "it": "Il Bassista",
+      "en": "The Bassist"
+     },
+     "trains": {
+      "it": "cambiare nota quando cambia l'accordo",
+      "en": "change note when the chord changes"
+     },
+     "phrases": []
+    },
+    {
+     "id": "guitarist",
+     "name": {
+      "it": "La Chitarra",
+      "en": "The Guitarist"
+     },
+     "trains": {
+      "it": "\"trading fours\": 4 battute lui, 4 battute tu",
+      "en": "trading fours: 4 bars him, 4 bars you"
+     },
+     "phrases": []
+    }
+   ],
+   "boss": {
+    "id": "stage-boss",
+    "name": {
+     "it": "Il Padrone del Palco",
+     "en": "The Stage Boss"
+    },
+    "description": {
+     "it": "Jam battle su tre giri: il pubblico misura chi suona meglio.",
+     "en": "A three-chorus jam battle: the crowd decides who plays better."
+    },
+    "phases": [
+     {
+      "phase": 1,
+      "mode": "jam_trade",
+      "bpm": [
+       90,
+       100
+      ],
+      "phrases": [],
+      "description": {
+       "it": "Scambio di 4 battute con il boss.",
+       "en": "Trade fours with the boss."
+      }
+     },
+     {
+      "phase": 2,
+      "mode": "jam_stop_time",
+      "bpm": [
+       100,
+       110
+      ],
+      "phrases": [],
+      "description": {
+       "it": "Stop time: la band si ferma, suoni nei buchi.",
+       "en": "Stop time: the band stops, you fill the gaps."
+      }
+     },
+     {
+      "phase": 3,
+      "mode": "jam_solo",
+      "bpm": [
+       110,
+       120
+      ],
+      "phrases": [],
+      "description": {
+       "it": "Assolo libero di 12 battute, con almeno un bend profondo e un accordo.",
+       "en": "Free 12-bar solo with at least one deep bend and one chord."
+      },
+      "entryTest": true
+     }
+    ],
+    "criteria": {
+     "minInScaleRatio": 0.7,
+     "minChangesHit": 0.5
+    }
+   }
+  },
+  {
+   "id": "after-hours",
+   "order": 8,
+   "extra": true,
+   "name": {
+    "it": "Dopo la chiusura",
+    "en": "After Hours"
+   },
+   "technique": {
+    "it": "Bend in soffio, overblow, tongue blocking, velocità",
+    "en": "Blow bends, overblows, tongue blocking, speed"
+   },
+   "goal": {
+    "it": "Tecniche avanzate per chi suona già.",
+    "en": "Advanced techniques for experienced players."
+   },
+   "bpm": [
+    80,
+    180
+   ],
+   "detection": "experimental",
+   "newNotes": [
+    "8↑'",
+    "9↑'",
+    "10↑'",
+    "10↑''",
+    "4ob",
+    "5ob",
+    "6ob",
+    "7od",
+    "1+4↑",
+    "1+4↓",
+    "4+7↑"
+   ],
+   "enemies": [
+    {
+     "id": "blow-bends",
+     "name": {
+      "it": "Il Sassofonista",
+      "en": "The Sax Player"
+     },
+     "trains": {
+      "it": "bend in soffio",
+      "en": "blow bends"
+     },
+     "phrases": [
+      {
+       "id": "blowbend-1",
+       "tab": "8↑ 8↑' 7↑ - |",
+       "beatsPerBar": 4,
+       "lengthBeats": 4.0,
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 8,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 28
+          }
+         ],
+         "start": 0.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 8,
+           "dir": "blow",
+           "bend": 1,
+           "semitone": 27
+          }
+         ],
+         "start": 1.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 7,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 24
+          }
+         ],
+         "start": 2.0,
+         "dur": 2.0
+        }
+       ]
+      },
+      {
+       "id": "blowbend-2",
+       "tab": "10↑ 10↑' 10↑'' 9↑ |",
+       "beatsPerBar": 4,
+       "lengthBeats": 4.0,
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 10,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 36
+          }
+         ],
+         "start": 0.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 10,
+           "dir": "blow",
+           "bend": 1,
+           "semitone": 35
+          }
+         ],
+         "start": 1.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 10,
+           "dir": "blow",
+           "bend": 2,
+           "semitone": 34
+          }
+         ],
+         "start": 2.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 9,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 31
+          }
+         ],
+         "start": 3.0,
+         "dur": 1.0
+        }
+       ]
+      },
+      {
+       "id": "blowbend-3",
+       "tab": "7↑ 8↓ 8↑ 9↓ | 9↑ 10↓ 10↑' 10↑ |",
+       "beatsPerBar": 4,
+       "lengthBeats": 8.0,
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 7,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 24
+          }
+         ],
+         "start": 0.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 8,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 26
+          }
+         ],
+         "start": 1.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 8,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 28
+          }
+         ],
+         "start": 2.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 9,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 29
+          }
+         ],
+         "start": 3.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 9,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 31
+          }
+         ],
+         "start": 4.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 10,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 33
+          }
+         ],
+         "start": 5.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 10,
+           "dir": "blow",
+           "bend": 1,
+           "semitone": 35
+          }
+         ],
+         "start": 6.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 10,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 36
+          }
+         ],
+         "start": 7.0,
+         "dur": 1.0
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "overblows",
+     "name": {
+      "it": "Il Trombone",
+      "en": "The Trombone"
+     },
+     "trains": {
+      "it": "overblow e overdraw",
+      "en": "overblows and overdraws"
+     },
+     "phrases": [
+      {
+       "id": "overblow-1",
+       "tab": "6↑ 6ob 6↓ - |",
+       "beatsPerBar": 4,
+       "lengthBeats": 4.0,
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 6,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 19
+          }
+         ],
+         "start": 0.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 6,
+           "dir": "blow",
+           "bend": 0,
+           "technique": "overblow",
+           "semitone": 22
+          }
+         ],
+         "start": 1.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 6,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 21
+          }
+         ],
+         "start": 2.0,
+         "dur": 2.0
+        }
+       ]
+      },
+      {
+       "id": "overblow-2",
+       "tab": "5↓ 5ob 6↑ - |",
+       "beatsPerBar": 4,
+       "lengthBeats": 4.0,
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 5,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 17
+          }
+         ],
+         "start": 0.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 5,
+           "dir": "blow",
+           "bend": 0,
+           "technique": "overblow",
+           "semitone": 18
+          }
+         ],
+         "start": 1.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 6,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 19
+          }
+         ],
+         "start": 2.0,
+         "dur": 2.0
+        }
+       ]
+      },
+      {
+       "id": "overdraw-1",
+       "tab": "7↑ 7od 8↓ - |",
+       "beatsPerBar": 4,
+       "lengthBeats": 4.0,
+       "events": [
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 7,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 24
+          }
+         ],
+         "start": 0.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 7,
+           "dir": "draw",
+           "bend": 0,
+           "technique": "overdraw",
+           "semitone": 25
+          }
+         ],
+         "start": 1.0,
+         "dur": 1.0
+        },
+        {
+         "type": "note",
+         "notes": [
+          {
+           "hole": 8,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 26
+          }
+         ],
+         "start": 2.0,
+         "dur": 2.0
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "tongue-block",
+     "name": {
+      "it": "Il Pianista",
+      "en": "The Pianist"
+     },
+     "trains": {
+      "it": "ottave con tongue blocking",
+      "en": "tongue-blocked octaves"
+     },
+     "phrases": [
+      {
+       "id": "octave-1",
+       "tab": "1+4↑ - 1+4↓ - | 4+7↑ - - - |",
+       "beatsPerBar": 4,
+       "lengthBeats": 8.0,
+       "events": [
+        {
+         "type": "octave",
+         "notes": [
+          {
+           "hole": 1,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 0
+          },
+          {
+           "hole": 4,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 12
+          }
+         ],
+         "start": 0.0,
+         "dur": 2.0
+        },
+        {
+         "type": "octave",
+         "notes": [
+          {
+           "hole": 1,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 2
+          },
+          {
+           "hole": 4,
+           "dir": "draw",
+           "bend": 0,
+           "semitone": 14
+          }
+         ],
+         "start": 2.0,
+         "dur": 2.0
+        },
+        {
+         "type": "octave",
+         "notes": [
+          {
+           "hole": 4,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 12
+          },
+          {
+           "hole": 7,
+           "dir": "blow",
+           "bend": 0,
+           "semitone": 24
+          }
+         ],
+         "start": 4.0,
+         "dur": 4.0
+        }
+       ]
+      }
+     ]
+    }
+   ],
+   "boss": {
+    "id": "midnight-whistle",
+    "name": {
+     "it": "Il Fischio di Mezzanotte",
+     "en": "The Midnight Whistle"
+    },
+    "description": {
+     "it": "Un rivale in terza posizione; da dettagliare dopo il test sugli overblow.",
+     "en": "A third-position rival; to be detailed after overblow detection is tested."
+    },
+    "phases": [],
+    "position": 3,
+    "status": "todo"
+   }
+  }
+ ]
+}

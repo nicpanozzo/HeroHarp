@@ -16,11 +16,16 @@ npm run dev        # server locale con ricarica automatica
 npm test           # test della logica (armonica, ascolto, battaglia)
 npm run typecheck
 npm run build      # crea dist/index.html, un file unico apribile con doppio clic
+npm run sync -- ..  # ricopia percorso didattico, grafica e audio dalla cartella del progetto
 ```
+
+`npm test` prova anche il rilevatore sulle registrazioni vere di `tests/campioni` del progetto
+(variabile `CAMPIONI` per un'altra cartella; il test si salta se non le trova).
 
 ## Struttura
 - `src/harp.ts`: accordatura Richter, tonalità, intavolatura (`4`, `-4`, `-3'`).
 - `src/audio/`: YIN per l'altezza, `NoteTracker` per note stabili e attacchi, motore audio (microfono, voce del nemico, metronomo).
 - `src/battle/logic.ts`: regole della battaglia senza grafica (testate in `tests/`).
-- `src/content/enemies.ts`: nemici e frasi dell'area 1, scritti in intavolatura.
+- `src/content/area1.ts`: nemici e frasi dell'area 1, letti da `percorso.json` (copiato da `content/` del progetto).
+- `src/style/` e `src/assets/`: audio, tema e grafica copiati da `style/` del progetto. Non modificarli qui.
 - `src/scenes/`: schermate Phaser (titolo, mappa, battaglia, risultato).

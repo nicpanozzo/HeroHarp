@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { BootScene } from "./scenes/BootScene";
 import { TitleScene } from "./scenes/TitleScene";
 import { MapScene } from "./scenes/MapScene";
 import { BattleScene } from "./scenes/BattleScene";
@@ -11,8 +12,8 @@ import { getEngine } from "./audio/engine";
 async function fontsReady(): Promise<void> {
   try {
     await Promise.race([
-      Promise.all([document.fonts.load("32px Rye"), document.fonts.load("600 16px Barlow"), document.fonts.load("700 16px Barlow")]),
-      new Promise((r) => setTimeout(r, 2000)),
+      Promise.all(["32px 'Alfa Slab One'", "bold 16px 'Atkinson Hyperlegible'", "16px 'Atkinson Hyperlegible'", "800 16px 'Atkinson Hyperlegible Mono'"].map((f) => document.fonts.load(f))),
+      new Promise((r) => setTimeout(r, 2500)),
     ]);
   } catch {
     /* si usano i caratteri di riserva */
@@ -26,9 +27,9 @@ fontsReady().then(() => {
     parent: "game",
     width: W,
     height: H,
-    backgroundColor: C.bg,
+    backgroundColor: C.carta,
     scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
-    scene: [TitleScene, MapScene, BattleScene, ResultScene],
+    scene: [BootScene, TitleScene, MapScene, BattleScene, ResultScene],
   });
   // accesso per i test automatici e il debug dalla console
   Object.assign(window, { __game: game, __engine: getEngine });

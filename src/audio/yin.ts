@@ -3,11 +3,11 @@
 
 export interface PitchResult {
   hz: number;
-  /** 0..1, quanto il segnale è periodico. Sotto ~0.8 è rumore o un accordo. */
+  /** 0..1, quanto il segnale è periodico. Sotto ~0.7 è rumore o un accordo. */
   clarity: number;
 }
 
-export function yin(buf: Float32Array, sampleRate: number, threshold = 0.12, minHz = 140, maxHz = 2400): PitchResult | null {
+export function yin(buf: Float32Array, sampleRate: number, threshold = 0.2, minHz = 140, maxHz = 3400): PitchResult | null {
   const half = buf.length >> 1;
   const minTau = Math.max(2, Math.floor(sampleRate / maxHz));
   const maxTau = Math.min(half - 2, Math.floor(sampleRate / minHz));

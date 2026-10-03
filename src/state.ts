@@ -6,10 +6,11 @@ export interface Save {
   lang: Lang;
   keyId: string;
   beaten: string[];
+  introSeen: boolean;
 }
 
 const KEY = "duello-dance-save";
-const defaults: Save = { lang: "it", keyId: "C", beaten: [] };
+const defaults: Save = { lang: "it", keyId: "C", beaten: [], introSeen: false };
 
 function load(): Save {
   try {
