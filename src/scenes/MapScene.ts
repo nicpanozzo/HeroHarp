@@ -54,7 +54,7 @@ export class MapScene extends Phaser.Scene {
       txt(this, x + cardW / 2, y + 292, e.name[lang].toUpperCase(), cardW < 240 || e.name[lang].length > 16 ? 20 : 24, HEX.inchiostro, "titoli")
         .setOrigin(0.5, 1)
         .setWordWrapWidth(cardW - 20);
-      txt(this, x + cardW / 2, y + 304, e.trains[lang], e.boss || cardW < 240 ? 15 : 17, HEX.inchiostro)
+      txt(this, x + cardW / 2, y + 304, e.trains[lang], e.boss ? 16 : cardW < 240 ? 18 : 20, HEX.inchiostro)
         .setOrigin(0.5, 0)
         .setWordWrapWidth(cardW - 26);
       if (e.comingSoon)

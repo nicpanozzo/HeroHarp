@@ -10,7 +10,7 @@ export class HearingReadout {
   private label: Phaser.GameObjects.Text;
 
   constructor(scene: Phaser.Scene, x: number, y: number, color: string = HEX.inchiostro) {
-    this.label = txt(scene, x, y, "", 18, color).setName("hearing");
+    this.label = txt(scene, x, y, "", 20, color).setName("hearing");
   }
 
   update(): void {
