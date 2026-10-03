@@ -27,6 +27,9 @@ export interface Save {
   introSeen: boolean;
   /** Aree di cui Zia Mae ha già spiegato le lezioni. */
   lessonsSeen: string[];
+  /** Record di punti e stelle per nemico. */
+  best: Record<string, number>;
+  stars: Record<string, number>;
   settings: Settings;
 }
 
@@ -41,7 +44,7 @@ export const DEFAULT_SETTINGS: Settings = {
   latency: null,
   openAll: false,
 };
-const defaults: Save = { lang: "it", keyId: "C", beaten: [], introSeen: false, lessonsSeen: [], settings: DEFAULT_SETTINGS };
+const defaults: Save = { lang: "it", keyId: "C", beaten: [], introSeen: false, lessonsSeen: [], best: {}, stars: {}, settings: DEFAULT_SETTINGS };
 
 function load(): Save {
   try {

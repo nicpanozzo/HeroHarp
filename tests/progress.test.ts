@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { AREAS, JOURNEY, areaById } from "../src/content/areas";
-import { areaUnlocked, enemyUnlocked, currentArea } from "../src/progress";
+import { areaUnlocked, enemyUnlocked, currentArea, nextEnemy, starsFor } from "../src/progress";
 
 const boss = (id: string) => areaById(id).enemies.find((e) => e.boss)!.id;
 const normals = (id: string) =>
@@ -39,5 +39,21 @@ describe("il viaggio", () => {
 
   it("con l'opzione aperta si va ovunque tranne dove manca ancora la grafica", () => {
     for (const a of AREAS) expect(areaUnlocked(a, { beaten: [], openAll: true })).toBe(!a.comingSoon);
+  });
+});
+
+describe("gioca subito", () => {
+  it("parte dal primo nemico non battuto della tappa attuale", () => {
+    expect(nextEnemy({ beaten: [] }).id).toBe("draft");
+    expect(nextEnemy({ beaten: ["draft"] }).id).toBe("sigh");
+    expect(nextEnemy({ beaten: [...normals("porch")] }).id).toBe("silence");
+    expect(nextEnemy({ beaten: [...normals("porch"), boss("porch")] }).areaId).toBe("station");
+  });
+
+  it("dà le stelle in base a note giuste e colpi presi", () => {
+    expect(starsFor(true, { notesHit: 10, notesExpected: 10, missed: 0 })).toBe(3);
+    expect(starsFor(true, { notesHit: 8, notesExpected: 10, missed: 3 })).toBe(2);
+    expect(starsFor(true, { notesHit: 5, notesExpected: 10, missed: 3 })).toBe(1);
+    expect(starsFor(false, { notesHit: 10, notesExpected: 10, missed: 0 })).toBe(0);
   });
 });

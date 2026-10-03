@@ -4,6 +4,7 @@ import { getLang, setLang, t } from "../i18n";
 import { save, persist } from "../state";
 import { getEngine } from "../audio/engine";
 import { applySettings } from "../settings";
+import { nextEnemy } from "../progress";
 import { C, W, H, HEX, txt, button, paper, panel } from "../ui";
 
 export class TitleScene extends Phaser.Scene {
@@ -53,26 +54,22 @@ export class TitleScene extends Phaser.Scene {
     ).setName("lang");
     button(this, 120, 56, t("options"), () => this.scene.start("options", { from: "title" }), 180, false).setName("options");
 
-    const status = txt(this, W / 2, 530, t("micAsk"), 20, HEX.inchiostro).setWordWrapWidth(560);
-    button(
-      this,
-      W / 2,
-      460,
-      t("start"),
-      async () => {
-        const engine = getEngine();
-        applySettings();
-        await engine.resume();
-        const mic = engine.micStatus === "on" ? "on" : await engine.startMic();
-        if (mic !== "on") {
-          status.setText(t("micDenied")).setColor(HEX.rosso);
-          this.time.delayedCall(2800, () => this.scene.start("journey"));
-        } else {
-          this.scene.start("journey");
-        }
-      },
-      300,
-    ).setName("start");
+    const status = txt(this, W / 2, 588, t("micAsk"), 18, HEX.inchiostro).setWordWrapWidth(560);
+    // un tocco e si suona: il microfono si accende qui (serve un gesto), poi dritti in battaglia
+    const enter = async (scene: string, data?: object) => {
+      const engine = getEngine();
+      applySettings();
+      await engine.resume();
+      const mic = engine.micStatus === "on" ? "on" : await engine.startMic();
+      if (mic !== "on") {
+        status.setText(t("micDenied")).setColor(HEX.rosso);
+        this.time.delayedCall(2200, () => this.scene.start(scene, data));
+      } else this.scene.start(scene, data);
+    };
+    const play = () => enter("battle", { enemyId: nextEnemy({ beaten: save.beaten, openAll: save.settings.openAll }).id });
+    button(this, W / 2, 452, `${t("play")} ▶`, play, 320, true, 70).setName("start");
+    button(this, W / 2, 518, t("journey"), () => enter("journey"), 320, false, 44).setName("to-journey");
+    this.input.keyboard?.once("keydown-ENTER", play);
     this.add.rectangle(W / 2, H - 40, W, 2, C.inchiostro, 0.3);
     txt(this, W / 2, H - 22, t("keyboardHint"), 17, HEX.inchiostro).setAlpha(0.7);
   }

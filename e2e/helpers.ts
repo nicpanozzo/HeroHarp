@@ -50,7 +50,7 @@ export async function start(page: Page, skipIntro = true) {
     });
   await page.goto(GAME);
   await page.waitForFunction(() => window.__game?.scene.isActive("title"));
-  await click(page, "title", "start");
+  await click(page, "title", "to-journey");
   await page.waitForFunction(() => window.__game.scene.isActive("journey"));
   return errors;
 }

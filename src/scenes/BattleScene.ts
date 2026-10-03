@@ -7,7 +7,7 @@ import { getLang, t } from "../i18n";
 import { save, persist } from "../state";
 import { getEngine } from "../audio/engine";
 import type { TonalitaArmonica } from "../style/basi";
-import { C, W, HEX, txt, backdrop, pop, panel, reducedMotion } from "../ui";
+import { C, W, H, HEX, txt, backdrop, pop, panel, button, reducedMotion } from "../ui";
 import { HearingReadout } from "./readout";
 import { applySettings } from "../settings";
 
@@ -48,6 +48,10 @@ export class BattleScene extends Phaser.Scene {
   private sub!: Phaser.GameObjects.Text;
   private beatDot!: Phaser.GameObjects.Arc;
   private hp!: Phaser.GameObjects.Graphics;
+  private scoreText!: Phaser.GameObjects.Text;
+  private streakText!: Phaser.GameObjects.Text;
+  private shownScore = 0;
+  private flash!: Phaser.GameObjects.Rectangle;
   private chips: Chip[] = [];
   private chipLayer!: Phaser.GameObjects.Container;
   private projectiles = new Map<number, Phaser.GameObjects.Container>();
@@ -75,6 +79,7 @@ export class BattleScene extends Phaser.Scene {
     this.beatTimes = [];
     this.cleanup = [];
     this.ending = false;
+    this.shownScore = 0;
     this.playerTurn = false;
     this.poseUntil = this.enemyPoseUntil = 0;
   }
@@ -116,11 +121,26 @@ export class BattleScene extends Phaser.Scene {
       .setOrigin(1, 0.5)
       .setLetterSpacing(2);
 
-    this.banner = txt(this, W / 2, 140, "", 46, HEX.inchiostro, "titoli")
+    // punteggio al centro dell'intestazione, serie di colpi sotto
+    this.scoreText = txt(this, W / 2, 53, "0", 34, HEX.inchiostro, "fori").setName("score");
+    this.streakText = txt(this, W / 2, 112, "", 26, HEX.ottone, "titoli")
+      .setStroke(HEX.inchiostro, 6)
+      .setAlpha(0);
+    button(this, 70, 122, "‹", () => this.scene.start("map", { areaId: this.enemy.areaId }), 64, false, 44).setName("exit");
+    this.input.keyboard?.on("keydown-ESC", () => this.scene.start("map", { areaId: this.enemy.areaId }));
+    this.flash = this.add.rectangle(W / 2, H / 2, W, H, C.rosso, 0).setDepth(30);
+    if (!this.textures.exists("dot")) {
+      const g = this.make.graphics({}, false);
+      g.fillStyle(0xffffff, 1).fillCircle(6, 6, 6);
+      g.generateTexture("dot", 12, 12);
+      g.destroy();
+    }
+
+    this.banner = txt(this, W / 2, 158, "", 46, HEX.inchiostro, "titoli")
       .setStroke(HEX.carta, 8)
       .setName("banner");
-    this.sub = txt(this, W / 2, 186, "", 20, HEX.inchiostro).setStroke(HEX.carta, 5);
-    this.beatDot = this.add.circle(W / 2, 214, 8, C.rosso).setAlpha(0.25);
+    this.sub = txt(this, W / 2, 200, "", 19, HEX.inchiostro).setStroke(HEX.carta, 5);
+    this.beatDot = this.add.circle(W / 2, 226, 8, C.rosso).setAlpha(0.25);
 
     this.playerImg = this.add.image(PLAYER.x, PLAYER.y, "personaggi-protagonista-idle").setDisplaySize(250, 250);
     const size = this.enemy.boss ? 330 : 260;
@@ -144,6 +164,12 @@ export class BattleScene extends Phaser.Scene {
     this.battle.startRound(engine.now + 0.3);
     this.redrawHp();
     this.sub.setText(this.enemy.trains[lang]);
+    if (!save.introSeen) {
+      // la prima volta basta una riga: il resto si capisce giocando
+      this.sub.setText(t("firstHint")).setColor(HEX.prugna);
+      save.introSeen = true;
+      persist();
+    }
   }
 
   update(): void {
@@ -155,6 +181,12 @@ export class BattleScene extends Phaser.Scene {
     this.battle.update(now, held);
     for (const ev of this.battle.drain()) this.handle(ev);
     this.animateBeat(now);
+    // il punteggio sale a scatti fino al valore vero
+    const target = this.battle.stats.score;
+    if (this.shownScore !== target) {
+      this.shownScore = Math.min(target, this.shownScore + Math.max(1, Math.ceil((target - this.shownScore) / 6)));
+      this.scoreText.setText(String(this.shownScore));
+    }
     this.animateCall(now);
     this.moveProjectiles(now);
     this.animatePoses(now, held);
@@ -293,8 +325,8 @@ export class BattleScene extends Phaser.Scene {
     switch (ev.type) {
       case "phase": {
         const label = { countin: t("countin"), call: t("call"), response: t("response"), volley: t("volley"), won: t("won"), lost: t("lost") }[ev.phase];
-        this.banner.setText(label.toUpperCase()).setScale(1.25);
-        this.tweens.add({ targets: this.banner, scale: 1, duration: 250 });
+        this.banner.setText(label.toUpperCase()).setScale(1.4);
+        this.tweens.add({ targets: this.banner, scale: 1, duration: 180, ease: "Back.easeOut" });
         this.drawLanes(ev.phase === "volley");
         this.chipLayer.setAlpha(ev.phase === "volley" ? 0.3 : 1);
         // mentre suoni tu la base tace, così il microfono sente solo l'armonica
@@ -303,9 +335,21 @@ export class BattleScene extends Phaser.Scene {
         if (ev.phase === "won" || ev.phase === "lost") this.finish(ev.phase === "won");
         break;
       }
-      case "responseHit":
+      case "responseHit": {
         this.paintChip(ev.index, "hit");
-        engine.fx.notaGiusta(ev.index);
+        engine.fx.notaGiusta(Math.min(ev.streak, 12));
+        const chip = this.chips[ev.index];
+        const cx = this.chipLayer.x + (chip?.x ?? 0);
+        const color = ev.rating === "perfect" ? HEX.ottone : ev.rating === "good" ? HEX.indaco : HEX.inchiostro;
+        pop(this, cx, 240, t(ev.rating).toUpperCase(), color, ev.rating === "perfect" ? 30 : 24);
+        this.burst(cx, this.chipLayer.y, ev.rating === "perfect" ? C.ottone : C.indaco, ev.rating === "perfect" ? 16 : 8);
+        if (chip && !reducedMotion()) this.tweens.add({ targets: chip.label, scale: 1.35, duration: 90, yoyo: true });
+        this.showStreak(ev.streak);
+        break;
+      }
+      case "streakLost":
+        pop(this, W / 2, 112, t("streakLost").toUpperCase(), HEX.rosso, 22);
+        this.showStreak(0);
         break;
       case "shortNote":
         this.paintChip(ev.index, "short");
@@ -318,13 +362,17 @@ export class BattleScene extends Phaser.Scene {
         if (ev.amount > 0) {
           engine.fx.critico();
           this.setEnemyPose("colpito", now + 0.6);
-          this.tweens.add({ targets: this.enemyImg, x: ENEMY.x + 14, duration: 60, yoyo: true, repeat: 3, onComplete: () => this.enemyImg.setX(ENEMY.x) });
-          pop(this, ENEMY.x, 200, `-${ev.amount}`, HEX.rosso, 44);
+          this.tweens.add({ targets: this.enemyImg, x: ENEMY.x + 18, duration: 50, yoyo: true, repeat: 4, onComplete: () => this.enemyImg.setX(ENEMY.x) });
+          this.enemyImg.setTintFill(0xffffff);
+          this.time.delayedCall(90, () => this.enemyImg.clearTint());
+          this.burst(ENEMY.x, ENEMY.y - 40, C.rosso, 26);
+          if (!reducedMotion()) this.cameras.main.shake(180, 0.006 + Math.min(0.01, ev.amount / 4000));
+          pop(this, ENEMY.x, 200, `-${ev.amount}`, HEX.rosso, 56);
         } else {
           engine.fx.notaMancata();
         }
-        if (ev.onTime) pop(this, ENEMY.x, 250, t("onTime"), HEX.inchiostro, 26);
-        if (ev.combo >= 2) pop(this, W / 2, 240, `${t("combo")} x${ev.combo}`, HEX.ottone, 30);
+        if (ev.onTime) pop(this, ENEMY.x, 262, t("onTime"), HEX.inchiostro, 26);
+        if (ev.combo >= 2) pop(this, W / 2, 300, `${t("combo")} x${ev.combo}`, HEX.ottone, 36);
         this.redrawHp();
         break;
       case "heal":
@@ -341,10 +389,13 @@ export class BattleScene extends Phaser.Scene {
         const c = this.projectiles.get(ev.id);
         if (c) {
           const star = this.add.image(c.x, HIT_Y, "ui-nota-giusta").setDisplaySize(56, 56);
-          this.tweens.add({ targets: star, scale: star.scale * 1.6, alpha: 0, duration: 380, onComplete: () => star.destroy() });
+          this.tweens.add({ targets: star, scale: star.scale * 1.8, alpha: 0, duration: 380, onComplete: () => star.destroy() });
+          this.burst(c.x, HIT_Y, C.ottone, 12);
+          pop(this, c.x, HIT_Y - 50, `+${ev.points}`, HEX.ottone, 24);
           c.setVisible(false);
         }
-        engine.fx.notaGiusta();
+        engine.fx.notaGiusta(Math.min(ev.streak, 12));
+        this.showStreak(ev.streak);
         break;
       }
       case "playerDamaged": {
@@ -356,13 +407,42 @@ export class BattleScene extends Phaser.Scene {
         }
         engine.fx.danno();
         this.setPose("colpito", now + 0.5);
-        if (!reducedMotion()) this.cameras.main.shake(150, 0.004);
+        if (!reducedMotion()) this.cameras.main.shake(160, 0.008);
+        this.flash.setAlpha(0.28);
+        this.tweens.add({ targets: this.flash, alpha: 0, duration: 260 });
         pop(this, PLAYER.x, 300, `-${ev.amount}`, HEX.rosso, 36);
         this.redrawHp();
         break;
       }
       case "difficulty":
         break;
+    }
+  }
+
+  /** Scintille che esplodono da un punto. */
+  private burst(x: number, y: number, color: number, n: number): void {
+    if (reducedMotion()) return;
+    const em = this.add.particles(x, y, "dot", {
+      speed: { min: 140, max: 420 },
+      scale: { start: 1, end: 0 },
+      lifespan: 420,
+      tint: [color, 0xffffff],
+      emitting: false,
+    });
+    em.setDepth(20);
+    em.explode(n);
+    this.time.delayedCall(600, () => em.destroy());
+  }
+
+  /** La serie di colpi giusti: compare da 3 in su, festeggia ogni 10. */
+  private showStreak(n: number): void {
+    if (n < 3) return void this.streakText.setAlpha(0);
+    this.streakText.setText(`${t("streak").toUpperCase()} x${n}`).setAlpha(1);
+    if (!reducedMotion()) this.tweens.add({ targets: this.streakText, scale: { from: 1.3, to: 1 }, duration: 160 });
+    if (n % 10 === 0) {
+      getEngine().fx.critico();
+      pop(this, W / 2, 330, `${n}!`, HEX.ottone, 72);
+      this.burst(W / 2, 330, C.ottone, 30);
     }
   }
 
@@ -396,6 +476,6 @@ export class BattleScene extends Phaser.Scene {
       engine.fx.sconfitta(engine.now + 0.2);
       this.setPose("colpito", Infinity);
     }
-    this.time.delayedCall(2200, () => this.scene.start("result", { won, enemyId: this.enemy.id, stats: this.battle.stats }));
+    this.time.delayedCall(1300, () => this.scene.start("result", { won, enemyId: this.enemy.id, stats: this.battle.stats }));
   }
 }

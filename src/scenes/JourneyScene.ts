@@ -1,13 +1,13 @@
 import Phaser from "phaser";
 import manifest from "../assets/manifest.json";
 import { AREAS, type AreaDef } from "../content/areas";
-import { areaCleared, areaUnlocked, currentArea } from "../progress";
+import { areaCleared, areaUnlocked, currentArea, nextEnemy } from "../progress";
 import { getLang, t } from "../i18n";
-import { save, persist } from "../state";
+import { save } from "../state";
 import { getEngine } from "../audio/engine";
 import { C, W, H, HEX, txt, button, paper, reducedMotion } from "../ui";
 import { HearingReadout } from "./readout";
-import { showLessons, showIntro } from "./lessons";
+import { showIntro } from "./lessons";
 
 // Tre righe a serpentina: la strada va a destra, poi torna a sinistra, poi di nuovo a destra.
 const COLS = [250, 640, 1030];
@@ -79,17 +79,11 @@ export class JourneyScene extends Phaser.Scene {
     joined.forEach((m, i) => {
       this.add.image(292 + i * 60, H - 34, m.key).setDisplaySize(62, 62);
     });
-    this.readout = new HearingReadout(this, 800, H - 46);
+    this.readout = new HearingReadout(this, 1010, H - 20);
+    const next = nextEnemy(progress);
+    button(this, 800, H - 52, `${t("play")} ▶`, () => this.scene.start("battle", { enemyId: next.id }), 240, true, 56).setName("play");
     button(this, 128, H - 46, t("help"), () => showIntro(this), 216, false, 48).setName("help");
-    button(this, W - 110, H - 46, t("options"), () => this.scene.start("options", { from: "journey" }), 180, false, 48).setName("options");
-
-    if (!save.introSeen) {
-      showIntro(this, () => {
-        save.introSeen = true;
-        persist();
-        if (!save.lessonsSeen.includes(here.id)) this.openArea(here);
-      });
-    }
+    button(this, W - 110, H - 58, t("options"), () => this.scene.start("options", { from: "journey" }), 180, false, 40).setName("options");
   }
 
   private stop(a: AreaDef, x: number, y: number, open: boolean, cleared: boolean, current: boolean): void {
@@ -120,15 +114,9 @@ export class JourneyScene extends Phaser.Scene {
     zone.on("pointerup", () => this.openArea(a));
   }
 
-  /** La prima volta in una tappa Zia Mae spiega la tecnica nuova, poi si va alla mappa della tappa. */
+  /** Dritti alla tappa: le lezioni di Zia Mae restano a portata di tasto, senza fermare il gioco. */
   private openArea(a: AreaDef): void {
-    const go = () => void this.scene.start("map", { areaId: a.id });
-    if (save.lessonsSeen.includes(a.id) || a.lessons.length === 0) return go();
-    showLessons(this, a, () => {
-      save.lessonsSeen.push(a.id);
-      persist();
-      go();
-    });
+    this.scene.start("map", { areaId: a.id });
   }
 
   update(): void {

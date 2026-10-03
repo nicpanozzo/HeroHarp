@@ -35,3 +35,17 @@ export const areaCleared = (a: AreaDef, p: Progress): boolean => a.enemies.filte
 export function currentArea(p: Progress): AreaDef {
   return JOURNEY.find((a) => areaUnlocked(a, p) && !areaCleared(a, p)) ?? JOURNEY.filter((a) => areaUnlocked(a, p)).pop() ?? JOURNEY[0];
 }
+
+/** Il prossimo nemico da sfidare: il primo aperto e non ancora battuto della tappa attuale. */
+export function nextEnemy(p: Progress): EnemyDef {
+  const area = currentArea(p);
+  const open = area.enemies.filter((e) => enemyUnlocked(e, p));
+  return open.find((e) => !p.beaten.includes(e.id)) ?? open[open.length - 1] ?? AREAS[0].enemies[0];
+}
+
+/** Stelle di una battaglia vinta: 3 se quasi tutto giusto e quasi nessun colpo preso. */
+export function starsFor(won: boolean, s: { notesHit: number; notesExpected: number; missed: number }): number {
+  if (!won) return 0;
+  const acc = s.notesExpected ? s.notesHit / s.notesExpected : 1;
+  return acc >= 0.9 && s.missed <= 1 ? 3 : acc >= 0.7 ? 2 : 1;
+}

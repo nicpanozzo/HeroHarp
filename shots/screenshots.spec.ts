@@ -18,16 +18,13 @@ test("schermate", async ({ page }) => {
   await page.goto("file://" + resolve("dist/index.html"));
   await active(page, "title");
   await shot("01-titolo");
-  await start(page, false);
-  await shot("02-zia-mae", 800);
-  await click(page, "journey", "mae-ok");
-  await shot("03-lezione");
-  for (let i = 0; i < 10 && !(await page.evaluate(() => window.__game.scene.isActive("map"))); i++) {
-    await click(page, "journey", "mae-ok");
-    await page.waitForTimeout(150);
-  }
+  await start(page);
+  await shot("02-viaggio-inizio", 800);
+  await page.evaluate(() => window.__game.scene.getScene("journey").scene.start("map", { areaId: "porch" }));
   await active(page, "map");
-  await shot("04-tappa-portico", 800);
+  await shot("03-tappa-portico", 800);
+  await click(page, "map", "lessons");
+  await shot("04-lezione");
 
   // un viaggio già avanzato: prime tre tappe battute, la band cresce
   await page.evaluate(() => {
@@ -38,7 +35,7 @@ test("schermate", async ({ page }) => {
     location.reload();
   });
   await active(page, "title");
-  await click(page, "title", "start");
+  await click(page, "title", "to-journey");
   await active(page, "journey");
   await shot("05-viaggio", 900);
   await page.evaluate(() => window.__game.scene.getScene("journey").scene.start("map", { areaId: "juke-joint" }));

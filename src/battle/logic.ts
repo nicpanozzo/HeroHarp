@@ -38,7 +38,9 @@ export interface Round {
   beat: number;
   bpm: number;
   phraseId: string;
+  /** Colpi di conto alla rovescia: solo al primo round, poi si va dritti a tempo. */
   countIn: number[];
+  callStart: number;
   call: PhraseNote[];
   callEnd: number;
   response: PhraseNote[];
@@ -50,17 +52,26 @@ export interface Round {
 
 export type BattleEvent =
   | { type: "phase"; phase: Phase }
-  | { type: "responseHit"; index: number; offset: number }
+  | { type: "responseHit"; index: number; offset: number; rating: Rating; points: number; streak: number }
   | { type: "wrongNote"; midi: number }
+  | { type: "streakLost"; streak: number }
   | { type: "shortNote"; index: number }
   | { type: "enemyDamaged"; amount: number; accuracy: number; onTime: boolean; combo: number }
-  | { type: "parry"; id: number }
+  | { type: "parry"; id: number; points: number; streak: number }
   | { type: "playerDamaged"; id: number; amount: number }
   | { type: "heal"; amount: number }
   | { type: "bossPhase"; index: number }
   | { type: "difficulty"; level: number; bpm: number };
 
 export const PLAYER_HP = 100;
+
+/** Giudizio di una nota: quanto vicino al punto giusto è arrivata. */
+export type Rating = "perfect" | "good" | "ok";
+export const RATING_POINTS: Record<Rating, number> = { perfect: 100, good: 60, ok: 30 };
+export function rate(offset: number): Rating {
+  const a = Math.abs(offset);
+  return a <= 0.1 ? "perfect" : a <= 0.22 ? "good" : "ok";
+}
 /** Le note lunghe almeno così (in battiti) vanno tenute. */
 const HOLD_BEATS = 2;
 
@@ -82,7 +93,9 @@ export class Battle {
   bpm: number;
   combo = 0;
   round!: Round;
-  stats = { notesExpected: 0, notesHit: 0, parried: 0, missed: 0, rounds: 0 };
+  stats = { notesExpected: 0, notesHit: 0, parried: 0, missed: 0, rounds: 0, perfect: 0, score: 0, bestStreak: 0 };
+  /** Note giuste e parate di fila: moltiplica i punti. */
+  streak = 0;
   private rng: () => number;
   private align: (t: number) => number;
   private roundNo = 0;
@@ -163,8 +176,8 @@ export class Battle {
     const t0 = this.align(at);
     const beat = this.beat;
     const phrase = this.nextPhrase();
-    const countIn = [0, 1, 2, 3].map((i) => t0 + i * beat);
-    const callStart = t0 + 4 * beat;
+    const countIn = this.roundNo === 0 ? [0, 1, 2, 3].map((i) => t0 + i * beat) : [];
+    const callStart = t0 + countIn.length * beat;
     const mk = (start: number): PhraseNote[] =>
       phrase.notes.map((n) => ({
         tab: n.tab,
@@ -177,13 +190,14 @@ export class Battle {
     const call = mk(callStart);
     const callEnd = callStart + phrase.beats * beat;
     const response = mk(callEnd);
-    // due battiti di tolleranza per chi è in ritardo
-    const responseEnd = callEnd + phrase.beats * beat + 2 * beat;
-    const volleyStart = responseEnd + beat;
-    const spacing = this.level < 1 ? 2 * beat : beat;
+    // un battito di tolleranza per chi è in ritardo
+    const responseEnd = callEnd + phrase.beats * beat + beat;
+    const volleyStart = responseEnd;
+    const spacing = beat;
+    const shots = Math.min(this.enemy.volleySize, 3 + (this.enemy.boss ? 1 : 0) + this.level);
     const volley: Projectile[] = [];
     let prev = -1;
-    for (let i = 0; i < this.enemy.volleySize; i++) {
+    for (let i = 0; i < shots; i++) {
       let k = Math.floor(this.rng() * this.volleyTabs.length);
       if (k === prev) k = (k + 1) % this.volleyTabs.length;
       prev = k;
@@ -197,14 +211,28 @@ export class Battle {
         state: "pending",
       });
     }
-    const end = volley[volley.length - 1].time + this.parryWindow + beat;
+    const end = volley[volley.length - 1].time + this.parryWindow;
     this.roundNo++;
     this.respIndex = 0;
     this.offsets = [];
     this.sustain = null;
     this.silentSince = null;
     this.healedBeats = 0;
-    this.round = { number: this.roundNo, beat, bpm: this.bpm, phraseId: phrase.id, countIn, call, callEnd, response, responseEnd, volleyStart, volley, end };
+    this.round = {
+      number: this.roundNo,
+      beat,
+      bpm: this.bpm,
+      phraseId: phrase.id,
+      countIn,
+      callStart,
+      call,
+      callEnd,
+      response,
+      responseEnd,
+      volleyStart,
+      volley,
+      end,
+    };
     this.setPhase("countin");
     return this.round;
   }
@@ -216,12 +244,17 @@ export class Battle {
     if (!exp) return;
     if (exp.accept.includes(midi)) {
       exp.hit = true;
-      this.offsets.push(time - exp.time);
+      const offset = time - exp.time;
+      this.offsets.push(offset);
       if (exp.dur >= HOLD_BEATS * this.round.beat - 1e-6) this.sustain = { index: this.respIndex, until: time + 0.6 * exp.dur };
-      this.events.push({ type: "responseHit", index: this.respIndex, offset: time - exp.time });
+      const rating = rate(offset);
+      if (rating === "perfect") this.stats.perfect++;
+      const points = this.addPoints(RATING_POINTS[rating]);
+      this.events.push({ type: "responseHit", index: this.respIndex, offset, rating, points, streak: this.streak });
       this.respIndex++;
     } else {
       this.events.push({ type: "wrongNote", midi });
+      this.breakStreak();
     }
   }
 
@@ -231,7 +264,7 @@ export class Battle {
     const prev = Math.min(this.lastUpdate, now);
     this.lastUpdate = now;
     const r = this.round;
-    if (this.phase === "countin" && now >= r.countIn[3] + r.beat) this.setPhase("call");
+    if (this.phase === "countin" && now >= r.callStart) this.setPhase("call");
     if (this.phase === "call" && now >= r.callEnd - 0.1 * r.beat) this.setPhase("response");
     if (this.phase === "response") {
       this.checkSustain(now, heldMidi);
@@ -250,17 +283,33 @@ export class Battle {
         if (heldMidi === p.midi && now >= p.time - this.parryWindow && prev <= p.time + this.parryWindow) {
           p.state = "parried";
           this.stats.parried++;
-          this.events.push({ type: "parry", id: p.id });
+          const points = this.addPoints(50);
+          this.events.push({ type: "parry", id: p.id, points, streak: this.streak });
         } else if (now > p.time + this.parryWindow) {
           p.state = "missed";
           this.stats.missed++;
           this.playerHp = Math.max(0, this.playerHp - this.enemy.attack);
           this.events.push({ type: "playerDamaged", id: p.id, amount: this.enemy.attack });
+          this.breakStreak();
           if (this.playerHp <= 0) return this.setPhase("lost");
         }
       }
       if (now >= r.end) this.startRound(now);
     }
+  }
+
+  /** Punti con il moltiplicatore della serie: +5% per ogni colpo di fila, fino al doppio. */
+  private addPoints(base: number): number {
+    this.streak++;
+    this.stats.bestStreak = Math.max(this.stats.bestStreak, this.streak);
+    const points = Math.round(base * (1 + Math.min(this.streak - 1, 20) * 0.05));
+    this.stats.score += points;
+    return points;
+  }
+
+  private breakStreak(): void {
+    if (this.streak >= 3) this.events.push({ type: "streakLost", streak: this.streak });
+    this.streak = 0;
   }
 
   private checkSustain(now: number, heldMidi: number | null): void {
@@ -310,7 +359,9 @@ export class Battle {
     // "a tempo" se tutte le note sono arrivate entro mezzo battito dal punto ideale
     const onTime = accuracy === 1 && this.offsets.every((o) => Math.abs(o) <= 0.5 * r.beat);
     this.combo = accuracy === 1 ? this.combo + 1 : 0;
-    const base = this.enemy.hp / (this.enemy.boss ? 8 : 4);
+    if (r.response.some((n) => !n.hit)) this.breakStreak();
+    // pochi round per nemico: battaglie corte e intense
+    const base = this.enemy.hp / (this.enemy.boss ? 6 : 3);
     const amount = Math.round(base * accuracy * (onTime ? 1.25 : 1) * (1 + 0.15 * Math.max(0, this.combo - 1)));
     this.enemyHp = Math.max(0, this.enemyHp - amount);
     this.events.push({ type: "enemyDamaged", amount, accuracy, onTime, combo: this.combo });

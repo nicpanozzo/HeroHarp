@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { click, start, startBot } from "./helpers";
+import { GAME } from "./paths";
 
 test("il microfono finto viene riconosciuto come foro 4 soffiato", async ({ page }) => {
   const errors = await start(page);
@@ -73,17 +74,14 @@ test("la calibrazione del ritardo misura e salva lo scarto", async ({ page }) =>
   expect(await page.evaluate(() => window.__engine().inputLatency)).toBe(latency);
 });
 
-test("la prima volta Zia Mae spiega il gioco e la tappa, poi si entra nel portico", async ({ page }) => {
-  const errors = await start(page, false);
-  await click(page, "journey", "mae-ok");
-  // le lezioni della prima tappa, una pagina per tecnica
-  for (let i = 0; i < 10 && !(await page.evaluate(() => window.__game.scene.isActive("map"))); i++) {
-    await click(page, "journey", "mae-ok");
-    await page.waitForTimeout(150);
-  }
-  await page.waitForFunction(() => window.__game.scene.isActive("map"));
-  const title = await page.evaluate(() => window.__game.scene.getScene("map").children.getByName("area-title").text);
-  expect(title).toMatch(/PORTICO/);
+test("Gioca porta in un tocco alla battaglia contro il primo nemico", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await page.goto(GAME);
+  await page.waitForFunction(() => window.__game?.scene.isActive("title"));
+  await click(page, "title", "start");
+  await page.waitForFunction(() => window.__game.scene.isActive("battle"));
+  expect(await page.evaluate(() => window.__game.scene.getScene("battle").enemy.id)).toBe("draft");
   expect(errors).toEqual([]);
 });
 
