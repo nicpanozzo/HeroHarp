@@ -8,6 +8,8 @@ export default defineConfig({
   timeout: 300_000,
   // le battaglie durano minuti veri: si giocano in parallelo
   fullyParallel: true,
+  // su GitHub gli errori compaiono come annotazioni accanto al codice
+  reporter: process.env.CI ? [["github"], ["list"]] : "list",
   use: {
     viewport: { width: 1280, height: 720 },
     launchOptions: {
