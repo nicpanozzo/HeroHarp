@@ -3,6 +3,7 @@ import { KEYS, keyById } from "../harp";
 import { getLang, setLang, t } from "../i18n";
 import { save, persist } from "../state";
 import { getEngine } from "../audio/engine";
+import { applySettings } from "../settings";
 import { C, W, H, HEX, txt, button, paper, panel } from "../ui";
 
 export class TitleScene extends Phaser.Scene {
@@ -36,25 +37,42 @@ export class TitleScene extends Phaser.Scene {
     button(this, W / 2 - 150, 342, "‹", () => step(-1), 64, false).setName("key-prev");
     button(this, W / 2 + 150, 342, "›", () => step(1), 64, false).setName("key-next");
 
-    button(this, W - 120, 56, getLang() === "it" ? "English" : "Italiano", () => {
-      setLang(getLang() === "it" ? "en" : "it");
-      save.lang = getLang();
-      persist();
-      this.scene.restart();
-    }, 180, false).setName("lang");
+    button(
+      this,
+      W - 120,
+      56,
+      getLang() === "it" ? "English" : "Italiano",
+      () => {
+        setLang(getLang() === "it" ? "en" : "it");
+        save.lang = getLang();
+        persist();
+        this.scene.restart();
+      },
+      180,
+      false,
+    ).setName("lang");
+    button(this, 120, 56, t("options"), () => this.scene.start("options", { from: "title" }), 180, false).setName("options");
 
     const status = txt(this, W / 2, 530, t("micAsk"), 20, HEX.inchiostro).setWordWrapWidth(560);
-    button(this, W / 2, 460, t("start"), async () => {
-      const engine = getEngine();
-      await engine.resume();
-      const mic = engine.micStatus === "on" ? "on" : await engine.startMic();
-      if (mic !== "on") {
-        status.setText(t("micDenied")).setColor(HEX.rosso);
-        this.time.delayedCall(2800, () => this.scene.start("map"));
-      } else {
-        this.scene.start("map");
-      }
-    }, 300).setName("start");
+    button(
+      this,
+      W / 2,
+      460,
+      t("start"),
+      async () => {
+        const engine = getEngine();
+        applySettings();
+        await engine.resume();
+        const mic = engine.micStatus === "on" ? "on" : await engine.startMic();
+        if (mic !== "on") {
+          status.setText(t("micDenied")).setColor(HEX.rosso);
+          this.time.delayedCall(2800, () => this.scene.start("map"));
+        } else {
+          this.scene.start("map");
+        }
+      },
+      300,
+    ).setName("start");
     this.add.rectangle(W / 2, H - 40, W, 2, C.inchiostro, 0.3);
     txt(this, W / 2, H - 22, t("keyboardHint"), 17, HEX.inchiostro).setAlpha(0.7);
   }

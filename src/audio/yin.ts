@@ -37,7 +37,9 @@ export function yin(buf: Float32Array, sampleRate: number, threshold = 0.2, minH
   }
   if (tau < 0) return null;
   // interpolazione parabolica per una stima sotto il campione
-  const a = d[tau - 1], b = d[tau], c = d[tau + 1];
+  const a = d[tau - 1],
+    b = d[tau],
+    c = d[tau + 1];
   const den = a + c - 2 * b;
   const shift = den ? (a - c) / (2 * den) : 0;
   return { hz: sampleRate / (tau + shift), clarity: 1 - b };

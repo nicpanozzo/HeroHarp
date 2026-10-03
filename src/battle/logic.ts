@@ -101,8 +101,7 @@ export class Battle {
     this.bpm = enemy.phases[0].bpm[0];
     const seen = new Map<string, Tab>();
     for (const ph of enemy.phases)
-      for (const phrase of ph.phrases)
-        for (const seg of phrase) for (const n of seg.notes) seen.set(`${n.tab.hole}${n.tab.draw}${n.tab.bend}`, n.tab);
+      for (const phrase of ph.phrases) for (const seg of phrase) for (const n of seg.notes) seen.set(`${n.tab.hole}${n.tab.draw}${n.tab.bend}`, n.tab);
     this.volleyTabs = [...seen.values()].sort((a, b) => a.hole - b.hole || Number(a.draw) - Number(b.draw));
     this.lanes = [...new Set(this.volleyTabs.map((t) => t.hole))];
   }
@@ -156,7 +155,14 @@ export class Battle {
       if (k === prev) k = (k + 1) % this.volleyTabs.length;
       prev = k;
       const tab = this.volleyTabs[k];
-      volley.push({ id: this.nextId++, tab, midi: tabToMidi(tab, this.key), lane: this.lanes.indexOf(tab.hole), time: volleyStart + 2 * beat + i * spacing, state: "pending" });
+      volley.push({
+        id: this.nextId++,
+        tab,
+        midi: tabToMidi(tab, this.key),
+        lane: this.lanes.indexOf(tab.hole),
+        time: volleyStart + 2 * beat + i * spacing,
+        state: "pending",
+      });
     }
     const end = volley[volley.length - 1].time + this.parryWindow + beat;
     this.roundNo++;

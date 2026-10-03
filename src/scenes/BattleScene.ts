@@ -9,6 +9,7 @@ import type { TonalitaArmonica } from "../style/basi";
 import type { Timbro } from "../style/effetti";
 import { C, W, HEX, txt, porch, pop, panel, reducedMotion } from "../ui";
 import { HearingReadout } from "./readout";
+import { applySettings } from "../settings";
 
 // Pannello di battaglia (in basso): corsie verticali, una per foro, come nella guida di stile.
 const BOARD = { x: 300, y: 430, w: 680, h: 270 };
@@ -72,6 +73,7 @@ export class BattleScene extends Phaser.Scene {
   create(): void {
     const engine = getEngine();
     const lang = getLang();
+    applySettings();
     porch(this);
 
     // base musicale nella tonalità dell'armonica: i round partono sempre a inizio battuta
@@ -89,7 +91,8 @@ export class BattleScene extends Phaser.Scene {
       basi.suBattito((n, tm) => {
         this.beatTimes.push(tm);
         // a base spenta il tempo lo tiene il metronomo
-        if (this.playerTurn) engine.click(tm, n === 0);
+        const st = save.settings;
+        if (st.metronome && (this.playerTurn || !st.music)) engine.click(tm, n === 0);
       }),
     );
     engine.duckBand(false);
@@ -103,7 +106,9 @@ export class BattleScene extends Phaser.Scene {
       .setOrigin(1, 0.5)
       .setLetterSpacing(2);
 
-    this.banner = txt(this, W / 2, 140, "", 46, HEX.inchiostro, "titoli").setStroke(HEX.carta, 8).setName("banner");
+    this.banner = txt(this, W / 2, 140, "", 46, HEX.inchiostro, "titoli")
+      .setStroke(HEX.carta, 8)
+      .setName("banner");
     this.sub = txt(this, W / 2, 186, "", 20, HEX.inchiostro).setStroke(HEX.carta, 5);
     this.beatDot = this.add.circle(W / 2, 214, 8, C.rosso).setAlpha(0.25);
 

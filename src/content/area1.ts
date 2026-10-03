@@ -6,9 +6,24 @@ import type { Tab } from "../harp";
 
 type L10n = { it: string; en: string };
 
-interface RawNote { hole: number; dir: "blow" | "draw"; bend: number }
-interface RawEvent { type: string; start: number; dur: number; notes: RawNote[] }
-interface RawPhrase { id: string; tab: string; beatsPerBar: number; lengthBeats: number; events: RawEvent[] }
+interface RawNote {
+  hole: number;
+  dir: "blow" | "draw";
+  bend: number;
+}
+interface RawEvent {
+  type: string;
+  start: number;
+  dur: number;
+  notes: RawNote[];
+}
+interface RawPhrase {
+  id: string;
+  tab: string;
+  beatsPerBar: number;
+  lengthBeats: number;
+  events: RawEvent[];
+}
 
 export interface PhraseNote {
   tab: Tab;
@@ -73,7 +88,8 @@ export function segment(raw: RawPhrase): Phrase[] {
   for (let from = 0; from < total; from += MAX_SEGMENT_BEATS) {
     const to = Math.min(total, from + MAX_SEGMENT_BEATS);
     const part = notes.filter((n) => n.start >= from && n.start < to).map((n) => ({ ...n, start: n.start - from }));
-    if (part.length) out.push({ id: `${raw.id}${total > MAX_SEGMENT_BEATS ? `.${from / MAX_SEGMENT_BEATS + 1}` : ""}`, beats: Math.ceil((to - from) / 4) * 4, notes: part });
+    if (part.length)
+      out.push({ id: `${raw.id}${total > MAX_SEGMENT_BEATS ? `.${from / MAX_SEGMENT_BEATS + 1}` : ""}`, beats: Math.ceil((to - from) / 4) * 4, notes: part });
   }
   return out;
 }
@@ -81,7 +97,6 @@ export function segment(raw: RawPhrase): Phrase[] {
 const SPRITES: Record<string, string> = { draft: "spiffero", sigh: "sospiro", bellows: "mantice", silence: "silenzio" };
 
 function buildArea1(): AreaDef {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const a = (percorso as any).areas[0];
   const bpm = a.bpm as [number, number];
   const normal: EnemyDef[] = a.enemies.map((e: any, i: number) => ({

@@ -12,9 +12,12 @@ const FLAT: Record<string, string> = { Db: "C#", Eb: "D#", Gb: "F#", Ab: "G#", B
 
 function readWav(path: string): { sr: number; x: Float32Array } {
   const b = readFileSync(path);
-  let p = 12, sr = 0, data: Buffer | null = null;
+  let p = 12,
+    sr = 0,
+    data: Buffer | null = null;
   while (p + 8 <= b.length) {
-    const id = b.toString("ascii", p, p + 4), size = b.readUInt32LE(p + 4);
+    const id = b.toString("ascii", p, p + 4),
+      size = b.readUInt32LE(p + 4);
     if (id === "fmt ") sr = b.readUInt32LE(p + 12);
     if (id === "data") data = b.subarray(p + 8, p + 8 + size);
     p += 8 + size + (size & 1);
@@ -33,7 +36,11 @@ function expected(file: string): number | null {
 }
 
 const files = existsSync(DIR)
-  ? ["reali", "derivati"].flatMap((d) => readdirSync(`${DIR}/${d}`).filter((f) => f.endsWith(".wav") && !f.includes("glide")).map((f) => `${d}/${f}`))
+  ? ["reali", "derivati"].flatMap((d) =>
+      readdirSync(`${DIR}/${d}`)
+        .filter((f) => f.endsWith(".wav") && !f.includes("glide"))
+        .map((f) => `${d}/${f}`),
+    )
   : [];
 
 describe.skipIf(files.length === 0)("rilevatore sulle registrazioni del banco di prova", () => {

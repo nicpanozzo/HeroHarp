@@ -1,13 +1,22 @@
 // Componenti condivisi tra le scene, con i colori e i caratteri della guida di stile (style/tema.ts).
 import Phaser from "phaser";
 import { COLORI, COLORI_NUM, FONT } from "./style/tema";
+import { save } from "./state";
 
 export const W = 1280;
 export const H = 720;
 export const C = COLORI_NUM;
 export const HEX = COLORI;
 
-export function txt(scene: Phaser.Scene, x: number, y: number, s: string, size = 22, color: string = HEX.inchiostro, kind: "titoli" | "testo" | "fori" = "testo"): Phaser.GameObjects.Text {
+export function txt(
+  scene: Phaser.Scene,
+  x: number,
+  y: number,
+  s: string,
+  size = 22,
+  color: string = HEX.inchiostro,
+  kind: "titoli" | "testo" | "fori" = "testo",
+): Phaser.GameObjects.Text {
   return scene.add
     .text(x, y, s, {
       fontFamily: FONT[kind],
@@ -66,8 +75,8 @@ export function paper(scene: Phaser.Scene): void {
 /** Testo che sale e svanisce, per danni e complimenti. */
 export function pop(scene: Phaser.Scene, x: number, y: number, s: string, color: string = HEX.inchiostro, size = 32): void {
   const t = txt(scene, x, y, s, size, color, "titoli").setStroke(HEX.carta, 6);
-  const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  const reduce = reducedMotion();
   scene.tweens.add({ targets: t, y: reduce ? y : y - 60, alpha: 0, duration: 1100, ease: "Cubic.easeOut", onComplete: () => t.destroy() });
 }
 
-export const reducedMotion = (): boolean => !!window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+export const reducedMotion = (): boolean => save.settings.reduceMotion || !!window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;

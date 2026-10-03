@@ -10,7 +10,7 @@ import { NoteTracker } from "./tracker";
 export type MicStatus = "off" | "on" | "denied" | "unsupported";
 
 // soglie tarate sul banco di prova (tests/suggerimenti-rilevatore.md nella cartella del progetto)
-const GATE = 0.002;
+export const DEFAULT_GATE = 0.002;
 const MIN_CLARITY = 0.7;
 
 export class AudioEngine {
@@ -27,6 +27,12 @@ export class AudioEngine {
   /** Ritardo stimato tra il suono reale e la sua analisi (secondi). */
   inputLatency = 0.05;
   level = 0;
+  /** Soglia di volume sotto cui il microfono è considerato in silenzio (tarata dalla calibrazione). */
+  gate = DEFAULT_GATE;
+  /** Volume della base (opzioni) e quanto resta mentre suoni: 0 con gli altoparlanti, un decimo con le cuffie. */
+  musicVolume = 0.8;
+  duckLevel = 0;
+  private ducked = false;
   /** Vero mentre si suona con la tastiera: il microfono non sovrascrive la nota. */
   keyboardHeld = false;
 
@@ -72,7 +78,7 @@ export class AudioEngine {
     this.analyser.getFloatTimeDomainData(this.buf);
     this.level = rms(this.buf);
     const t = this.now - this.inputLatency;
-    if (this.level < GATE) return this.tracker.feed(t, null, this.level);
+    if (this.level < this.gate) return this.tracker.feed(t, null, this.level);
     const p = yin(this.buf, this.ctx.sampleRate);
     this.tracker.feed(t, p && p.clarity > MIN_CLARITY ? hzToMidi(p.hz) : null, this.level);
   }
@@ -83,7 +89,16 @@ export class AudioEngine {
    * rende il riconoscimento inutilizzabile: contiene le stesse note dell'armonica.
    */
   duckBand(on: boolean, when = this.now): void {
-    this.band.gain.setTargetAtTime(on ? 0 : 1, when, 0.04);
+    this.ducked = on;
+    this.band.gain.setTargetAtTime(this.musicVolume * (on ? this.duckLevel : 1), when, 0.04);
+  }
+
+  /** Applica volume e modalità cuffie dalle opzioni. */
+  configureMusic(volume: number, headphones: boolean): void {
+    this.musicVolume = volume;
+    // misurato dal banco di prova: base 20 dB sotto l'armonica (guadagno 0.1) non disturba il riconoscimento
+    this.duckLevel = headphones ? 0.1 : 0;
+    this.duckBand(this.ducked);
   }
 
   private noise: AudioBuffer | null = null;
