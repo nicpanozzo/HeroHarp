@@ -362,6 +362,14 @@ export class BattleScene extends Phaser.Scene {
         this.banner.setText(label.toUpperCase()).setScale(1.4);
         this.tweens.add({ targets: this.banner, scale: 1, duration: 180, ease: "Back.easeOut" });
         this.drawLanes(ev.phase === "volley");
+        // jam: nella risposta conta il ritmo, la nota la scegli tu tra quelle permesse
+        const jam = this.enemy.jam;
+        if (jam && this.battle.round.call[0]?.source.free) {
+          if (ev.phase === "response") {
+            this.chips.forEach((c) => c.label.setText("♪"));
+            this.sub.setText(t("jamHint", { notes: jam.allowed.map((n) => `${n.hole}${n.draw ? "↓" : "↑"}${"'".repeat(n.bend)}`).join(" ") }));
+          } else if (ev.phase === "call") this.sub.setText(this.enemy.trains[getLang()]);
+        }
         // la targa resta piena (niente manifesti che trasparono): si attenuano solo le note
         for (const c of this.chips) {
           c.bg.setAlpha(ev.phase === "volley" ? 0.3 : 1);
@@ -379,7 +387,7 @@ export class BattleScene extends Phaser.Scene {
         const chip = this.chips[ev.index];
         const cx = this.chipLayer.x + (chip?.x ?? 0);
         const color = ev.rating === "perfect" ? HEX.ottone : ev.rating === "good" ? HEX.indaco : HEX.inchiostro;
-        pop(this, cx, 240, t(ev.rating).toUpperCase(), color, ev.rating === "perfect" ? 30 : 24);
+        pop(this, cx, 420, t(ev.rating).toUpperCase(), color, ev.rating === "perfect" ? 30 : 24);
         this.burst(cx, this.chipLayer.y, ev.rating === "perfect" ? C.ottone : C.indaco, ev.rating === "perfect" ? 16 : 8);
         if (chip && !reducedMotion()) this.tweens.add({ targets: chip.label, scale: 1.35, duration: 90, yoyo: true });
         this.showStreak(ev.streak);

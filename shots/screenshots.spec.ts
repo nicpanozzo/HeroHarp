@@ -105,3 +105,35 @@ test("schermate del Juke Joint", async ({ page }) => {
   await go("volo", { id: "primo-volo" }, "24b-volo", 5000);
   await go("jamMenu", {}, "25-jam-menu", 800);
 });
+
+test("schermate verso la beta", async ({ page }) => {
+  const shot = async (name: string, wait = 600) => {
+    await page.waitForTimeout(wait);
+    await page.screenshot({ path: `${OUT}/${name}.png` });
+  };
+  await page.goto("file://" + resolve("dist/index.html"));
+  await active(page, "title");
+  await shot("30-titolo");
+  await click(page, "title", "to-dojo");
+  await active(page, "dojo");
+  await shot("31-dojo", 1500);
+  await page.evaluate(() => window.__game.scene.getScene("dojo").scene.start("journey"));
+  await active(page, "journey");
+  await page.evaluate(() => window.__game.scene.getScene("journey").scene.start("map", { areaId: "chicago-club" }));
+  await active(page, "map");
+  await shot("32-chicago", 900);
+  for (const [enemy, name] of [
+    ["drummer", "33-batterista"],
+    ["stage-boss", "34-padrone-del-palco"],
+    ["midnight-whistle", "35-fischio-di-mezzanotte"],
+  ]) {
+    await page.evaluate((e) => window.__game.scene.getScenes(true)[0].scene.start("battle", { enemyId: e }), enemy);
+    await active(page, "battle");
+    await startBot(page);
+    await page.waitForFunction(() => window.__game.scene.getScene("battle").battle.phase === "response", null, { timeout: 60_000 });
+    await shot(`${name}-risposta`, 900);
+  }
+  await page.evaluate(() => window.__game.scene.getScenes(true)[0].scene.start("options", { from: "title" }));
+  await active(page, "options");
+  await shot("36-opzioni");
+});

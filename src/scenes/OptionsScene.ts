@@ -1,6 +1,6 @@
 import Phaser from "phaser";
 import { getLang, setLang, t, type StringId } from "../i18n";
-import { save, persist } from "../state";
+import { save, persist, exportSave, pickSaveFile } from "../state";
 import { updateSettings } from "../settings";
 import { getEngine } from "../audio/engine";
 import { keepGroove } from "../audio/music";
@@ -79,6 +79,13 @@ export class OptionsScene extends Phaser.Scene {
     row("optOpenAll", onOff(s.openAll), toggle("openAll"), "opt-open-all");
 
     button(this, W / 2, 686, t("back"), () => this.scene.start(this.from), 260).setName("back");
+    // il salvataggio in un file: per cambiare dispositivo o tenerne una copia
+    button(this, 300, 686, t("exportSave"), () => exportSave(), 220, false, 44).setName("opt-export");
+    const imp = button(this, W - 300, 686, t("importSave"), () => pickSaveFile(() => pop()), 220, false, 44).setName("opt-import");
+    const pop = () => {
+      const msg = txt(this, imp.x, 640, t("importBad"), 16, HEX.rosso);
+      this.time.delayedCall(2500, () => msg.destroy());
+    };
   }
 
   update(): void {

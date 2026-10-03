@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { Battle } from "../src/battle/logic";
-import { AREA1, AREAS, enemyById, segment } from "../src/content/areas";
+import { AREA1, AREAS, enemyById, parseTab, segment } from "../src/content/areas";
 import { keyById } from "../src/harp";
 
 const seeded = () => {
@@ -176,5 +176,28 @@ describe("frame persi", () => {
     b.update(p.time - b.parryWindow - 0.05, p.midi); // tenuta appena prima della finestra...
     b.update(p.time + b.parryWindow + 0.3, p.midi); // ...e il frame dopo arriva in ritardo
     expect(p.state).toBe("parried");
+  });
+});
+
+describe("club di Chicago", () => {
+  it("nella jam vale qualunque nota permessa, purché a tempo", () => {
+    const drummer = enemyById("drummer");
+    expect(drummer.jam?.allowed.length).toBe(3);
+    const b = new Battle(drummer, keyById("C"), { rng: () => 0 });
+    const r = b.startRound(0);
+    for (const n of r.response) {
+      expect(n.source.free).toBe(true);
+      expect(n.accept).toHaveLength(3);
+    }
+  });
+  it("il bassista chiede le note dell'accordo, esattamente", () => {
+    const bass = enemyById("bassist");
+    expect(bass.jam).toBeUndefined();
+    const notes = bass.phases[0].phrases.flat().flatMap((p) => p.notes);
+    expect(new Set(notes.map((n) => `${n.tab.hole}${n.tab.draw}`))).toEqual(new Set(["2true", "4false", "4true"]));
+  });
+  it("parseTab legge bend e direzione", () => {
+    expect(parseTab("3↓''")).toEqual({ hole: 3, draw: true, bend: 2 });
+    expect(parseTab("6↑")).toEqual({ hole: 6, draw: false, bend: 0 });
   });
 });

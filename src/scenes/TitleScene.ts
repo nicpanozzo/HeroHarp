@@ -21,8 +21,8 @@ export class TitleScene extends Phaser.Scene {
     const music = () => currentArea({ beaten: save.beaten, openAll: save.settings.openAll }).music;
     grooveOnGesture(this, music());
     txt(this, W / 2, 182, t("tagline"), 26, HEX.inchiostro);
-    this.add.image(250, 430, "personaggi-protagonista-suona").setScale(1.25);
-    this.add.image(W - 250, 440, "personaggi-zia-mae-sorride").setScale(1.2);
+    this.add.image(150, 430, "personaggi-protagonista-suona").setScale(1.25);
+    this.add.image(W - 150, 440, "personaggi-zia-mae-sorride").setScale(1.2);
 
     // tonalità dell'armonica
     panel(this, W / 2 - 220, 250, 440, 150);
@@ -77,8 +77,9 @@ export class TitleScene extends Phaser.Scene {
     const playBtn = button(this, W / 2, 452, `${t("play")} ▶`, play, 320, true, 70).setName("start");
     pulse(this, [title], 0.03);
     pulse(this, [playBtn], 0.05);
-    button(this, W / 2 - 162, 518, t("journey"), () => enter("journey"), 312, false, 44).setName("to-journey");
-    button(this, W / 2 + 162, 518, "Juke Joint ♪", () => enter("hub"), 312, false, 44).setName("to-juke");
+    button(this, W / 2 - 250, 518, t("journeyShort"), () => enter("journey"), 236, false, 44).setName("to-journey");
+    button(this, W / 2, 518, "Juke Joint ♪", () => enter("hub"), 236, false, 44).setName("to-juke");
+    button(this, W / 2 + 250, 518, t("dojo"), () => enter("dojo"), 236, false, 44).setName("to-dojo");
     this.input.keyboard?.once("keydown-ENTER", play);
     this.add.rectangle(W / 2, H - 40, W, 2, C.inchiostro, 0.3);
     txt(this, W / 2, H - 22, t("keyboardHint"), 17, HEX.inchiostro).setAlpha(0.7);

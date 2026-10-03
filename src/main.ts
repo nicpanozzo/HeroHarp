@@ -9,6 +9,7 @@ import { ResultScene } from "./scenes/ResultScene";
 import { OptionsScene } from "./scenes/OptionsScene";
 import { CalibrationScene } from "./scenes/CalibrationScene";
 import { LatencyScene } from "./scenes/LatencyScene";
+import { DojoScene } from "./scenes/DojoScene";
 import { installKeyboard } from "./input";
 import { W, H, C } from "./ui";
 import { getEngine } from "./audio/engine";
@@ -39,7 +40,7 @@ fontsReady().then(() => {
     height: H,
     backgroundColor: C.carta,
     scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
-    scene: [BootScene, TitleScene, JourneyScene, MapScene, BattleScene, ResultScene, OptionsScene, CalibrationScene, LatencyScene, ...MODE_SCENES],
+    scene: [BootScene, TitleScene, JourneyScene, MapScene, BattleScene, ResultScene, OptionsScene, CalibrationScene, LatencyScene, DojoScene, ...MODE_SCENES],
   });
   wireModes(game);
   // accesso per i test automatici e il debug dalla console

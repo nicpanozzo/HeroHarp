@@ -107,7 +107,7 @@ test("la base suona dal primo tocco e non si ferma entrando in battaglia", async
 
 test("si gioca una tappa con accordi e una con i bend", async ({ page }) => {
   const errors = await start(page);
-  for (const enemy of ["stoker", "crow"]) {
+  for (const enemy of ["stoker", "crow", "drummer", "midnight-whistle"]) {
     await page.evaluate((e) => window.__game.scene.getScene("journey").scene.start("battle", { enemyId: e }), enemy);
     await page.waitForFunction(() => window.__game.scene.isActive("battle"));
     await page.waitForFunction(() => window.__game.scene.getScene("battle").battle.phase === "response", null, { timeout: 60_000 });
@@ -149,5 +149,48 @@ test("dal titolo si entra nel Juke Joint, si aprono le tre modalità e si torna 
   await page.waitForTimeout(400);
   await click(page, "hub", "hub-back");
   await page.waitForFunction(() => window.__game.scene.isActive("title"));
+  expect(errors).toEqual([]);
+});
+
+test("il Dojo mostra il foro che senti dal microfono", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await page.goto(GAME);
+  await page.waitForFunction(() => window.__game?.scene.isActive("title"));
+  await click(page, "title", "to-dojo");
+  await page.waitForFunction(() => window.__game.scene.isActive("dojo"));
+  // il microfono finto suona un Do: 4 soffiato
+  await page.waitForFunction(() => window.__game.scene.getScene("dojo").children.getByName("dojo-tab")?.text === "4↑", null, { timeout: 15_000 });
+  await click(page, "dojo", "dojo-back");
+  await page.waitForFunction(() => window.__game.scene.isActive("title"));
+  expect(errors).toEqual([]);
+});
+
+test("il salvataggio si esporta in un file e si reimporta", async ({ page }, info) => {
+  const errors = await start(page);
+  await page.evaluate(() => {
+    const raw = JSON.parse(localStorage.getItem("duello-dance-save")!);
+    raw.beaten = ["draft", "sigh"];
+    localStorage.setItem("duello-dance-save", JSON.stringify(raw));
+  });
+  await page.reload();
+  await page.waitForFunction(() => window.__game?.scene.isActive("title"));
+  await click(page, "title", "options");
+  await page.waitForFunction(() => window.__game.scene.isActive("options"));
+  const download = page.waitForEvent("download");
+  await click(page, "options", "opt-export");
+  const file = info.outputPath("salvataggio.json");
+  await (await download).saveAs(file);
+  // un altro dispositivo: niente progressi
+  await page.evaluate(() => localStorage.clear());
+  await page.reload();
+  await page.waitForFunction(() => window.__game?.scene.isActive("title"));
+  await click(page, "title", "options");
+  await page.waitForFunction(() => window.__game.scene.isActive("options"));
+  const chooser = page.waitForEvent("filechooser");
+  await click(page, "options", "opt-import");
+  await (await chooser).setFiles(file);
+  await page.waitForFunction(() => window.__game?.scene.isActive("title"));
+  expect(await page.evaluate(() => JSON.parse(localStorage.getItem("duello-dance-save")!).beaten)).toEqual(["draft", "sigh"]);
   expect(errors).toEqual([]);
 });

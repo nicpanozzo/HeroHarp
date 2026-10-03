@@ -69,3 +69,49 @@ export function persist(): void {
     /* ignorato */
   }
 }
+
+const MODES_KEY = "duello-dance-juke-joint";
+
+/** Tutto il salvataggio (viaggio e Juke Joint) in un file JSON da scaricare: per cambiare dispositivo o fare una copia. */
+export function exportSave(): void {
+  persist();
+  let modes: unknown = null;
+  try {
+    modes = JSON.parse(localStorage.getItem(MODES_KEY) ?? "null");
+  } catch {
+    /* niente record delle modalità */
+  }
+  const blob = new Blob([JSON.stringify({ app: "heroharp", version: 1, game: save, modes }, null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `heroharp-${new Date().toISOString().slice(0, 10)}.json`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
+/** Legge un file esportato. Restituisce false se non è un salvataggio valido (e non tocca nulla). */
+export function importSave(text: string): boolean {
+  try {
+    const data = JSON.parse(text);
+    if (data?.app !== "heroharp" || typeof data.game !== "object" || !Array.isArray(data.game.beaten)) return false;
+    localStorage.setItem(KEY, JSON.stringify(data.game));
+    if (data.modes) localStorage.setItem(MODES_KEY, JSON.stringify(data.modes));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/** Apre la scelta del file e, se il salvataggio è valido, ricarica il gioco con i progressi importati. */
+export function pickSaveFile(onInvalid: () => void): void {
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = "application/json,.json";
+  input.onchange = async () => {
+    const file = input.files?.[0];
+    if (!file) return;
+    if (importSave(await file.text())) location.reload();
+    else onInvalid();
+  };
+  input.click();
+}
