@@ -140,15 +140,21 @@ export class BattleScene extends Phaser.Scene {
     }
 
     // cartello di carta dietro il titolo del turno: si legge su qualunque manifesto dello sfondo
-    panel(this, W / 2 - 290, 126, 580, 92);
+    panel(this, W / 2 - 290, 126, 580, 102);
     this.banner = txt(this, W / 2, 158, "", 46, HEX.inchiostro, "titoli")
       .setStroke(HEX.carta, 8)
       .setName("banner");
-    this.sub = txt(this, W / 2, 200, "", 19, HEX.inchiostro).setStroke(HEX.carta, 5);
-    this.beatDot = this.add.circle(W / 2, 226, 8, C.rosso).setAlpha(0.25);
+    // resta dentro il cartello: va a capo e, se serve, si rimpicciolisce
+    this.sub = txt(this, W / 2, 200, "", 19, HEX.inchiostro)
+      .setStroke(HEX.carta, 5)
+      .setWordWrapWidth(540);
+
+    this.beatDot = this.add.circle(W / 2, 242, 8, C.rosso).setAlpha(0.25);
 
     this.playerImg = this.add.image(PLAYER.x, PLAYER.y, "personaggi-protagonista-idle").setDisplaySize(250, 250);
     const size = this.enemy.boss ? 330 : 260;
+    // un cono di luce sul nemico: le insegne e i manifesti dello sfondo restano dietro, non addosso
+    this.add.image(ENEMY.x, ENEMY.y - (this.enemy.boss ? 30 : 0), this.spotTexture()).setDisplaySize(size * 1.25, size * 1.25);
     this.enemyImg = this.add.image(ENEMY.x, ENEMY.y - (this.enemy.boss ? 30 : 0), `nemici-${this.enemy.sprite}-idle`).setDisplaySize(size, size);
     // tutti ballano sul battito della base
     hop(this, this.enemyImg, 10);
@@ -170,10 +176,10 @@ export class BattleScene extends Phaser.Scene {
 
     this.battle.startRound(engine.now + 0.3);
     this.redrawHp();
-    this.sub.setText(this.enemy.trains[lang]);
+    this.setSub(this.enemy.trains[lang]);
     if (!save.introSeen) {
       // la prima volta basta una riga: il resto si capisce giocando
-      this.sub.setText(t("firstHint")).setColor(HEX.prugna);
+      this.setSub(t("firstHint")).setColor(HEX.prugna);
       save.introSeen = true;
       persist();
     }
@@ -216,6 +222,30 @@ export class BattleScene extends Phaser.Scene {
       c.setVisible(false);
       this.projectiles.set(p.id, c);
     }
+  }
+
+  private setSub(v: string): Phaser.GameObjects.Text {
+    this.sub.setFontSize(19).setText(v).setY(200);
+    // su due righe: più piccolo e un po' più su, sempre dentro il cartello
+    if (this.sub.height > 30) this.sub.setFontSize(15).setY(205);
+    return this.sub;
+  }
+
+  /** Alone morbido e scuro, generato una volta sola. */
+  private spotTexture(): string {
+    const key = "spot";
+    if (!this.textures.exists(key)) {
+      const c = this.textures.createCanvas(key, 256, 256)!;
+      const ctx = c.getContext();
+      const g = ctx.createRadialGradient(128, 128, 20, 128, 128, 128);
+      g.addColorStop(0, "rgba(28,22,18,0.95)");
+      g.addColorStop(0.5, "rgba(28,22,18,0.85)");
+      g.addColorStop(1, "rgba(28,22,18,0)");
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, 256, 256);
+      c.refresh();
+    }
+    return key;
   }
 
   /**
@@ -367,8 +397,8 @@ export class BattleScene extends Phaser.Scene {
         if (jam && this.battle.round.call[0]?.source.free) {
           if (ev.phase === "response") {
             this.chips.forEach((c) => c.label.setText("♪"));
-            this.sub.setText(t("jamHint", { notes: jam.allowed.map((n) => `${n.hole}${n.draw ? "↓" : "↑"}${"'".repeat(n.bend)}`).join(" ") }));
-          } else if (ev.phase === "call") this.sub.setText(this.enemy.trains[getLang()]);
+            this.setSub(t("jamHint", { notes: jam.allowed.map((n) => `${n.hole}${n.draw ? "↓" : "↑"}${"'".repeat(n.bend)}`).join(" ") }));
+          } else if (ev.phase === "call") this.setSub(this.enemy.trains[getLang()]);
         }
         // la targa resta piena (niente manifesti che trasparono): si attenuano solo le note
         for (const c of this.chips) {
@@ -402,7 +432,7 @@ export class BattleScene extends Phaser.Scene {
         pop(this, W / 2, 380, t("hold"), HEX.prugna, 26);
         break;
       case "wrongNote":
-        pop(this, W / 2, 380, `${t("wrong")}: ${noteName(ev.midi, getLang())}`, HEX.rosso, 22);
+        pop(this, W / 2, 460, `${t("wrong")}: ${noteName(ev.midi, getLang())}`, HEX.rosso, 22);
         break;
       case "enemyDamaged":
         if (ev.amount > 0) {
@@ -428,7 +458,7 @@ export class BattleScene extends Phaser.Scene {
         break;
       case "bossPhase": {
         const d = this.battle.currentPhase.description;
-        this.sub.setText(`${t("bossPhase")} ${ev.index + 1}${d ? ` · ${d[getLang()]}` : ""}`);
+        this.setSub(`${t("bossPhase")} ${ev.index + 1}${d ? ` · ${d[getLang()]}` : ""}`);
         break;
       }
       case "parry": {
