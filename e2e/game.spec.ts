@@ -4,6 +4,7 @@ import { click, start, startBot } from "./helpers";
 test("il microfono finto viene riconosciuto come foro 4 soffiato", async ({ page }) => {
   const errors = await start(page);
   await expect.poll(() => page.evaluate(() => window.__game.scene.getScene("journey").children.getByName("hearing").text)).toContain("4↑");
+  expect(await page.evaluate(() => window.__engine().detector)).toBe("worklet");
   expect(errors).toEqual([]);
 });
 

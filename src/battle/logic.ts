@@ -91,6 +91,7 @@ export class Battle {
   private offsets: number[] = [];
   private queue: Phrase[] = [];
   private lastPhrase = -1;
+  private lastUpdate = -Infinity;
   private sustain: { index: number; until: number } | null = null;
   private silentSince: number | null = null;
   private healedBeats = 0;
@@ -227,6 +228,8 @@ export class Battle {
   /** Da chiamare a ogni frame con la nota tenuta in questo momento. */
   update(now: number, heldMidi: number | null): void {
     if (this.phase === "won" || this.phase === "lost") return;
+    const prev = Math.min(this.lastUpdate, now);
+    this.lastUpdate = now;
     const r = this.round;
     if (this.phase === "countin" && now >= r.countIn[3] + r.beat) this.setPhase("call");
     if (this.phase === "call" && now >= r.callEnd - 0.1 * r.beat) this.setPhase("response");
@@ -242,7 +245,9 @@ export class Battle {
     if (this.phase === "volley") {
       for (const p of r.volley) {
         if (p.state !== "pending") continue;
-        if (heldMidi === p.midi && Math.abs(now - p.time) <= this.parryWindow) {
+        // vale anche se tra due aggiornamenti è passato del tempo (frame persi): basta che la nota
+        // fosse tenuta in un momento dell'intervallo che tocca la finestra di parata
+        if (heldMidi === p.midi && now >= p.time - this.parryWindow && prev <= p.time + this.parryWindow) {
           p.state = "parried";
           this.stats.parried++;
           this.events.push({ type: "parry", id: p.id });

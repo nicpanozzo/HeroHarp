@@ -4,6 +4,7 @@ import { describe, it, expect } from "vitest";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { yin, rms } from "../src/audio/yin";
 import { hzToMidi } from "../src/harp";
+import { HOP } from "../src/audio/pitchWorklet";
 import { NoteTracker } from "../src/audio/tracker";
 
 const DIR = process.env.CAMPIONI ?? "/mnt/project-files/tests/campioni";
@@ -44,28 +45,37 @@ const files = existsSync(DIR)
   : [];
 
 describe.skipIf(files.length === 0)("rilevatore sulle registrazioni del banco di prova", () => {
-  it("ogni nota attaccata dal gioco è quella giusta, nella grande maggioranza dei file", () => {
-    let pass = 0;
-    const failed: string[] = [];
-    for (const f of files) {
-      const want = expected(f);
-      if (want === null) continue;
-      const { sr, x } = readWav(`${DIR}/${f}`);
-      // come nel gioco: 60 letture al secondo, note accettate solo dopo letture stabili
-      const tr = new NoteTracker();
-      const onsets: number[] = [];
-      tr.onOnset((o) => onsets.push(o.midi));
-      for (let i = 0; i + 2048 <= x.length; i += Math.round(sr / 60)) {
-        const buf = x.subarray(i, i + 2048);
-        const level = rms(buf);
-        const r = level >= 0.002 ? yin(buf, sr) : null;
-        tr.feed(i / sr, r && r.clarity > 0.7 ? hzToMidi(r.hz) : null, level);
+  // 60 letture al secondo (vecchio rilevatore legato ai frame) e il passo dell'AudioWorklet
+  it.each([
+    ["frame", 0],
+    ["worklet", HOP],
+  ])(
+    "ogni nota attaccata dal gioco è quella giusta, nella grande maggioranza dei file (%s)",
+    (_name, hop) => {
+      let pass = 0;
+      const failed: string[] = [];
+      for (const f of files) {
+        const want = expected(f);
+        if (want === null) continue;
+        const { sr, x } = readWav(`${DIR}/${f}`);
+        // come nel gioco: letture a passo fisso, note accettate solo dopo letture stabili
+        const step = (hop as number) || Math.round(sr / 60);
+        const tr = new NoteTracker();
+        const onsets: number[] = [];
+        tr.onOnset((o) => onsets.push(o.midi));
+        for (let i = 0; i + 2048 <= x.length; i += step) {
+          const buf = x.subarray(i, i + 2048);
+          const level = rms(buf);
+          const r = level >= 0.002 ? yin(buf, sr) : null;
+          tr.feed(i / sr, r && r.clarity > 0.7 ? hzToMidi(r.hz) : null, level);
+        }
+        if (onsets.length > 0 && onsets.every((m) => m === want)) pass++;
+        else failed.push(`${f}: atteso ${want}, attacchi ${onsets.join(",") || "nessuno"}`);
       }
-      if (onsets.length > 0 && onsets.every((m) => m === want)) pass++;
-      else failed.push(`${f}: atteso ${want}, attacchi ${onsets.join(",") || "nessuno"}`);
-    }
-    const n = files.filter((f) => expected(f) !== null).length;
-    console.log(`campioni: ${pass}/${n} file riconosciuti senza errori`);
-    expect(pass / n, failed.join("\n")).toBeGreaterThan(0.95);
-  }, 120_000);
+      const n = files.filter((f) => expected(f) !== null).length;
+      console.log(`campioni (${_name}): ${pass}/${n} file riconosciuti senza errori`);
+      expect(pass / n, failed.join("\n")).toBeGreaterThan(0.95);
+    },
+    120_000,
+  );
 });

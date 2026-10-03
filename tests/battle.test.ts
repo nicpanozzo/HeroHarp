@@ -165,3 +165,16 @@ describe("tutte le tappe", () => {
     if (ob) expect(ob.semitones[0]).toBe(22); // 6 overblow = Si bemolle
   });
 });
+
+describe("frame persi", () => {
+  it("la parata vale anche se l'aggiornamento arriva dopo la finestra, con la nota tenuta", () => {
+    const b = new Battle(enemyById("draft"), keyById("C"), { rng: seeded() });
+    const r = b.startRound(0);
+    b.update(r.callEnd, null);
+    b.update(r.responseEnd + 0.01, null); // risposta mancata: si passa alla raffica
+    const p = r.volley[0];
+    b.update(p.time - b.parryWindow - 0.05, p.midi); // tenuta appena prima della finestra...
+    b.update(p.time + b.parryWindow + 0.3, p.midi); // ...e il frame dopo arriva in ritardo
+    expect(p.state).toBe("parried");
+  });
+});

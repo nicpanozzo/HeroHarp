@@ -6,6 +6,7 @@ import { GeneratoreBasi } from "../style/basi";
 import { EffettiSonori } from "../style/effetti";
 import { yin, rms } from "./yin";
 import { NoteTracker } from "./tracker";
+import { createPitchNode, type PitchFrame } from "./pitchWorklet";
 
 export type MicStatus = "off" | "on" | "denied" | "unsupported";
 
@@ -24,14 +25,17 @@ export class AudioEngine {
   readonly basi: GeneratoreBasi;
   readonly fx: EffettiSonori;
   private analyser: AnalyserNode | null = null;
+  /** Analisi nel thread audio (se disponibile): le misure arrivano qui e poll() le passa al tracker. */
+  private pitchNode: AudioWorkletNode | null = null;
+  private frames: PitchFrame[] = [];
+  /** "worklet" o "analyser": come viene analizzato il microfono (per diagnosi). */
+  detector: "worklet" | "analyser" | "none" = "none";
   private buf = new Float32Array(2048);
   micStatus: MicStatus = "off";
   /** Ritardo stimato tra il suono reale e la sua analisi (secondi). */
   /** Secondi da togliere agli attacchi sentiti dal microfono (vedi la calibrazione del ritardo). */
   inputLatency = DEFAULT_LATENCY;
   level = 0;
-  /** Soglia di volume sotto cui il microfono è considerato in silenzio (tarata dalla calibrazione). */
-  gate = DEFAULT_GATE;
   /** Volume della base (opzioni) e quanto resta mentre suoni: 0 con gli altoparlanti, un decimo con le cuffie. */
   musicVolume = 0.8;
   duckLevel = 0;
@@ -65,23 +69,66 @@ export class AudioEngine {
         audio: { echoCancellation: true, noiseSuppression: false, autoGainControl: false },
       });
       const src = this.ctx.createMediaStreamSource(stream);
-      this.analyser = this.ctx.createAnalyser();
-      this.analyser.fftSize = 2048;
-      src.connect(this.analyser);
-      this.buf = new Float32Array(this.analyser.fftSize);
+      try {
+        this.pitchNode = await createPitchNode(this.ctx, (f) => {
+          // se nessuna scena legge il microfono per un po', si tengono solo le misure recenti
+          if (this.frames.push(f) > 200) this.frames.shift();
+        });
+      } catch (e) {
+        // senza AudioWorklet si ripiega sull'analisi a ogni frame
+        console.warn("AudioWorklet non disponibile:", e);
+        this.pitchNode = null;
+      }
+      if (this.pitchNode) {
+        src.connect(this.pitchNode);
+        // il nodo va collegato all'uscita perché il browser lo faccia lavorare, ma in silenzio
+        const mute = this.ctx.createGain();
+        mute.gain.value = 0;
+        this.pitchNode.connect(mute).connect(this.ctx.destination);
+        this.pitchNode.port.postMessage({ gate: this.gate });
+        this.detector = "worklet";
+      } else {
+        this.analyser = this.ctx.createAnalyser();
+        this.analyser.fftSize = 2048;
+        src.connect(this.analyser);
+        this.buf = new Float32Array(this.analyser.fftSize);
+        this.detector = "analyser";
+      }
       return (this.micStatus = "on");
     } catch {
       return (this.micStatus = "denied");
     }
   }
 
-  /** Da chiamare a ogni frame: analizza l'ultimo pezzo di audio dal microfono. */
+  private _gate = DEFAULT_GATE;
+  /** Soglia di volume sotto cui il microfono è considerato in silenzio (tarata dalla calibrazione). */
+  get gate(): number {
+    return this._gate;
+  }
+  set gate(v: number) {
+    this._gate = v;
+    this.pitchNode?.port.postMessage({ gate: v });
+  }
+
+  /** Da chiamare a ogni frame: passa al tracker le misure arrivate dal microfono. */
   poll(): void {
+    if (this.pitchNode) {
+      const frames = this.frames;
+      this.frames = [];
+      if (this.keyboardHeld) return;
+      for (const f of frames) {
+        this.level = f.level;
+        const t = f.time - this.inputLatency;
+        if (f.level < this._gate) this.tracker.feed(t, null, f.level);
+        else this.tracker.feed(t, f.hz && f.clarity > MIN_CLARITY ? hzToMidi(f.hz) : null, f.level);
+      }
+      return;
+    }
     if (!this.analyser || this.keyboardHeld) return;
     this.analyser.getFloatTimeDomainData(this.buf);
     this.level = rms(this.buf);
     const t = this.now - this.inputLatency;
-    if (this.level < this.gate) return this.tracker.feed(t, null, this.level);
+    if (this.level < this._gate) return this.tracker.feed(t, null, this.level);
     const p = yin(this.buf, this.ctx.sampleRate);
     this.tracker.feed(t, p && p.clarity > MIN_CLARITY ? hzToMidi(p.hz) : null, this.level);
   }
