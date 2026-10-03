@@ -420,8 +420,9 @@ function buildArea(a: any): AreaDef {
     timbre: timbre(b.id),
     name: b.name,
     trains: b.description,
-    hp: 150 + (o - 1) * 20,
-    attack: 12 + Math.floor((o - 1) / 2),
+    hp: 120 + (o - 1) * 22,
+    // i boss durano di più ma colpiscono piano: vince chi suona bene, non solo chi suona perfetto
+    attack: 9 + Math.floor((o - 1) / 2),
     volleySize: 5,
     boss: true,
     healsOnSilence: b.id === "silence",

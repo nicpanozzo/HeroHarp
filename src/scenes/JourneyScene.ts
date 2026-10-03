@@ -100,9 +100,11 @@ export class JourneyScene extends Phaser.Scene {
     txt(this, x, y + 2, label, 34, a.extra ? HEX.carta : HEX.inchiostro, "titoli").setAlpha(open || a.extra ? 1 : 0.45);
     const name = txt(this, x, y + 62, a.name[lang].toUpperCase(), 19, HEX.inchiostro, "titoli").setAlpha(open ? 1 : 0.5);
     const sub = a.comingSoon ? t("comingSoon") : open ? a.technique[lang] : a.extra ? t("extraLocked") : t("areaLocked");
-    txt(this, x, y + 86, sub, 15, a.comingSoon ? HEX.rosso : HEX.inchiostro)
+    // sotto il nome, dall'alto: su due righe scende senza coprirlo
+    txt(this, x, y + 76, sub, 16, a.comingSoon ? HEX.rosso : HEX.inchiostro)
+      .setOrigin(0.5, 0)
       .setAlpha(open ? 0.85 : 0.6)
-      .setWordWrapWidth(300);
+      .setWordWrapWidth(330);
     if (current && open) {
       const me = this.add.image(x - 62, y - 30, "personaggi-protagonista-suona").setDisplaySize(84, 84);
       hop(this, me, 8);

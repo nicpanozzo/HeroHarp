@@ -189,8 +189,25 @@ test("il salvataggio si esporta in un file e si reimporta", async ({ page }, inf
   await page.waitForFunction(() => window.__game.scene.isActive("options"));
   const chooser = page.waitForEvent("filechooser");
   await click(page, "options", "opt-import");
-  await (await chooser).setFiles(file);
+  // l'importazione ricarica la pagina: si aspetta il salvataggio, non la scena (il titolo è già attivo prima)
+  await Promise.all([page.waitForEvent("load"), (await chooser).setFiles(file)]);
   await page.waitForFunction(() => window.__game?.scene.isActive("title"));
   expect(await page.evaluate(() => JSON.parse(localStorage.getItem("duello-dance-save")!).beaten)).toEqual(["draft", "sigh"]);
   expect(errors).toEqual([]);
+});
+
+test("al primo avvio la prima nota arriva in meno di 30 secondi", async ({ page }) => {
+  const t0 = Date.now();
+  await page.goto(GAME);
+  await page.waitForFunction(() => window.__game?.scene.isActive("title"));
+  await click(page, "title", "start");
+  await page.waitForFunction(() => window.__game.scene.isActive("battle"));
+  // la prima nota del nemico: da lì in poi stai già suonando
+  await page.waitForFunction(() => {
+    const b = window.__game.scene.getScene("battle").battle;
+    return b && window.__engine().now >= b.round.callStart;
+  });
+  const seconds = (Date.now() - t0) / 1000;
+  console.log(`prima nota dopo ${seconds.toFixed(1)} s`);
+  expect(seconds).toBeLessThan(30);
 });

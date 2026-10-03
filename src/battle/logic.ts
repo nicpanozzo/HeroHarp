@@ -60,10 +60,13 @@ export type BattleEvent =
   | { type: "parry"; id: number; points: number; streak: number }
   | { type: "playerDamaged"; id: number; amount: number }
   | { type: "heal"; amount: number }
+  | { type: "playerHealed"; amount: number }
   | { type: "bossPhase"; index: number }
   | { type: "difficulty"; level: number; bpm: number };
 
 export const PLAYER_HP = 100;
+/** Vita recuperata con una risposta tutta giusta. */
+export const PERFECT_HEAL = 5;
 
 /** Giudizio di una nota: quanto vicino al punto giusto è arrivata. */
 export type Rating = "perfect" | "good" | "ok";
@@ -194,7 +197,7 @@ export class Battle {
     const responseEnd = callEnd + phrase.beats * beat + beat;
     const volleyStart = responseEnd;
     const spacing = beat;
-    const shots = Math.min(this.enemy.volleySize, 3 + (this.enemy.boss ? 1 : 0) + this.level);
+    const shots = Math.min(this.enemy.volleySize, 3 + this.level);
     const volley: Projectile[] = [];
     let prev = -1;
     for (let i = 0; i < shots; i++) {
@@ -361,10 +364,16 @@ export class Battle {
     this.combo = accuracy === 1 ? this.combo + 1 : 0;
     if (r.response.some((n) => !n.hit)) this.breakStreak();
     // pochi round per nemico: battaglie corte e intense
-    const base = this.enemy.hp / (this.enemy.boss ? 6 : 3);
+    const base = this.enemy.hp / (this.enemy.boss ? 4 : 3);
     const amount = Math.round(base * accuracy * (onTime ? 1.25 : 1) * (1 + 0.15 * Math.max(0, this.combo - 1)));
     this.enemyHp = Math.max(0, this.enemyHp - amount);
     this.events.push({ type: "enemyDamaged", amount, accuracy, onTime, combo: this.combo });
+    // una risposta perfetta ridà fiato: chi suona bene recupera un po' di vita
+    if (accuracy === 1 && this.playerHp < PLAYER_HP) {
+      const back = Math.min(PERFECT_HEAL, PLAYER_HP - this.playerHp);
+      this.playerHp += back;
+      this.events.push({ type: "playerHealed", amount: back });
+    }
     this.adapt(accuracy);
     if (this.enemyHp <= 0) return this.setPhase("won");
     this.advanceBossPhase();

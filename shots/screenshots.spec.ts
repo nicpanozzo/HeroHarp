@@ -137,3 +137,51 @@ test("schermate verso la beta", async ({ page }) => {
   await active(page, "options");
   await shot("36-opzioni");
 });
+
+test("controllo visivo su telefono, in inglese", async ({ page }) => {
+  test.setTimeout(400_000);
+  await page.setViewportSize({ width: 844, height: 390 });
+  await page.addInitScript(() => {
+    if (!localStorage.getItem("duello-dance-save"))
+      localStorage.setItem(
+        "duello-dance-save",
+        JSON.stringify({ lang: "en", introSeen: true, beaten: ["draft", "sigh", "bellows", "silence", "ticket-clerk"] }),
+      );
+  });
+  const shot = async (name: string, wait = 700) => {
+    await page.waitForTimeout(wait);
+    await page.screenshot({ path: `${OUT}/${name}.png` });
+  };
+  const go = async (key: string, data: object = {}) => {
+    await page.evaluate(([k, d]) => window.__game.scene.getScenes(true)[0].scene.start(k, d), [key, data] as const);
+    await active(page, key);
+  };
+  await page.goto("file://" + resolve("dist/index.html"));
+  await active(page, "title");
+  await shot("en-01-title");
+  await click(page, "title", "to-journey");
+  await active(page, "journey");
+  await shot("en-02-journey", 900);
+  await go("map", { areaId: "station" });
+  await shot("en-03-map", 900);
+  await click(page, "map", "lessons");
+  await shot("en-04-lesson");
+  await go("options", { from: "title" });
+  await shot("en-05-options");
+  await go("latency", { from: "options" });
+  await shot("en-06-latency");
+  await go("calibration", { from: "options" });
+  await shot("en-07-calibration");
+  await go("dojo");
+  await shot("en-08-dojo", 1200);
+  await go("hub");
+  await shot("en-09-hub", 900);
+  await go("battle", { enemyId: "porter" });
+  await startBot(page);
+  for (const phase of ["call", "response", "volley"]) {
+    await page.waitForFunction((p) => window.__game.scene.getScene("battle").battle.phase === p, phase, { timeout: 60_000 });
+    await shot(`en-10-battle-${phase}`, 800);
+  }
+  await page.waitForFunction(() => window.__game.scene.isActive("result"), null, { timeout: 200_000 });
+  await shot("en-11-result", 2500);
+});

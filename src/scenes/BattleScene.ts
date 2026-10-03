@@ -19,6 +19,7 @@ const HIT_Y = BOARD.y + BOARD.h - 62;
 /** Battiti che un colpo impiega a scendere fino alla linea. */
 // quattro battiti per leggere il foro prima di pararlo
 const TRAVEL_BEATS = 4;
+const SPOT_AREAS = new Set(["after-hours"]);
 const PLAYER = { x: 175, y: 470 };
 const ENEMY = { x: 1110, y: 440 };
 
@@ -153,8 +154,9 @@ export class BattleScene extends Phaser.Scene {
 
     this.playerImg = this.add.image(PLAYER.x, PLAYER.y, "personaggi-protagonista-idle").setDisplaySize(250, 250);
     const size = this.enemy.boss ? 330 : 260;
-    // un cono di luce sul nemico: le insegne e i manifesti dello sfondo restano dietro, non addosso
-    this.add.image(ENEMY.x, ENEMY.y - (this.enemy.boss ? 30 : 0), this.spotTexture()).setDisplaySize(size * 1.25, size * 1.25);
+    // un cono d'ombra dietro il nemico dove lo sfondo notturno ha insegne che altrimenti gli trasparirebbero addosso
+    if (SPOT_AREAS.has(this.enemy.areaId))
+      this.add.image(ENEMY.x, ENEMY.y - (this.enemy.boss ? 30 : 0), this.spotTexture()).setDisplaySize(size * 1.25, size * 1.25);
     this.enemyImg = this.add.image(ENEMY.x, ENEMY.y - (this.enemy.boss ? 30 : 0), `nemici-${this.enemy.sprite}-idle`).setDisplaySize(size, size);
     // tutti ballano sul battito della base
     hop(this, this.enemyImg, 10);
@@ -450,6 +452,10 @@ export class BattleScene extends Phaser.Scene {
         if (ev.onTime) pop(this, ENEMY.x, 262, t("onTime"), HEX.inchiostro, 26);
         if (ev.combo >= 2) pop(this, W / 2, 300, `${t("combo")} x${ev.combo}`, HEX.ottone, 36);
         this.redrawHp();
+        break;
+      case "playerHealed":
+        pop(this, PLAYER.x, PLAYER.y - 150, `+${ev.amount} ♥`, HEX.ottone, 26);
+        engine.fx.critico();
         break;
       case "heal":
         pop(this, ENEMY.x, 210, `+${ev.amount}`, HEX.prugna, 28);
