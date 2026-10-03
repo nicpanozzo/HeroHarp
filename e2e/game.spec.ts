@@ -85,6 +85,26 @@ test("Gioca porta in un tocco alla battaglia contro il primo nemico", async ({ p
   expect(errors).toEqual([]);
 });
 
+test("la base suona dal primo tocco e non si ferma entrando in battaglia", async ({ page }) => {
+  const errors = await start(page);
+  await page.waitForFunction(() => window.__engine().basi.inRiproduzione);
+  // conta le ripartenze: entrando in battaglia nella stessa tappa non ce ne devono essere
+  await page.evaluate(() => {
+    const b = window.__engine().basi;
+    const avvia = b.avvia.bind(b);
+    (window as any).__restarts = 0;
+    b.avvia = (...a: any[]) => ((window as any).__restarts++, avvia(...a));
+  });
+  await click(page, "journey", "play");
+  await page.waitForFunction(() => window.__game.scene.isActive("battle"));
+  expect(await page.evaluate(() => window.__engine().basi.inRiproduzione)).toBe(true);
+  expect(await page.evaluate(() => (window as any).__restarts)).toBe(0);
+  await page.evaluate(() => window.__game.scene.getScene("battle").scene.start("map", { areaId: "porch" }));
+  await page.waitForFunction(() => window.__game.scene.isActive("map"));
+  expect(await page.evaluate(() => window.__engine().basi.inRiproduzione)).toBe(true);
+  expect(errors).toEqual([]);
+});
+
 test("si gioca una tappa con accordi e una con i bend", async ({ page }) => {
   const errors = await start(page);
   for (const enemy of ["stoker", "crow"]) {

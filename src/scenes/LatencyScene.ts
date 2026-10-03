@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { hush } from "../audio/music";
 import { t } from "../i18n";
 import { save } from "../state";
 import { applySettings, updateSettings } from "../settings";
@@ -39,6 +40,7 @@ export class LatencyScene extends Phaser.Scene {
 
   create(): void {
     paper(this);
+    hush();
     txt(this, W / 2, 80, t("latTitle").toUpperCase(), 42, HEX.inchiostro, "titoli");
     panel(this, 160, 150, W - 320, 400);
     this.add.image(320, 360, "personaggi-zia-mae-spiega").setScale(0.9);

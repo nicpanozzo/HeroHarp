@@ -27,6 +27,7 @@
     "juke-joint": "juke",
     "beale-street": "beale",
     "delta-crossroads": "crocevia",
+    "riverboat": "fiume",
     "chicago-club": "chicago",
     "after-hours": "dopo-chiusura"
   },
@@ -468,6 +469,50 @@
       "area": "station",
       "nemico": "stationmaster",
       "nome": "Il Capostazione",
+      "boss": false,
+      "posa": "sconfitto"
+    },
+    {
+      "key": "nemici-controllore-idle",
+      "file": "nemici/controllore-idle.svg",
+      "w": 256,
+      "h": 256,
+      "area": "station",
+      "nemico": "inspector",
+      "nome": "Il Controllore",
+      "boss": false,
+      "posa": "idle"
+    },
+    {
+      "key": "nemici-controllore-attacco",
+      "file": "nemici/controllore-attacco.svg",
+      "w": 256,
+      "h": 256,
+      "area": "station",
+      "nemico": "inspector",
+      "nome": "Il Controllore",
+      "boss": false,
+      "posa": "attacco"
+    },
+    {
+      "key": "nemici-controllore-colpito",
+      "file": "nemici/controllore-colpito.svg",
+      "w": 256,
+      "h": 256,
+      "area": "station",
+      "nemico": "inspector",
+      "nome": "Il Controllore",
+      "boss": false,
+      "posa": "colpito"
+    },
+    {
+      "key": "nemici-controllore-sconfitto",
+      "file": "nemici/controllore-sconfitto.svg",
+      "w": 256,
+      "h": 256,
+      "area": "station",
+      "nemico": "inspector",
+      "nome": "Il Controllore",
       "boss": false,
       "posa": "sconfitto"
     },
@@ -1000,6 +1045,50 @@
       "posa": "sconfitto"
     },
     {
+      "key": "nemici-chiave-di-basso-idle",
+      "file": "nemici/chiave-di-basso-idle.svg",
+      "w": 256,
+      "h": 256,
+      "area": "beale-street",
+      "nemico": "upright-bassist",
+      "nome": "Il Contrabbassista",
+      "boss": false,
+      "posa": "idle"
+    },
+    {
+      "key": "nemici-chiave-di-basso-attacco",
+      "file": "nemici/chiave-di-basso-attacco.svg",
+      "w": 256,
+      "h": 256,
+      "area": "beale-street",
+      "nemico": "upright-bassist",
+      "nome": "Il Contrabbassista",
+      "boss": false,
+      "posa": "attacco"
+    },
+    {
+      "key": "nemici-chiave-di-basso-colpito",
+      "file": "nemici/chiave-di-basso-colpito.svg",
+      "w": 256,
+      "h": 256,
+      "area": "beale-street",
+      "nemico": "upright-bassist",
+      "nome": "Il Contrabbassista",
+      "boss": false,
+      "posa": "colpito"
+    },
+    {
+      "key": "nemici-chiave-di-basso-sconfitto",
+      "file": "nemici/chiave-di-basso-sconfitto.svg",
+      "w": 256,
+      "h": 256,
+      "area": "beale-street",
+      "nemico": "upright-bassist",
+      "nome": "Il Contrabbassista",
+      "boss": false,
+      "posa": "sconfitto"
+    },
+    {
       "key": "nemici-re-di-beale-idle",
       "file": "nemici/re-di-beale-idle.svg",
       "w": 384,
@@ -1216,6 +1305,182 @@
       "area": "delta-crossroads",
       "nemico": "delta-shade",
       "nome": "L'Ombra del Delta",
+      "boss": true,
+      "posa": "sconfitto"
+    },
+    {
+      "key": "nemici-timone-idle",
+      "file": "nemici/timone-idle.svg",
+      "w": 256,
+      "h": 256,
+      "area": "riverboat",
+      "nemico": "river-pilot",
+      "nome": "Il Pilota",
+      "boss": false,
+      "posa": "idle"
+    },
+    {
+      "key": "nemici-timone-attacco",
+      "file": "nemici/timone-attacco.svg",
+      "w": 256,
+      "h": 256,
+      "area": "riverboat",
+      "nemico": "river-pilot",
+      "nome": "Il Pilota",
+      "boss": false,
+      "posa": "attacco"
+    },
+    {
+      "key": "nemici-timone-colpito",
+      "file": "nemici/timone-colpito.svg",
+      "w": 256,
+      "h": 256,
+      "area": "riverboat",
+      "nemico": "river-pilot",
+      "nome": "Il Pilota",
+      "boss": false,
+      "posa": "colpito"
+    },
+    {
+      "key": "nemici-timone-sconfitto",
+      "file": "nemici/timone-sconfitto.svg",
+      "w": 256,
+      "h": 256,
+      "area": "riverboat",
+      "nemico": "river-pilot",
+      "nome": "Il Pilota",
+      "boss": false,
+      "posa": "sconfitto"
+    },
+    {
+      "key": "nemici-nebbia-idle",
+      "file": "nemici/nebbia-idle.svg",
+      "w": 256,
+      "h": 256,
+      "area": "riverboat",
+      "nemico": "fog",
+      "nome": "La Nebbia",
+      "boss": false,
+      "posa": "idle"
+    },
+    {
+      "key": "nemici-nebbia-attacco",
+      "file": "nemici/nebbia-attacco.svg",
+      "w": 256,
+      "h": 256,
+      "area": "riverboat",
+      "nemico": "fog",
+      "nome": "La Nebbia",
+      "boss": false,
+      "posa": "attacco"
+    },
+    {
+      "key": "nemici-nebbia-colpito",
+      "file": "nemici/nebbia-colpito.svg",
+      "w": 256,
+      "h": 256,
+      "area": "riverboat",
+      "nemico": "fog",
+      "nome": "La Nebbia",
+      "boss": false,
+      "posa": "colpito"
+    },
+    {
+      "key": "nemici-nebbia-sconfitto",
+      "file": "nemici/nebbia-sconfitto.svg",
+      "w": 256,
+      "h": 256,
+      "area": "riverboat",
+      "nemico": "fog",
+      "nome": "La Nebbia",
+      "boss": false,
+      "posa": "sconfitto"
+    },
+    {
+      "key": "nemici-galleggiante-idle",
+      "file": "nemici/galleggiante-idle.svg",
+      "w": 256,
+      "h": 256,
+      "area": "riverboat",
+      "nemico": "fisherman",
+      "nome": "Il Pescatore",
+      "boss": false,
+      "posa": "idle"
+    },
+    {
+      "key": "nemici-galleggiante-attacco",
+      "file": "nemici/galleggiante-attacco.svg",
+      "w": 256,
+      "h": 256,
+      "area": "riverboat",
+      "nemico": "fisherman",
+      "nome": "Il Pescatore",
+      "boss": false,
+      "posa": "attacco"
+    },
+    {
+      "key": "nemici-galleggiante-colpito",
+      "file": "nemici/galleggiante-colpito.svg",
+      "w": 256,
+      "h": 256,
+      "area": "riverboat",
+      "nemico": "fisherman",
+      "nome": "Il Pescatore",
+      "boss": false,
+      "posa": "colpito"
+    },
+    {
+      "key": "nemici-galleggiante-sconfitto",
+      "file": "nemici/galleggiante-sconfitto.svg",
+      "w": 256,
+      "h": 256,
+      "area": "riverboat",
+      "nemico": "fisherman",
+      "nome": "Il Pescatore",
+      "boss": false,
+      "posa": "sconfitto"
+    },
+    {
+      "key": "nemici-sirena-idle",
+      "file": "nemici/sirena-idle.svg",
+      "w": 384,
+      "h": 384,
+      "area": "riverboat",
+      "nemico": "river-siren",
+      "nome": "La Sirena del fiume",
+      "boss": true,
+      "posa": "idle"
+    },
+    {
+      "key": "nemici-sirena-attacco",
+      "file": "nemici/sirena-attacco.svg",
+      "w": 384,
+      "h": 384,
+      "area": "riverboat",
+      "nemico": "river-siren",
+      "nome": "La Sirena del fiume",
+      "boss": true,
+      "posa": "attacco"
+    },
+    {
+      "key": "nemici-sirena-colpito",
+      "file": "nemici/sirena-colpito.svg",
+      "w": 384,
+      "h": 384,
+      "area": "riverboat",
+      "nemico": "river-siren",
+      "nome": "La Sirena del fiume",
+      "boss": true,
+      "posa": "colpito"
+    },
+    {
+      "key": "nemici-sirena-sconfitto",
+      "file": "nemici/sirena-sconfitto.svg",
+      "w": 384,
+      "h": 384,
+      "area": "riverboat",
+      "nemico": "river-siren",
+      "nome": "La Sirena del fiume",
       "boss": true,
       "posa": "sconfitto"
     },
@@ -1813,6 +2078,30 @@
       "w": 1280,
       "h": 720,
       "area": "chicago-club",
+      "livello": 3
+    },
+    {
+      "key": "sfondi-fiume-1-cielo",
+      "file": "sfondi/fiume-1-cielo.svg",
+      "w": 1280,
+      "h": 720,
+      "area": "riverboat",
+      "livello": 1
+    },
+    {
+      "key": "sfondi-fiume-2-scena",
+      "file": "sfondi/fiume-2-scena.svg",
+      "w": 1280,
+      "h": 720,
+      "area": "riverboat",
+      "livello": 2
+    },
+    {
+      "key": "sfondi-fiume-3-primo-piano",
+      "file": "sfondi/fiume-3-primo-piano.svg",
+      "w": 1280,
+      "h": 720,
+      "area": "riverboat",
       "livello": 3
     },
     {

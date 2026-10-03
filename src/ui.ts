@@ -2,6 +2,7 @@
 import Phaser from "phaser";
 import { COLORI, COLORI_NUM, FONT } from "./style/tema";
 import { save } from "./state";
+import { getEngine } from "./audio/engine";
 
 export const W = 1280;
 export const H = 720;
@@ -51,8 +52,18 @@ export function button(
   const c = scene.add.container(x, y, [g, t]).setSize(w, h).setInteractive({ useHandCursor: true });
   c.on("pointerover", () => draw(true));
   c.on("pointerout", () => draw(false));
-  c.on("pointerup", onClick);
+  c.on("pointerup", () => {
+    tap();
+    onClick();
+  });
   return c;
+}
+
+let tapStep = 0;
+/** Ogni tocco è una nota della scala della base: i menu suonano insieme alla musica. */
+export function tap(): void {
+  const engine = getEngine();
+  if (engine.ctx.state === "running") engine.fx.notaGiusta(tapStep++ % 5);
 }
 
 /** Pannello di carta con contorno d'inchiostro, come un manifesto incollato. */

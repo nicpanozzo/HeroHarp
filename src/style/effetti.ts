@@ -29,12 +29,15 @@ export function foroInMidi(foro: string, armonica: TonalitaArmonica = "C") {
 
 const mtof = (m: number) => 440 * Math.pow(2, (m - 69) / 12);
 const PENTATONICA = [0, 2, 4, 7, 9, 12, 14, 16];
+const PENTATONICA_MINORE = [0, 3, 5, 7, 10, 12, 15, 17];
 
 export class EffettiSonori {
   readonly uscita: GainNode;
   private rumore?: AudioBuffer;
   /** Tonica (MIDI) della base corrente: impostala da `GeneratoreBasi.tonicaMidi`. */
   tonica = 60;
+  /** true sulle basi in minore (terza posizione): impostalo da `GeneratoreBasi.minore`. */
+  minore = false;
   private serie = 0;
 
   constructor(readonly ctx: BaseAudioContext, destinazione: AudioNode = ctx.destination) {
@@ -43,7 +46,8 @@ export class EffettiSonori {
 
   /** Nota giusta: un rintocco sulla pentatonica maggiore della base, che sale con la combo (mai stonato). */
   notaGiusta(combo = this.serie++, t = this.ctx.currentTime) {
-    const midi = this.tonica + 12 + PENTATONICA[combo % PENTATONICA.length];
+    const scala = this.minore ? PENTATONICA_MINORE : PENTATONICA;
+    const midi = this.tonica + 12 + scala[combo % scala.length];
     this.campanella(t, midi, 0.18, 0.35);
     this.campanella(t + 0.005, midi + 12, 0.06, 0.25);
   }
@@ -61,7 +65,7 @@ export class EffettiSonori {
 
   /** Colpo critico / combo: stab di piano (accordo di settima) e un "ooh" del pubblico. */
   critico(t = this.ctx.currentTime) {
-    for (const iv of [0, 4, 7, 10, 16]) this.campanella(t, this.tonica + iv, 0.09, 0.5, "triangle");
+    for (const iv of this.minore ? [0, 3, 7, 10, 15] : [0, 4, 7, 10, 16]) this.campanella(t, this.tonica + iv, 0.09, 0.5, "triangle");
     const n = this.sorgenteRumore(), f = this.ctx.createBiquadFilter(), g = this.ctx.createGain();
     f.type = "bandpass"; f.Q.value = 3; f.frequency.setValueAtTime(500, t + 0.05); f.frequency.linearRampToValueAtTime(900, t + 0.5);
     g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.25, t + 0.15); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.8);

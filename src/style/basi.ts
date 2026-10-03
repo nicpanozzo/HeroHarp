@@ -12,14 +12,16 @@
 
 export type Strumento = "piede" | "treno" | "acustica" | "basso" | "piano" | "spazzole" | "batteria" | "elettrica";
 export type Forma = "vamp" | "quattro" | "blues12";
-export type Area = "portico" | "stazione" | "treno" | "juke" | "beale" | "crocevia" | "chicago";
+export type Area = "portico" | "stazione" | "treno" | "juke" | "beale" | "crocevia" | "fiume" | "chicago" | "dopo";
 /** Tonalità dell'armonica diatonica (layout Richter). */
 export type TonalitaArmonica = "G" | "Ab" | "A" | "Bb" | "B" | "C" | "Db" | "D" | "Eb" | "E" | "F" | "F#";
 
 export interface PresetArea {
   bpm: number;
-  /** 1 = la base è nella tonalità dell'armonica; 2 = seconda posizione (una quinta sopra). */
-  posizione: 1 | 2;
+  /** 1 = la base è nella tonalità dell'armonica; 2 = seconda posizione (una quinta sopra); 3 = terza posizione (un tono sopra, blues minore). */
+  posizione: 1 | 2 | 3;
+  /** Accordi minori su I e IV (il V resta di settima), come nel blues minore di terza posizione. */
+  minore?: boolean;
   forma: Forma;
   swing: "shuffle" | "dritto";
   band: Strumento[];
@@ -33,7 +35,15 @@ export const PRESET: Record<Area, PresetArea> = {
   juke:     { bpm: 80,  posizione: 1, forma: "blues12", swing: "shuffle", band: ["acustica", "basso", "piano", "spazzole"] },
   beale:    { bpm: 96,  posizione: 2, forma: "blues12", swing: "shuffle", band: ["basso", "piano", "batteria"] },
   crocevia: { bpm: 66,  posizione: 2, forma: "blues12", swing: "shuffle", band: ["acustica", "basso", "spazzole"] },
+  fiume:    { bpm: 70,  posizione: 3, forma: "blues12", swing: "shuffle", minore: true, band: ["acustica", "basso", "piano", "spazzole"] },
   chicago:  { bpm: 108, posizione: 2, forma: "blues12", swing: "shuffle", band: ["basso", "piano", "batteria", "elettrica"] },
+  dopo:     { bpm: 92,  posizione: 2, forma: "blues12", swing: "shuffle", band: ["basso", "piano", "spazzole"] },
+};
+
+/** Dagli id delle aree di content/percorso.json ai preset qui sopra. */
+export const AREA_DA_PERCORSO: Record<string, Area> = {
+  porch: "portico", station: "stazione", "freight-train": "treno", "juke-joint": "juke", "beale-street": "beale",
+  "delta-crossroads": "crocevia", riverboat: "fiume", "chicago-club": "chicago", "after-hours": "dopo",
 };
 
 export interface OpzioniBase extends Partial<PresetArea> {
@@ -109,9 +119,17 @@ export class GeneratoreBasi {
   /** Tonica della base come nota MIDI (ottava 4), utile per gli effetti "nella scala". */
   get tonicaMidi() { return 60 + this.spostamento(); }
   get posizione() { return this.cfg.posizione; }
+  /** true quando la base è un blues minore: gli effetti devono usare la scala minore. */
+  get minore() { return !!this.cfg.minore; }
 
   /** Cambia il tempo a partire dalla prossima battuta (difficoltà adattiva). */
   impostaTempo(bpm: number) { this.bpmProssimo = Math.max(40, Math.min(200, bpm)); }
+
+  /** Strumenti che suonano ora. */
+  get band(): readonly Strumento[] { return this.cfg.band; }
+
+  /** Cambia gli strumenti della base al volo (dalla croma successiva), es. quando un musicista si unisce o per una modalità di gioco. */
+  impostaBand(band: readonly Strumento[]) { this.cfg.band = [...band]; }
 
   /** Durante la risposta del giocatore restano solo basso e ritmo: meno rientri nel microfono, più spazio all'armonica. */
   impostaRisposta(attiva: boolean, quando = this.ctx.currentTime) {
@@ -137,7 +155,7 @@ export class GeneratoreBasi {
   // ---------- Programmazione ----------
 
   private spostamento() {
-    return SPOSTAMENTO_ARMONICA[this.cfg.armonica] + (this.cfg.posizione === 2 ? 7 : 0);
+    return SPOSTAMENTO_ARMONICA[this.cfg.armonica] + ({ 1: 0, 2: 7, 3: 2 } as const)[this.cfg.posizione];
   }
 
   private durataCroma(i: number) {
@@ -182,8 +200,10 @@ export class GeneratoreBasi {
       if (!levare && battito % 2 === 1) this.rullante(t, 0.4);
       this.charleston(t, levare ? 0.07 : 0.13);
     }
-    // Boogie sulle corde basse: tonica + quinta / tonica + sesta, alternate a ogni battito.
-    const bicordo = battito % 2 === 0 ? 7 : 9;
+    // In minore I e IV sono accordi minori; il V resta di settima per tirare verso la tonica.
+    const min = !!this.cfg.minore && this.gradoInBattuta(this.battuta) !== 7;
+    // Boogie sulle corde basse: tonica + quinta / tonica + sesta (in minore: sesta minore), alternate a ogni battito.
+    const bicordo = battito % 2 === 0 ? 7 : (min ? 8 : 9);
     if (ha("acustica")) {
       this.pizzico(t, radice + 12, durata, 0.16, this.bus.medio, { taglio: 2600 });
       this.pizzico(t, radice + 12 + bicordo, durata, 0.12, this.bus.medio, { taglio: 2600 });
@@ -194,12 +214,12 @@ export class GeneratoreBasi {
     }
     // Basso camminante: 1 3 5 6 b7 6 5 3 su due battute.
     if (ha("basso") && !levare) {
-      const cammino = [0, 4, 7, 9, 10, 9, 7, 4];
+      const cammino = min ? [0, 3, 7, 10, 12, 10, 7, 3] : [0, 4, 7, 9, 10, 9, 7, 4];
       this.pizzico(t, radice + cammino[(this.battuta % 2) * 4 + battito], b * 0.9, 0.35, this.bus.basso, { onda: "triangle", taglio: 900, taglioFine: 300 });
     }
     // Piano: accordo di settima in levare sul 2 e sul 4.
     if (ha("piano") && levare && battito % 2 === 1) {
-      for (const iv of [4, 10, 14]) this.pizzico(t, radice + 24 + iv, b * 0.5, 0.07, this.bus.medio, { onda: "triangle", taglio: 3000, taglioFine: 1500 });
+      for (const iv of min ? [3, 10, 14] : [4, 10, 14]) this.pizzico(t, radice + 24 + iv, b * 0.5, 0.07, this.bus.medio, { onda: "triangle", taglio: 3000, taglioFine: 1500 });
     }
   }
 

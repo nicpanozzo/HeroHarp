@@ -6,7 +6,8 @@ import type { PhraseNote } from "../battle/logic";
 import { getLang, t } from "../i18n";
 import { save, persist } from "../state";
 import { getEngine } from "../audio/engine";
-import type { TonalitaArmonica } from "../style/basi";
+import { groove } from "../audio/music";
+import { hop } from "./beat";
 import { C, W, H, HEX, txt, backdrop, pop, panel, button, reducedMotion } from "../ui";
 import { HearingReadout } from "./readout";
 import { applySettings } from "../settings";
@@ -95,13 +96,14 @@ export class BattleScene extends Phaser.Scene {
     const basi = engine.basi;
     const align = (at: number) => {
       let s = basi.prossimaBattuta();
-      while (s < at - 0.01) s += basi.durataBattuta;
+      // dalla prossima battuta la base va al tempo della battaglia
+      while (s < at - 0.01) s += 240 / this.battle.bpm;
       return s;
     };
     this.battle = new Battle(this.enemy, keyById(save.keyId), { align });
-    basi.avvia({ area: area.music, armonica: save.keyId as TonalitaArmonica, bpm: this.battle.bpm });
-    engine.fx.tonica = basi.tonicaMidi;
-    this.cleanup.push(() => basi.ferma(0.4));
+    // la base dei menu continua: cambia solo il tempo (o il luogo, se si arriva da un'altra tappa)
+    groove(area.music, this.battle.bpm);
+    this.cleanup.push(() => engine.duckBand(false));
     this.cleanup.push(
       basi.suBattito((n, tm) => {
         this.beatTimes.push(tm);
@@ -145,7 +147,9 @@ export class BattleScene extends Phaser.Scene {
     this.playerImg = this.add.image(PLAYER.x, PLAYER.y, "personaggi-protagonista-idle").setDisplaySize(250, 250);
     const size = this.enemy.boss ? 330 : 260;
     this.enemyImg = this.add.image(ENEMY.x, ENEMY.y - (this.enemy.boss ? 30 : 0), `nemici-${this.enemy.sprite}-idle`).setDisplaySize(size, size);
-    if (!reducedMotion()) this.tweens.add({ targets: this.enemyImg, y: this.enemyImg.y - 8, duration: 700, yoyo: true, repeat: -1, ease: "Sine.easeInOut" });
+    // tutti ballano sul battito della base
+    hop(this, this.enemyImg, 10);
+    hop(this, this.playerImg, 6);
 
     // frase del nemico, su una targa scura
     this.chipLayer = this.add.container(W / 2, 300);
@@ -328,7 +332,11 @@ export class BattleScene extends Phaser.Scene {
         this.banner.setText(label.toUpperCase()).setScale(1.4);
         this.tweens.add({ targets: this.banner, scale: 1, duration: 180, ease: "Back.easeOut" });
         this.drawLanes(ev.phase === "volley");
-        this.chipLayer.setAlpha(ev.phase === "volley" ? 0.3 : 1);
+        // la targa resta piena (niente manifesti che trasparono): si attenuano solo le note
+        for (const c of this.chips) {
+          c.bg.setAlpha(ev.phase === "volley" ? 0.3 : 1);
+          c.label.setAlpha(ev.phase === "volley" ? 0.3 : 1);
+        }
         // mentre suoni tu la base tace, così il microfono sente solo l'armonica
         this.playerTurn = ev.phase === "response" || ev.phase === "volley";
         engine.duckBand(this.playerTurn);
@@ -464,7 +472,6 @@ export class BattleScene extends Phaser.Scene {
     if (this.ending) return;
     this.ending = true;
     const engine = getEngine();
-    engine.basi.ferma(0.6);
     engine.duckBand(false);
     if (won) {
       engine.fx.vittoria(engine.now + 0.2);

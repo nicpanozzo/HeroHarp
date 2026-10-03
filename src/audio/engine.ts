@@ -36,7 +36,7 @@ export class AudioEngine {
   /** Secondi da togliere agli attacchi sentiti dal microfono (vedi la calibrazione del ritardo). */
   inputLatency = DEFAULT_LATENCY;
   level = 0;
-  /** Volume della base (opzioni) e quanto resta mentre suoni: 0 con gli altoparlanti, un decimo con le cuffie. */
+  /** Volume della base (opzioni) e quanto resta mentre suoni: un decimo con gli altoparlanti, 0.4 con le cuffie. */
   musicVolume = 0.8;
   duckLevel = 0;
   private ducked = false;
@@ -54,9 +54,25 @@ export class AudioEngine {
     this.fx = new EffettiSonori(this.ctx, this.master);
   }
 
+  private clock = { ct: -1, perf: 0, last: 0 };
+  /**
+   * Orologio audio "liscio": currentTime avanza a scatti (decine di ms sui telefoni, 250 ms in Chromium
+   * senza scheda audio), qui si interpola con performance.now() tra uno scatto e l'altro. Mai all'indietro.
+   */
   get now(): number {
-    return this.ctx.currentTime;
+    const ct = this.ctx.currentTime;
+    const perf = performance.now();
+    if (ct !== this.clock.ct) {
+      this.clock.ct = ct;
+      this.clock.perf = perf;
+    }
+    const t = this.ctx.state === "running" ? ct + Math.min(0.3, (perf - this.clock.perf) / 1000) : ct;
+    this.clock.last = Math.max(this.clock.last, t);
+    return this.clock.last;
   }
+
+  /** Ultima stima grezza dell'altezza (MIDI con i centesimi), senza attese: per seguire i bend. */
+  lastPitch: number | null = null;
 
   async resume(): Promise<void> {
     if (this.ctx.state !== "running") await this.ctx.resume();
@@ -119,8 +135,9 @@ export class AudioEngine {
       for (const f of frames) {
         this.level = f.level;
         const t = f.time - this.inputLatency;
-        if (f.level < this._gate) this.tracker.feed(t, null, f.level);
-        else this.tracker.feed(t, f.hz && f.clarity > MIN_CLARITY ? hzToMidi(f.hz) : null, f.level);
+        const midi = f.level >= this._gate && f.hz && f.clarity > MIN_CLARITY ? hzToMidi(f.hz) : null;
+        this.lastPitch = midi;
+        this.tracker.feed(t, midi, f.level);
       }
       return;
     }
@@ -128,9 +145,9 @@ export class AudioEngine {
     this.analyser.getFloatTimeDomainData(this.buf);
     this.level = rms(this.buf);
     const t = this.now - this.inputLatency;
-    if (this.level < this._gate) return this.tracker.feed(t, null, this.level);
-    const p = yin(this.buf, this.ctx.sampleRate);
-    this.tracker.feed(t, p && p.clarity > MIN_CLARITY ? hzToMidi(p.hz) : null, this.level);
+    const p = this.level < this._gate ? null : yin(this.buf, this.ctx.sampleRate);
+    this.lastPitch = p && p.clarity > MIN_CLARITY ? hzToMidi(p.hz) : null;
+    this.tracker.feed(t, this.lastPitch, this.level);
   }
 
   /**
@@ -141,13 +158,16 @@ export class AudioEngine {
   duckBand(on: boolean, when = this.now): void {
     this.ducked = on;
     this.band.gain.setTargetAtTime(this.musicVolume * (on ? this.duckLevel : 1), when, 0.04);
+    // mentre suoni restano solo basso e ritmo: meno note che il microfono può confondere con l'armonica
+    this.basi.impostaRisposta(on, when);
   }
 
   /** Applica volume e modalità cuffie dalle opzioni. */
   configureMusic(volume: number, headphones: boolean): void {
     this.musicVolume = volume;
-    // misurato dal banco di prova: base 20 dB sotto l'armonica (guadagno 0.1) non disturba il riconoscimento
-    this.duckLevel = headphones ? 0.1 : 0;
+    // misurato dal banco di prova: base 20 dB sotto l'armonica (guadagno 0.1) non disturba il riconoscimento;
+    // con le cuffie il microfono non la sente, quindi può restare più forte
+    this.duckLevel = headphones ? 0.4 : 0.1;
     this.duckBand(this.ducked);
   }
 

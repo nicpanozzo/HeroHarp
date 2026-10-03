@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { grooveOnGesture } from "../audio/music";
 import { areaById, AREA1, type AreaDef } from "../content/areas";
 import { enemyUnlocked } from "../progress";
 import { getLang, t } from "../i18n";
@@ -26,6 +27,8 @@ export class MapScene extends Phaser.Scene {
     const a = this.area;
     const progress = { beaten: save.beaten, openAll: save.settings.openAll };
     backdrop(this, a.backdrop, 0.35);
+    // ogni tappa ha il suo groove
+    grooveOnGesture(this, a.music);
     panel(this, 140, 24, W - 280, 104);
     const head = `${a.extra ? t("extra") : t("area", { n: a.order })} · ${a.name[lang]}`.toUpperCase();
     txt(this, W / 2, 60, head, 34, HEX.inchiostro, "titoli").setName("area-title");

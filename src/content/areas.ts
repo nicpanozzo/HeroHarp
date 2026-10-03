@@ -5,7 +5,7 @@
 import percorso from "./percorso.json";
 import manifest from "../assets/manifest.json";
 import { BLOW, DRAW, type Tab } from "../harp";
-import type { Area as PresetBase } from "../style/basi";
+import { AREA_DA_PERCORSO, type Area as PresetBase } from "../style/basi";
 import type { Timbro } from "../style/effetti";
 
 export type L10n = { it: string; en: string };
@@ -169,18 +169,6 @@ function backdropFor(areaId: string): string[] | null {
 }
 
 const TIMBRES: Timbro[] = ["spiffero", "sospiro", "mantice", "silenzio"];
-/** Preset delle basi per area; dove manca si usa il più vicino per atmosfera. */
-const MUSIC: Record<string, PresetBase> = {
-  porch: "portico",
-  station: "stazione",
-  "freight-train": "treno",
-  "juke-joint": "juke",
-  "beale-street": "beale",
-  "delta-crossroads": "crocevia",
-  riverboat: "crocevia",
-  "chicago-club": "chicago",
-  "after-hours": "chicago",
-};
 
 // ---------- costruzione delle tappe ----------
 
@@ -241,7 +229,7 @@ function buildArea(a: any): AreaDef {
     lessons,
     enemies,
     backdrop,
-    music: MUSIC[a.id] ?? "portico",
+    music: AREA_DA_PERCORSO[a.id] ?? "portico",
     extra,
     comingSoon: !backdrop || enemies.every((e) => e.comingSoon),
   };

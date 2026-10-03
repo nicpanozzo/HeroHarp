@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { hush } from "../audio/music";
 import { t } from "../i18n";
 import { save } from "../state";
 import { updateSettings } from "../settings";
@@ -39,6 +40,7 @@ export class CalibrationScene extends Phaser.Scene {
 
   create(): void {
     paper(this);
+    hush();
     txt(this, W / 2, 80, t("calTitle").toUpperCase(), 42, HEX.inchiostro, "titoli");
     panel(this, 240, 150, W - 480, 380);
     this.add.image(380, 360, "personaggi-zia-mae-spiega").setScale(0.9);

@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { groove } from "../audio/music";
 import { areaById, enemyById, JOURNEY } from "../content/areas";
 import { areaCleared, areaUnlocked, nextEnemy, starsFor } from "../progress";
 import { getLang, t } from "../i18n";
@@ -18,6 +19,8 @@ export class ResultScene extends Phaser.Scene {
     const e = enemyById(data.enemyId);
     const area = areaById(e.areaId);
     const s = data.stats;
+    // la base non si ferma: torna al passo del luogo
+    groove(area.music);
     const stars = starsFor(data.won, s);
     const prevBest = save.best[e.id] ?? 0;
     const record = data.won && s.score > prevBest;

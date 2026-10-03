@@ -5,9 +5,11 @@ import { areaCleared, areaUnlocked, currentArea, nextEnemy } from "../progress";
 import { getLang, t } from "../i18n";
 import { save } from "../state";
 import { getEngine } from "../audio/engine";
-import { C, W, H, HEX, txt, button, paper, reducedMotion } from "../ui";
+import { C, W, H, HEX, txt, button, paper } from "../ui";
 import { HearingReadout } from "./readout";
 import { showIntro } from "./lessons";
+import { grooveOnGesture } from "../audio/music";
+import { hop, pulse } from "./beat";
 
 // Tre righe a serpentina: la strada va a destra, poi torna a sinistra, poi di nuovo a destra.
 const COLS = [250, 640, 1030];
@@ -58,6 +60,7 @@ export class JourneyScene extends Phaser.Scene {
     for (let i = 0; i < pts.length - 1; i += 2) road.lineBetween(pts[i].x, pts[i].y, pts[i + 1].x, pts[i + 1].y);
 
     const here = currentArea(progress);
+    grooveOnGesture(this, here.music);
     for (const { a, x, y } of spots) this.stop(a, x, y, areaUnlocked(a, progress), !a.comingSoon && areaCleared(a, progress), a.id === here.id);
 
     // in basso: la band che si è unita finora
@@ -81,7 +84,7 @@ export class JourneyScene extends Phaser.Scene {
     });
     this.readout = new HearingReadout(this, 1010, H - 20);
     const next = nextEnemy(progress);
-    button(this, 800, H - 52, `${t("play")} ▶`, () => this.scene.start("battle", { enemyId: next.id }), 240, true, 56).setName("play");
+    pulse(this, [button(this, 800, H - 52, `${t("play")} ▶`, () => this.scene.start("battle", { enemyId: next.id }), 240, true, 56).setName("play")]);
     button(this, 128, H - 46, t("help"), () => showIntro(this), 216, false, 48).setName("help");
     button(this, W - 110, H - 58, t("options"), () => this.scene.start("options", { from: "journey" }), 180, false, 40).setName("options");
   }
@@ -102,7 +105,7 @@ export class JourneyScene extends Phaser.Scene {
       .setWordWrapWidth(300);
     if (current && open) {
       const me = this.add.image(x - 62, y - 30, "personaggi-protagonista-suona").setDisplaySize(84, 84);
-      if (!reducedMotion()) this.tweens.add({ targets: me, y: me.y - 6, duration: 600, yoyo: true, repeat: -1, ease: "Sine.easeInOut" });
+      hop(this, me, 8);
     }
     if (!open) return;
     const zone = this.add

@@ -4,7 +4,9 @@ import { getLang, setLang, t } from "../i18n";
 import { save, persist } from "../state";
 import { getEngine } from "../audio/engine";
 import { applySettings } from "../settings";
-import { nextEnemy } from "../progress";
+import { currentArea, nextEnemy } from "../progress";
+import { groove, grooveOnGesture } from "../audio/music";
+import { pulse } from "./beat";
 import { C, W, H, HEX, txt, button, paper, panel } from "../ui";
 
 export class TitleScene extends Phaser.Scene {
@@ -15,7 +17,9 @@ export class TitleScene extends Phaser.Scene {
   create(): void {
     paper(this);
     // manifesto: titolo, protagonista, sottotitolo
-    txt(this, W / 2, 110, t("title").toUpperCase(), 92, HEX.inchiostro, "titoli").setShadow(5, 4, HEX.rosso, 0, false, true);
+    const title = txt(this, W / 2, 110, t("title").toUpperCase(), 92, HEX.inchiostro, "titoli").setShadow(5, 4, HEX.rosso, 0, false, true);
+    const music = () => currentArea({ beaten: save.beaten, openAll: save.settings.openAll }).music;
+    grooveOnGesture(this, music());
     txt(this, W / 2, 182, t("tagline"), 26, HEX.inchiostro);
     this.add.image(250, 430, "personaggi-protagonista-suona").setScale(1.25);
     this.add.image(W - 250, 440, "personaggi-zia-mae-sorride").setScale(1.2);
@@ -34,6 +38,8 @@ export class TitleScene extends Phaser.Scene {
       save.keyId = KEYS[(i + d + KEYS.length) % KEYS.length].id;
       persist();
       showKey();
+      // la base si sposta nella nuova tonalità
+      groove(music());
     };
     button(this, W / 2 - 150, 342, "‹", () => step(-1), 64, false).setName("key-prev");
     button(this, W / 2 + 150, 342, "›", () => step(1), 64, false).setName("key-next");
@@ -60,6 +66,7 @@ export class TitleScene extends Phaser.Scene {
       const engine = getEngine();
       applySettings();
       await engine.resume();
+      groove(music());
       const mic = engine.micStatus === "on" ? "on" : await engine.startMic();
       if (mic !== "on") {
         status.setText(t("micDenied")).setColor(HEX.rosso);
@@ -67,7 +74,9 @@ export class TitleScene extends Phaser.Scene {
       } else this.scene.start(scene, data);
     };
     const play = () => enter("battle", { enemyId: nextEnemy({ beaten: save.beaten, openAll: save.settings.openAll }).id });
-    button(this, W / 2, 452, `${t("play")} ▶`, play, 320, true, 70).setName("start");
+    const playBtn = button(this, W / 2, 452, `${t("play")} ▶`, play, 320, true, 70).setName("start");
+    pulse(this, [title], 0.03);
+    pulse(this, [playBtn], 0.05);
     button(this, W / 2, 518, t("journey"), () => enter("journey"), 320, false, 44).setName("to-journey");
     this.input.keyboard?.once("keydown-ENTER", play);
     this.add.rectangle(W / 2, H - 40, W, 2, C.inchiostro, 0.3);

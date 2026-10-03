@@ -3,6 +3,7 @@ import { getLang, setLang, t, type StringId } from "../i18n";
 import { save, persist } from "../state";
 import { updateSettings } from "../settings";
 import { getEngine } from "../audio/engine";
+import { keepGroove } from "../audio/music";
 import { W, HEX, txt, button, paper, panel } from "../ui";
 
 /** Opzioni: base musicale, metronomo, cuffie, movimento, lingua, calibrazione del microfono e del ritardo. */
@@ -20,6 +21,7 @@ export class OptionsScene extends Phaser.Scene {
   create(): void {
     const s = save.settings;
     paper(this);
+    keepGroove(this);
     txt(this, W / 2, 58, t("options").toUpperCase(), 48, HEX.inchiostro, "titoli");
     panel(this, 190, 112, W - 380, 538);
 
