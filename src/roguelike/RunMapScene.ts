@@ -54,10 +54,10 @@ export class RunMapScene extends Phaser.Scene {
 
     // in basso: la tua band (che senti suonare) e gli attrezzi; l'uscita lascia la notte salvata
     panel(this, 24, 590, W - 48, 110);
-    txt(this, 48, 610, s("band").toUpperCase(), 14, HEX.inchiostro).setOrigin(0, 0.5).setLetterSpacing(2);
+    txt(this, 48, 610, s("band").toUpperCase(), 16, HEX.inchiostro).setOrigin(0, 0.5).setLetterSpacing(2);
     if (run.band.length === 0) txt(this, 48, 652, s("footOnly"), 18, HEX.inchiostro).setOrigin(0, 0.5).setAlpha(0.7);
     run.band.forEach((id, i) => this.add.image(78 + i * 64, 658, `band-${id}-suona`).setDisplaySize(76, 76));
-    txt(this, 420, 610, `${s("gear").toUpperCase()} · ${l(GROOVES[run.groove].name).toUpperCase()}`, 14, HEX.inchiostro)
+    txt(this, 420, 610, `${s("gear").toUpperCase()} · ${l(GROOVES[run.groove].name).toUpperCase()}`, 16, HEX.inchiostro)
       .setOrigin(0, 0.5)
       .setLetterSpacing(2);
     if (run.gear.length === 0) txt(this, 420, 652, l(GROOVES[run.groove].perk), 16, HEX.inchiostro).setOrigin(0, 0.5).setAlpha(0.7);
@@ -109,7 +109,7 @@ export class RunMapScene extends Phaser.Scene {
     const label = boss ? enemyById(n.enemyId!).name : null;
     const name = label ? l(label) : s(n.kind);
     parts.push(
-      txt(this, 0, R + 18, name.toUpperCase(), boss ? 17 : 14, HEX.carta)
+      txt(this, 0, R + 18, name.toUpperCase(), boss ? 19 : 17, HEX.carta)
         .setStroke(HEX.inchiostro, 5)
         .setWordWrapWidth(170),
     );

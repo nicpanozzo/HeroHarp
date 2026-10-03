@@ -78,13 +78,43 @@ export class AudioEngine {
     if (this.ctx.state !== "running") await this.ctx.resume();
   }
 
+  /**
+   * Cancellazione dell'eco: serve con gli altoparlanti (il microfono sentirebbe la base),
+   * ma aggiunge ritardo. Con le cuffie si spegne, così le note arrivano prima.
+   */
+  private echoCancel = true;
+  private stream: MediaStream | null = null;
+  private source: MediaStreamAudioSourceNode | null = null;
+
+  private openStream(): Promise<MediaStream> {
+    return navigator.mediaDevices.getUserMedia({
+      audio: { echoCancellation: this.echoCancel, noiseSuppression: false, autoGainControl: false },
+    });
+  }
+
+  /** Riapre il microfono con le impostazioni nuove, senza toccare l'analisi già pronta. */
+  private async reopenMic(): Promise<void> {
+    const sink: AudioNode | null = this.pitchNode ?? this.analyser ?? null;
+    if (this.micStatus !== "on" || !sink) return;
+    try {
+      const stream = await this.openStream();
+      this.source?.disconnect();
+      this.stream?.getTracks().forEach((tr) => tr.stop());
+      this.stream = stream;
+      this.source = this.ctx.createMediaStreamSource(stream);
+      this.source.connect(sink);
+    } catch {
+      /* resta il microfono di prima */
+    }
+  }
+
   async startMic(): Promise<MicStatus> {
     if (!navigator.mediaDevices?.getUserMedia) return (this.micStatus = "unsupported");
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        audio: { echoCancellation: true, noiseSuppression: false, autoGainControl: false },
-      });
+      const stream = await this.openStream();
       const src = this.ctx.createMediaStreamSource(stream);
+      this.stream = stream;
+      this.source = src;
       try {
         this.pitchNode = await createPitchNode(this.ctx, (f) => {
           // se nessuna scena legge il microfono per un po', si tengono solo le misure recenti
@@ -169,6 +199,10 @@ export class AudioEngine {
     // con le cuffie il microfono non la sente, quindi può restare più forte
     this.duckLevel = headphones ? 0.4 : 0.1;
     this.duckBand(this.ducked);
+    if (this.echoCancel === headphones) {
+      this.echoCancel = !headphones;
+      void this.reopenMic();
+    }
   }
 
   private noise: AudioBuffer | null = null;

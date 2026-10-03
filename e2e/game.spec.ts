@@ -213,3 +213,14 @@ test("al primo avvio la prima nota arriva in meno di 30 secondi", async ({ page 
   console.log(`prima nota dopo ${seconds.toFixed(1)} s`);
   expect(seconds).toBeLessThan(30);
 });
+
+test("con le cuffie il microfono si riapre senza cancellazione dell'eco e continua a sentire", async ({ page }) => {
+  const errors = await start(page);
+  await page.evaluate(() => window.__game.scene.getScene("journey").scene.start("options", { from: "journey" }));
+  await page.waitForFunction(() => window.__game.scene.isActive("options"));
+  await click(page, "options", "opt-headphones");
+  await page.waitForFunction(() => window.__engine().stream?.getAudioTracks()[0]?.getSettings().echoCancellation === false, null, { timeout: 10_000 });
+  // il microfono finto suona ancora il Do: si continua a sentirlo
+  await page.waitForFunction(() => window.__engine().tracker.state.midi === 72, null, { timeout: 10_000 });
+  expect(errors).toEqual([]);
+});

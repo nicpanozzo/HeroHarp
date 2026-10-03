@@ -7,6 +7,8 @@ import { click, start, startBot } from "../e2e/helpers";
 // Uso: SHOTS=../screenshots/<data-tappa> npm run shots
 const OUT = resolve(process.env.SHOTS ?? "test-results/shots");
 mkdirSync(OUT, { recursive: true });
+// PHONE=1: schermo di un telefono in orizzontale
+if (process.env.PHONE) test.use({ viewport: { width: 844, height: 390 } });
 
 const active = (page: Page, s: string) => page.waitForFunction((n) => window.__game.scene.isActive(n), s);
 

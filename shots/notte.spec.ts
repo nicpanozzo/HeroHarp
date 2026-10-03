@@ -5,6 +5,8 @@ import { click, startBot } from "../e2e/helpers";
 
 // Schermate della Lunga Notte (modalità roguelike). Uso: SHOTS=<cartella> npm run shots -- notte
 const OUT = resolve(process.env.SHOTS ?? "test-results/shots");
+// PHONE=1: schermo di un telefono in orizzontale, per il controllo di leggibilità
+if (process.env.PHONE) test.use({ viewport: { width: 844, height: 390 } });
 mkdirSync(OUT, { recursive: true });
 const active = (page: Page, s: string, timeout = 30_000) => page.waitForFunction((n) => window.__game.scene.isActive(n), s, { timeout });
 
