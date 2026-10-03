@@ -56,8 +56,8 @@ export async function start(page: Page, skipIntro = true) {
 }
 
 /** Un giocatore automatico che suona con la tastiera le note giuste al momento giusto. */
-export async function startBot(page: Page) {
-  await page.evaluate(() => {
+export async function startBot(page: Page, scene = "battle") {
+  await page.evaluate((sceneKey) => {
     const K = { b: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"], d: ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"] };
     const key = (t: any) => (t.draw ? K.d : K.b)[t.hole - 1];
     let held: string | null = null;
@@ -71,7 +71,7 @@ export async function startBot(page: Page) {
       held = null;
     };
     const tick = () => {
-      const sc = window.__game.scene.getScene("battle");
+      const sc = window.__game.scene.getScene(sceneKey);
       if (!sc.sys.isActive()) return up();
       const bt = sc.battle,
         now = window.__engine().now,
@@ -96,5 +96,5 @@ export async function startBot(page: Page) {
       requestAnimationFrame(tick);
     };
     tick();
-  });
+  }, scene);
 }

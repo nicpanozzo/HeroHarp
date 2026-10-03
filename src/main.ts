@@ -14,6 +14,7 @@ import { installKeyboard } from "./input";
 import { W, H, C } from "./ui";
 import { getEngine } from "./audio/engine";
 import { MODE_SCENES, wireModes } from "./modi";
+import { RUN_SCENES } from "./roguelike";
 
 // Aspetta che i caratteri inclusi siano pronti prima di disegnare i testi.
 async function fontsReady(): Promise<void> {
@@ -40,7 +41,20 @@ fontsReady().then(() => {
     height: H,
     backgroundColor: C.carta,
     scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
-    scene: [BootScene, TitleScene, JourneyScene, MapScene, BattleScene, ResultScene, OptionsScene, CalibrationScene, LatencyScene, DojoScene, ...MODE_SCENES],
+    scene: [
+      BootScene,
+      TitleScene,
+      JourneyScene,
+      MapScene,
+      BattleScene,
+      ResultScene,
+      OptionsScene,
+      CalibrationScene,
+      LatencyScene,
+      DojoScene,
+      ...MODE_SCENES,
+      ...RUN_SCENES,
+    ],
   });
   wireModes(game);
   // accesso per i test automatici e il debug dalla console

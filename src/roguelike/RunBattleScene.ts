@@ -1,0 +1,646 @@
+// Il duello della Lunga Notte: stesse regole della battaglia del viaggio (battle/logic.ts),
+// con la vita che resta da un duello all'altro, la tua band sul palco e i bonus di band e attrezzi.
+import Phaser from "phaser";
+import { Battle, type BattleEvent, type BattleOptions, type Round } from "../battle/logic";
+import { areaById, enemyById, type EnemyDef } from "../content/areas";
+import { formatTab, keyById, noteName, type HarpKey, type Tab } from "../harp";
+import { chipLabel } from "../scenes/BattleScene";
+import { getLang, t } from "../i18n";
+import { save } from "../state";
+import { getEngine } from "../audio/engine";
+import { hop } from "../scenes/beat";
+import { applySettings } from "../settings";
+import { HearingReadout } from "../scenes/readout";
+import { C, W, H, HEX, txt, backdrop, pop, panel, button, reducedMotion } from "../ui";
+import type { Mods } from "./data";
+import { addStats, coinsFor, endRun, mods, nodeById, runEnemy, savedRun, saveRun, tally, type MapNode, type RunState } from "./run";
+import { runGroove, s } from "./ui";
+
+const BOARD = { x: 300, y: 370, w: 680, h: 340 };
+const LANE_TOP = BOARD.y + 14;
+const HIT_Y = BOARD.y + BOARD.h - 62;
+const TRAVEL_BEATS = 4;
+const PLAYER = { x: 165, y: 445 };
+const ENEMY = { x: 1110, y: 440 };
+
+/** La battaglia con i bonus della run: la parata più larga se in band c'è il basso, ecc. */
+class RunBattle extends Battle {
+  constructor(
+    enemy: EnemyDef,
+    key: HarpKey,
+    opts: BattleOptions,
+    private parryMult: number,
+  ) {
+    super(enemy, key, opts);
+  }
+  override get parryWindow(): number {
+    return super.parryWindow * this.parryMult;
+  }
+}
+
+interface Chip {
+  bg: Phaser.GameObjects.Graphics;
+  label: Phaser.GameObjects.Text;
+  x: number;
+  tab: Tab;
+}
+
+type Pose = "idle" | "suona" | "colpito" | "vittoria";
+type EnemyPose = "idle" | "attacco" | "colpito" | "sconfitto";
+
+export class RunBattleScene extends Phaser.Scene {
+  private run!: RunState;
+  private node!: MapNode;
+  private mods!: Mods;
+  private battle!: RunBattle;
+  private enemy!: EnemyDef;
+  private enemyImg!: Phaser.GameObjects.Image;
+  private playerImg!: Phaser.GameObjects.Image;
+  private banner!: Phaser.GameObjects.Text;
+  private sub!: Phaser.GameObjects.Text;
+  private beatDot!: Phaser.GameObjects.Arc;
+  private hp!: Phaser.GameObjects.Graphics;
+  private hpText!: Phaser.GameObjects.Text;
+  private scoreText!: Phaser.GameObjects.Text;
+  private streakText!: Phaser.GameObjects.Text;
+  private coinText!: Phaser.GameObjects.Text;
+  private shownScore = 0;
+  private flash!: Phaser.GameObjects.Rectangle;
+  private chips: Chip[] = [];
+  private chipLayer!: Phaser.GameObjects.Container;
+  private projectiles = new Map<number, Phaser.GameObjects.Container>();
+  private laneG!: Phaser.GameObjects.Graphics;
+  private laneLabels?: Phaser.GameObjects.Text[];
+  private readout!: HearingReadout;
+  private scheduledRound = 0;
+  private talliedRound = 0;
+  private beatTimes: number[] = [];
+  private cleanup: (() => void)[] = [];
+  private ending = false;
+  private playerTurn = false;
+  private poseUntil = 0;
+  private enemyPoseUntil = 0;
+  private shield = 0;
+  private bonusCoins = 0;
+  private revived = false;
+
+  constructor() {
+    super("runBattle");
+  }
+
+  init(data: { nodeId: string }): void {
+    this.run = savedRun()!;
+    this.node = this.run ? nodeById(this.run, data.nodeId) : (null as never);
+    this.chips = [];
+    this.projectiles.clear();
+    this.laneLabels = undefined;
+    this.scheduledRound = 0;
+    this.talliedRound = 0;
+    this.beatTimes = [];
+    this.cleanup = [];
+    this.ending = false;
+    this.shownScore = 0;
+    this.playerTurn = false;
+    this.poseUntil = this.enemyPoseUntil = 0;
+    this.bonusCoins = 0;
+    this.revived = false;
+  }
+
+  create(): void {
+    if (!this.run || !this.node?.enemyId) return void this.scene.start("runStart");
+    const engine = getEngine();
+    const lang = getLang();
+    applySettings();
+    this.mods = mods(this.run);
+    this.shield = this.mods.shield;
+    this.enemy = runEnemy(enemyById(this.node.enemyId), this.node.kind, this.mods.bpm);
+    const area = areaById(this.enemy.areaId);
+    backdrop(this, area.backdrop);
+
+    const basi = engine.basi;
+    const align = (at: number) => {
+      let st = basi.prossimaBattuta();
+      while (st < at - 0.01) st += 240 / this.battle.bpm;
+      return st;
+    };
+    this.battle = new RunBattle(this.enemy, keyById(save.keyId), { align }, this.mods.parry);
+    this.battle.playerHp = this.run.hp;
+    // la tua band accompagna il duello, al tempo del nemico
+    runGroove(this.run, this.battle.bpm);
+    this.cleanup.push(() => engine.duckBand(false));
+    this.cleanup.push(
+      basi.suBattito((n, tm) => {
+        this.beatTimes.push(tm);
+        const st = save.settings;
+        if (st.metronome && (this.playerTurn || !st.music)) engine.click(tm, n === 0);
+      }),
+    );
+    engine.duckBand(false);
+
+    // intestazione: nemico a sinistra, tu a destra, punti e dollari al centro
+    panel(this, 24, 16, W - 48, 74);
+    this.hp = this.add.graphics();
+    const kind = this.node.kind === "elite" ? ` · ${s("elite")}` : "";
+    txt(this, 44, 38, (this.enemy.name[lang] + kind).toUpperCase(), 18, HEX.rosso)
+      .setOrigin(0, 0.5)
+      .setLetterSpacing(2);
+    txt(this, W - 44, 38, `${t("you").toUpperCase()} · ${s("act", { n: this.run.act + 1 }).toUpperCase()}`, 18, HEX.ottone)
+      .setOrigin(1, 0.5)
+      .setLetterSpacing(2);
+    this.hpText = txt(this, W - 44 - 260, 64, "", 15, HEX.inchiostro, "fori").setStroke(HEX.carta, 4);
+    this.scoreText = txt(this, W / 2, 46, "0", 30, HEX.inchiostro, "fori").setName("score");
+    this.coinText = txt(this, W / 2, 74, `$ ${this.run.coins}`, 17, HEX.inchiostro, "fori");
+    this.streakText = txt(this, W / 2, 112, "", 26, HEX.ottone, "titoli")
+      .setStroke(HEX.inchiostro, 6)
+      .setAlpha(0);
+    // uscire non costa nulla: si torna alla mappa e il duello resta da fare
+    const exit = () => this.scene.start("runMap");
+    button(this, 70, 122, "‹", exit, 64, false, 44).setName("exit");
+    this.input.keyboard?.on("keydown-ESC", exit);
+    this.flash = this.add.rectangle(W / 2, H / 2, W, H, C.rosso, 0).setDepth(30);
+    if (!this.textures.exists("dot")) {
+      const g = this.make.graphics({}, false);
+      g.fillStyle(0xffffff, 1).fillCircle(6, 6, 6);
+      g.generateTexture("dot", 12, 12);
+      g.destroy();
+    }
+
+    panel(this, W / 2 - 290, 126, 580, 102);
+    this.banner = txt(this, W / 2, 158, "", 46, HEX.inchiostro, "titoli")
+      .setStroke(HEX.carta, 8)
+      .setName("banner");
+    this.sub = txt(this, W / 2, 200, "", 19, HEX.inchiostro)
+      .setStroke(HEX.carta, 5)
+      .setWordWrapWidth(540);
+    this.beatDot = this.add.circle(W / 2, 242, 8, C.rosso).setAlpha(0.25);
+
+    // la tua band sul palco, dietro di te: chi hai reclutato suona davvero nella base
+    this.run.band.forEach((id, i) => {
+      const m = this.add.image(38 + i * 56, 300 + (i % 2) * 14, `band-${id}-suona`).setDisplaySize(86, 86);
+      hop(this, m, 5);
+    });
+    this.playerImg = this.add.image(PLAYER.x, PLAYER.y, "personaggi-protagonista-idle").setDisplaySize(230, 230);
+    const size = this.enemy.boss ? 330 : this.node.kind === "elite" ? 300 : 260;
+    this.add.image(ENEMY.x, ENEMY.y - (this.enemy.boss ? 30 : 0), this.spotTexture()).setDisplaySize(size * 1.25, size * 1.25);
+    this.enemyImg = this.add.image(ENEMY.x, ENEMY.y - (this.enemy.boss ? 30 : 0), `nemici-${this.enemy.sprite}-idle`).setDisplaySize(size, size);
+    if (this.node.kind === "elite") this.enemyImg.setTint(0xffd0c0);
+    hop(this, this.enemyImg, 10);
+    hop(this, this.playerImg, 6);
+
+    this.chipLayer = this.add.container(W / 2, 300);
+    const board = this.add.graphics();
+    board.fillStyle(C.inchiostro, 1).fillRect(BOARD.x + 6, BOARD.y + 6, BOARD.w, BOARD.h);
+    board.fillStyle(C.palcoScuro, 1).fillRect(BOARD.x, BOARD.y, BOARD.w, BOARD.h);
+    this.laneG = this.add.graphics();
+    this.drawLanes(false);
+    this.readout = new HearingReadout(this, BOARD.x + BOARD.w / 2, BOARD.y + BOARD.h - 18, HEX.carta);
+
+    this.cleanup.push(engine.tracker.onOnset((o) => this.battle.onset(o.midi, o.time)));
+    this.events.once("shutdown", () => {
+      this.cleanup.forEach((f) => f());
+      this.input.keyboard?.off("keydown-ESC");
+    });
+
+    this.battle.startRound(engine.now + 0.3);
+    this.redrawHp();
+    this.setSub(this.enemy.trains[lang]);
+  }
+
+  update(): void {
+    if (!this.battle) return;
+    const engine = getEngine();
+    engine.poll();
+    const now = engine.now;
+    if (this.battle.round.number !== this.scheduledRound) this.scheduleRound(this.battle.round);
+    const held = engine.tracker.state.midi;
+    this.battle.update(now, held);
+    for (const ev of this.battle.drain()) this.handle(ev);
+    this.animateBeat(now);
+    const target = this.battle.stats.score;
+    if (this.shownScore !== target) {
+      this.shownScore = Math.min(target, this.shownScore + Math.max(1, Math.ceil((target - this.shownScore) / 6)));
+      this.scoreText.setText(String(this.shownScore));
+    }
+    this.animateCall(now);
+    this.moveProjectiles(now);
+    this.animatePoses(now, held);
+    this.readout.update();
+  }
+
+  // ---------- audio e ritmo ----------
+
+  private scheduleRound(r: Round): void {
+    const engine = getEngine();
+    this.scheduledRound = r.number;
+    // June copre un colpo: raffiche più corte (sempre almeno due colpi)
+    const cut = Math.min(this.mods.volleyMinus, Math.max(0, r.volley.length - 2));
+    if (cut > 0) {
+      r.volley.splice(r.volley.length - cut, cut);
+      r.end = r.volley[r.volley.length - 1].time + this.battle.parryWindow;
+    }
+    engine.basi.impostaTempo(r.bpm);
+    r.countIn.forEach((tm, i) => engine.click(tm, i === 0));
+    for (const n of r.call) engine.fx.voceNemico(n.midi, Math.max(0.15, n.dur * 0.85), this.enemy.timbre, n.time);
+    this.buildChips(r);
+    this.projectiles.forEach((p) => p.destroy());
+    this.projectiles.clear();
+    for (const p of r.volley) {
+      const c = this.badge(p.tab).setPosition(this.laneX(p.lane), LANE_TOP);
+      c.setVisible(false);
+      this.projectiles.set(p.id, c);
+    }
+  }
+
+  private setSub(v: string): Phaser.GameObjects.Text {
+    this.sub.setFontSize(19).setText(v).setY(200);
+    if (this.sub.height > 30) this.sub.setFontSize(15).setY(205);
+    return this.sub;
+  }
+
+  private spotTexture(): string {
+    const key = "spot";
+    if (!this.textures.exists(key)) {
+      const c = this.textures.createCanvas(key, 256, 256)!;
+      const ctx = c.getContext();
+      const g = ctx.createRadialGradient(128, 128, 20, 128, 128, 128);
+      g.addColorStop(0, "rgba(28,22,18,0.95)");
+      g.addColorStop(0.5, "rgba(28,22,18,0.85)");
+      g.addColorStop(1, "rgba(28,22,18,0)");
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, 256, 256);
+      c.refresh();
+    }
+    return key;
+  }
+
+  /** Il colpo che scende: numero del foro grande su un gettone pieno (tondo = soffio, quadrato = aspirato). */
+  private badge(tab: Tab): Phaser.GameObjects.Container {
+    const R = 32;
+    const g = this.add.graphics();
+    const shape = (dx: number, color: number) => {
+      g.fillStyle(color, 1);
+      if (tab.draw) g.fillRoundedRect(-R + dx, -R + dx, 2 * R, 2 * R, 10);
+      else g.fillCircle(dx, dx, R);
+    };
+    shape(5, C.inchiostro);
+    shape(0, tab.draw ? C.indaco : C.ottone);
+    g.lineStyle(tab.bend ? 7 : 4, tab.bend ? C.prugna : C.inchiostro, 1);
+    if (tab.draw) g.strokeRoundedRect(-R, -R, 2 * R, 2 * R, 10);
+    else g.strokeCircle(0, 0, R);
+    const label = `${tab.hole}${"'".repeat(tab.bend)}`;
+    const num = txt(this, 0, 1, label, label.length > 2 ? 30 : 42, tab.draw ? HEX.carta : HEX.inchiostro, "fori");
+    const dot = this.add.circle(R - 4, -R + 4, 15, C.inchiostro);
+    const arrow = txt(this, R - 4, -R + 4, tab.draw ? "↓" : "↑", 22, tab.draw ? HEX.indacoChiaro : HEX.ottone, "fori");
+    return this.add.container(0, 0, [g, num, dot, arrow]);
+  }
+
+  private animateBeat(now: number): void {
+    while (this.beatTimes.length > 8) this.beatTimes.shift();
+    const last = this.beatTimes.filter((b) => b <= now).pop();
+    const on = last !== undefined && now - last < 0.12;
+    this.beatDot.setAlpha(on ? 1 : 0.25).setScale(on ? 1.5 : 1);
+  }
+
+  // ---------- frase: Ascolta / Rispondi ----------
+
+  private buildChips(r: Round): void {
+    this.chipLayer.removeAll(true);
+    this.chips = [];
+    const n = r.call.length;
+    const gap = Math.min(86, 1000 / n);
+    const plate = this.add.graphics();
+    const pw = n * gap + 40;
+    plate.fillStyle(C.inchiostro, 1).fillRect(-pw / 2 + 5, -39, pw, 88);
+    plate.fillStyle(C.palcoScuro, 1).fillRect(-pw / 2, -44, pw, 88);
+    this.chipLayer.add(plate);
+    r.call.forEach((note, i) => {
+      const x = (i - (n - 1) / 2) * gap;
+      const bg = this.add.graphics();
+      const lab = chipLabel(note);
+      const label = txt(this, x, 0, lab, lab.length > 3 ? (gap > 70 ? 28 : 22) : gap > 70 ? 40 : 32, HEX.carta, "fori");
+      this.chipLayer.add([bg, label]);
+      this.chips.push({ bg, label, x, tab: note.tab });
+      this.paintChip(i, "idle");
+    });
+  }
+
+  private paintChip(i: number, state: "idle" | "lit" | "target" | "hit" | "short"): void {
+    const c = this.chips[i];
+    if (!c) return;
+    c.bg.clear();
+    if (state === "lit") c.bg.fillStyle(c.tab.draw ? C.indaco : C.ottone, 1).fillRoundedRect(c.x - 36, -36, 72, 72, 8);
+    if (state === "target") c.bg.lineStyle(4, C.carta, 1).lineBetween(c.x - 26, 32, c.x + 26, 32);
+    if (state === "hit" || state === "short") c.bg.fillStyle(state === "hit" ? 0x5f8f4a : C.prugna, 1).fillRoundedRect(c.x - 36, -36, 72, 72, 8);
+    const plain = c.tab.draw ? HEX.indacoChiaro : HEX.ottone;
+    c.label.setColor(state === "idle" || state === "target" ? plain : HEX.carta);
+  }
+
+  private animateCall(now: number): void {
+    const b = this.battle;
+    const r = b.round;
+    if (b.phase === "call") {
+      r.call.forEach((n, i) => this.paintChip(i, now >= n.time && now < n.time + Math.max(0.12, n.dur * 0.85) ? "lit" : "idle"));
+    } else if (b.phase === "response") {
+      const next = r.response.findIndex((n) => !n.hit);
+      r.response.forEach((n, i) => this.paintChip(i, n.hit ? (n.short ? "short" : "hit") : i === next ? "target" : "idle"));
+    }
+  }
+
+  // ---------- raffica: Para! ----------
+
+  private laneX(lane: number): number {
+    return BOARD.x + ((lane + 0.5) * BOARD.w) / this.battle.lanes.length;
+  }
+
+  private drawLanes(active: boolean): void {
+    const g = this.laneG;
+    g.clear();
+    const lw = BOARD.w / this.battle.lanes.length;
+    this.battle.lanes.forEach((_, i) => {
+      g.lineStyle(2, C.carta, active ? 0.35 : 0.15).strokeRect(BOARD.x + i * lw + 6, LANE_TOP, lw - 12, HIT_Y - LANE_TOP + 36);
+    });
+    for (let x = BOARD.x + 10; x < BOARD.x + BOARD.w - 10; x += 16) g.lineStyle(3, C.ottone, active ? 1 : 0.35).lineBetween(x, HIT_Y, x + 8, HIT_Y);
+    this.laneLabels ??= this.battle.lanes.map((hole, i) => txt(this, this.laneX(i), HIT_Y + 26, String(hole), 34, HEX.carta, "fori"));
+    this.laneLabels.forEach((lb) => lb.setAlpha(active ? 1 : 0.5));
+  }
+
+  private moveProjectiles(now: number): void {
+    const b = this.battle;
+    const travel = TRAVEL_BEATS * b.round.beat;
+    for (const p of b.round.volley) {
+      const c = this.projectiles.get(p.id);
+      if (!c || p.state !== "pending") continue;
+      const k = 1 - (p.time - now) / travel;
+      const show = k >= 0 && (b.phase === "volley" || b.phase === "response");
+      c.setVisible(show).setAlpha(b.phase === "volley" ? 1 : 0.6);
+      c.y = Math.round(Phaser.Math.Linear(LANE_TOP + 34, HIT_Y, Phaser.Math.Clamp(k, 0, 1.15)));
+    }
+  }
+
+  // ---------- pose ----------
+
+  private setPose(p: Pose, until: number): void {
+    this.playerImg.setTexture(`personaggi-protagonista-${p}`);
+    this.poseUntil = until;
+  }
+
+  private setEnemyPose(p: EnemyPose, until: number): void {
+    this.enemyImg.setTexture(`nemici-${this.enemy.sprite}-${p}`);
+    this.enemyPoseUntil = until;
+  }
+
+  private animatePoses(now: number, held: number | null): void {
+    if (this.ending) return;
+    if (now >= this.poseUntil) this.playerImg.setTexture(`personaggi-protagonista-${held !== null ? "suona" : "idle"}`);
+    if (now >= this.enemyPoseUntil) {
+      const ph = this.battle.phase;
+      this.enemyImg.setTexture(`nemici-${this.enemy.sprite}-${ph === "call" || ph === "volley" ? "attacco" : "idle"}`);
+    }
+  }
+
+  // ---------- pagella: cosa hai preso e cosa no ----------
+
+  private tallyResponse(): void {
+    const r = this.battle.round;
+    if (this.talliedRound === r.number) return;
+    this.talliedRound = r.number;
+    for (const n of r.response) tally(this.run, chipLabel(n), !!n.hit && !n.short);
+  }
+
+  // ---------- eventi ----------
+
+  private handle(ev: BattleEvent): void {
+    const engine = getEngine();
+    const now = engine.now;
+    const b = this.battle;
+    switch (ev.type) {
+      case "phase": {
+        if (ev.phase === "volley" || ev.phase === "won") this.tallyResponse();
+        if (ev.phase === "lost" && this.tryRevive()) break;
+        const label = { countin: t("countin"), call: t("call"), response: t("response"), volley: t("volley"), won: t("won"), lost: t("lost") }[ev.phase];
+        this.banner.setText(label.toUpperCase()).setScale(1.4);
+        this.tweens.add({ targets: this.banner, scale: 1, duration: 180, ease: "Back.easeOut" });
+        this.drawLanes(ev.phase === "volley");
+        const jam = this.enemy.jam;
+        if (jam && b.round.call[0]?.source.free) {
+          if (ev.phase === "response") {
+            this.chips.forEach((c) => c.label.setText("♪"));
+            this.setSub(t("jamHint", { notes: jam.allowed.map(formatTab).join(" ") }));
+          } else if (ev.phase === "call") this.setSub(this.enemy.trains[getLang()]);
+        }
+        for (const c of this.chips) {
+          c.bg.setAlpha(ev.phase === "volley" ? 0.3 : 1);
+          c.label.setAlpha(ev.phase === "volley" ? 0.3 : 1);
+        }
+        this.playerTurn = ev.phase === "response" || ev.phase === "volley";
+        engine.duckBand(this.playerTurn);
+        if (ev.phase === "won" || ev.phase === "lost") this.finish(ev.phase === "won");
+        break;
+      }
+      case "responseHit": {
+        this.paintChip(ev.index, "hit");
+        engine.fx.notaGiusta(Math.min(ev.streak, 12));
+        const chip = this.chips[ev.index];
+        const cx = this.chipLayer.x + (chip?.x ?? 0);
+        const color = ev.rating === "perfect" ? HEX.ottone : ev.rating === "good" ? HEX.indaco : HEX.inchiostro;
+        pop(this, cx, 420, t(ev.rating).toUpperCase(), color, ev.rating === "perfect" ? 30 : 24);
+        this.burst(cx, this.chipLayer.y, ev.rating === "perfect" ? C.ottone : C.indaco, ev.rating === "perfect" ? 16 : 8);
+        if (chip && !reducedMotion()) this.tweens.add({ targets: chip.label, scale: 1.35, duration: 90, yoyo: true });
+        if (ev.rating === "perfect") {
+          // Ruby: le note perfette ridanno fiato; il cappello raccoglie le mance
+          if (this.mods.perfectHeal) {
+            b.playerHp = Math.min(this.run.maxHp, b.playerHp + this.mods.perfectHeal);
+            this.redrawHp();
+          }
+          if (this.mods.perfectCoin) {
+            this.bonusCoins += this.mods.perfectCoin;
+            this.coinText.setText(`$ ${this.run.coins + this.bonusCoins}`);
+          }
+        }
+        this.showStreak(ev.streak);
+        break;
+      }
+      case "streakLost":
+        pop(this, W / 2, 112, t("streakLost").toUpperCase(), HEX.rosso, 22);
+        this.showStreak(0);
+        break;
+      case "shortNote":
+        this.paintChip(ev.index, "short");
+        pop(this, W / 2, 380, t("hold"), HEX.prugna, 26);
+        break;
+      case "wrongNote":
+        pop(this, W / 2, 460, `${t("wrong")}: ${noteName(ev.midi, getLang())}`, HEX.rosso, 22);
+        break;
+      case "enemyDamaged": {
+        // la band e gli attrezzi colpiscono più forte
+        let mult = this.mods.dmg;
+        if (this.mods.streakDmg && b.streak >= 8) mult *= 1 + this.mods.streakDmg;
+        const extra = ev.amount > 0 ? Math.round(ev.amount * (mult - 1)) : 0;
+        const total = ev.amount + extra;
+        if (extra > 0) b.enemyHp = Math.max(0, b.enemyHp - extra);
+        if (total > 0) {
+          engine.fx.critico();
+          this.setEnemyPose("colpito", now + 0.6);
+          this.tweens.add({ targets: this.enemyImg, x: ENEMY.x + 18, duration: 50, yoyo: true, repeat: 4, onComplete: () => this.enemyImg.setX(ENEMY.x) });
+          this.enemyImg.setTintFill(0xffffff);
+          this.time.delayedCall(90, () => (this.node.kind === "elite" ? this.enemyImg.setTint(0xffd0c0) : this.enemyImg.clearTint()));
+          this.burst(ENEMY.x, ENEMY.y - 40, C.rosso, 26);
+          if (!reducedMotion()) this.cameras.main.shake(180, 0.006 + Math.min(0.01, total / 4000));
+          pop(this, ENEMY.x, 200, `-${total}`, HEX.rosso, 56);
+        } else engine.fx.notaMancata();
+        if (ev.onTime) pop(this, ENEMY.x, 262, t("onTime"), HEX.inchiostro, 26);
+        if (ev.combo >= 2) pop(this, W / 2, 300, `${t("combo")} x${ev.combo}`, HEX.ottone, 36);
+        this.redrawHp();
+        // il colpo in più può bastare a vincere prima che lo decida la battaglia
+        if (b.enemyHp <= 0 && b.phase !== "won") {
+          b.phase = "won";
+          this.handle({ type: "phase", phase: "won" });
+        }
+        break;
+      }
+      case "heal":
+        pop(this, ENEMY.x, 210, `+${ev.amount}`, HEX.prugna, 28);
+        pop(this, W / 2, 380, t("keepPlaying"), HEX.prugna, 24);
+        this.redrawHp();
+        break;
+      case "bossPhase": {
+        const d = b.currentPhase.description;
+        this.setSub(`${t("bossPhase")} ${ev.index + 1}${d ? ` · ${d[getLang()]}` : ""}`);
+        break;
+      }
+      case "parry": {
+        const c = this.projectiles.get(ev.id);
+        const p = b.round.volley.find((x) => x.id === ev.id);
+        if (p) tally(this.run, formatTab(p.tab), true);
+        if (c) {
+          const star = this.add.image(c.x, HIT_Y, "ui-nota-giusta").setDisplaySize(56, 56);
+          this.tweens.add({ targets: star, scale: star.scale * 1.8, alpha: 0, duration: 380, onComplete: () => star.destroy() });
+          this.burst(c.x, HIT_Y, C.ottone, 12);
+          pop(this, c.x, HIT_Y - 50, `+${ev.points}`, HEX.ottone, 24);
+          c.setVisible(false);
+        }
+        engine.fx.notaGiusta(Math.min(ev.streak, 12));
+        this.showStreak(ev.streak);
+        break;
+      }
+      case "playerDamaged": {
+        const c = this.projectiles.get(ev.id);
+        const p = b.round.volley.find((x) => x.id === ev.id);
+        if (p) tally(this.run, formatTab(p.tab), false);
+        if (c) {
+          const miss = this.add.image(c.x, HIT_Y, "ui-nota-mancata").setDisplaySize(48, 48);
+          this.tweens.add({ targets: miss, alpha: 0, duration: 500, onComplete: () => miss.destroy() });
+          c.setVisible(false);
+        }
+        if (this.shield > 0) {
+          // la custodia assorbe il colpo
+          this.shield--;
+          b.playerHp += ev.amount;
+          if (b.phase === "lost") {
+            b.phase = "volley";
+            this.revived = true;
+          }
+          pop(this, PLAYER.x, 300, s("shielded"), HEX.indaco, 24);
+          break;
+        }
+        engine.fx.danno();
+        this.setPose("colpito", now + 0.5);
+        if (!reducedMotion()) this.cameras.main.shake(160, 0.008);
+        this.flash.setAlpha(0.28);
+        this.tweens.add({ targets: this.flash, alpha: 0, duration: 260 });
+        pop(this, PLAYER.x, 300, `-${ev.amount}`, HEX.rosso, 36);
+        this.redrawHp();
+        break;
+      }
+      case "difficulty":
+        break;
+    }
+  }
+
+  /** Sconfitta evitata: la custodia ha appena parato il colpo, o c'è l'armonica di scorta. */
+  private tryRevive(): boolean {
+    const b = this.battle;
+    if (this.revived) {
+      this.revived = false;
+      b.phase = "volley";
+      return true;
+    }
+    if (this.run.gear.includes("scorta") && !this.run.spareUsed) {
+      this.run.spareUsed = true;
+      b.playerHp = Math.min(this.run.maxHp, 40);
+      b.phase = "volley";
+      pop(this, W / 2, 330, s("spare").toUpperCase(), HEX.ottone, 40);
+      getEngine().fx.critico();
+      this.redrawHp();
+      return true;
+    }
+    return false;
+  }
+
+  private burst(x: number, y: number, color: number, n: number): void {
+    if (reducedMotion()) return;
+    const em = this.add.particles(x, y, "dot", {
+      speed: { min: 140, max: 420 },
+      scale: { start: 1, end: 0 },
+      lifespan: 420,
+      tint: [color, 0xffffff],
+      emitting: false,
+    });
+    em.setDepth(20);
+    em.explode(n);
+    this.time.delayedCall(600, () => em.destroy());
+  }
+
+  private showStreak(n: number): void {
+    if (n < 3) return void this.streakText.setAlpha(0);
+    const hot = this.mods.streakDmg && n >= 8 ? " ★" : "";
+    this.streakText.setText(`${t("streak").toUpperCase()} x${n}${hot}`).setAlpha(1);
+    if (!reducedMotion()) this.tweens.add({ targets: this.streakText, scale: { from: 1.3, to: 1 }, duration: 160 });
+    if (n % 10 === 0) {
+      getEngine().fx.critico();
+      pop(this, W / 2, 330, `${n}!`, HEX.ottone, 72);
+      this.burst(W / 2, 330, C.ottone, 30);
+    }
+  }
+
+  private redrawHp(): void {
+    const g = this.hp;
+    g.clear();
+    const w = 470;
+    const bar = (x: number, frac: number, col: number, right: boolean) => {
+      g.fillStyle(C.carta2, 1).fillRect(x, 54, w, 20);
+      const fw = Math.max(0, w * Math.min(1, frac));
+      g.fillStyle(col, 1).fillRect(right ? x + w - fw : x, 54, fw, 20);
+      g.lineStyle(3, C.inchiostro, 1).strokeRect(x, 54, w, 20);
+    };
+    bar(44, this.battle.enemyHp / this.enemy.hp, C.rosso, false);
+    bar(W - 44 - w, this.battle.playerHp / this.run.maxHp, C.ottone, true);
+    this.hpText.setText(`${Math.max(0, this.battle.playerHp)} / ${this.run.maxHp}`);
+  }
+
+  private finish(won: boolean): void {
+    if (this.ending) return;
+    this.ending = true;
+    const engine = getEngine();
+    engine.duckBand(false);
+    const run = this.run;
+    const st = this.battle.stats;
+    addStats(run, st, won);
+    if (won) {
+      engine.fx.vittoria(engine.now + 0.2);
+      this.setEnemyPose("sconfitto", Infinity);
+      this.setPose("vittoria", Infinity);
+      run.hp = Math.min(run.maxHp, Math.max(1, this.battle.playerHp) + this.mods.winHeal);
+      const coins = coinsFor(run, this.node.kind, st.score) + this.bonusCoins;
+      run.coins += coins;
+      saveRun(run);
+      this.time.delayedCall(1300, () => this.scene.start("runStop", { mode: "reward", nodeId: this.node.id, coins }));
+    } else {
+      engine.fx.sconfitta(engine.now + 0.2);
+      this.setPose("colpito", Infinity);
+      run.hp = 0;
+      endRun(run, "lost");
+      this.time.delayedCall(1500, () => this.scene.start("runEnd"));
+    }
+  }
+}
