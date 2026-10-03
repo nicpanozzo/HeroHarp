@@ -84,11 +84,13 @@ export async function startBot(page: Page) {
           releaseAt = now + Math.max(0.15, n.dur * 0.8);
         }
       }
-      if (!held && bt.phase === "volley") {
-        const p = r.volley.find((x: any) => x.state === "pending" && Math.abs(now - x.time) < 0.12);
-        if (p) {
+      if (bt.phase === "volley") {
+        // anche se i frame arrivano a scatti (CI lenta): si suona un po' prima e si tiene oltre il colpo
+        const p = r.volley.find((x: any) => x.state === "pending" && now >= x.time - 0.15 && now <= x.time + 0.2);
+        if (p && held !== key(p.tab)) {
+          up();
           down(key(p.tab));
-          releaseAt = now + 0.2;
+          releaseAt = p.time + 0.2;
         }
       }
       requestAnimationFrame(tick);
