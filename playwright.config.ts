@@ -10,6 +10,8 @@ export default defineConfig({
   fullyParallel: true,
   // su GitHub gli errori compaiono come annotazioni accanto al codice
   reporter: process.env.CI ? [["github"], ["list"]] : "list",
+  // server locale per le prove che servono un sito vero (app offline)
+  webServer: { command: "npx vite preview --port 4173 --strictPort", url: "http://localhost:4173", reuseExistingServer: true },
   use: {
     viewport: { width: 1280, height: 720 },
     launchOptions: {

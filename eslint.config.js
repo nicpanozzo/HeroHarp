@@ -7,7 +7,9 @@ export default tseslint.config(
   { ignores: ["dist", "node_modules", "src/style", "src/assets", "playwright-report", "test-results"] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
-  { files: ["scripts/**", "e2e/**", "*.config.*"], languageOptions: { globals: globals.node } },
+  // gli script girano in Node ma passano funzioni al browser (page.evaluate)
+  { files: ["scripts/**", "e2e/**", "*.config.*"], languageOptions: { globals: { ...globals.node, ...globals.browser } } },
+  { files: ["public/sw.js"], languageOptions: { globals: globals.serviceworker } },
   {
     rules: {
       // i dati del percorso arrivano da JSON non tipizzato

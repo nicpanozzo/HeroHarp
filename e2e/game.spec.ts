@@ -98,3 +98,17 @@ test("si gioca una tappa con accordi e una con i bend", async ({ page }) => {
   }
   expect(errors).toEqual([]);
 });
+
+test("dopo la prima apertura il gioco funziona anche senza rete", async ({ page, context }) => {
+  await page.goto("http://localhost:4173/");
+  await page.waitForFunction(() => window.__game?.scene.isActive("title"));
+  await page.evaluate(() => navigator.serviceWorker.ready);
+  await page.reload(); // ora la pagina passa dal service worker, che ha salvato tutto
+  await page.waitForFunction(() => window.__game?.scene.isActive("title"));
+  await context.setOffline(true);
+  await page.reload();
+  await page.waitForFunction(() => window.__game?.scene.isActive("title"));
+  const manifest = await page.evaluate(() => document.querySelector('link[rel="manifest"]')?.getAttribute("href"));
+  expect(manifest).toBe("manifest.webmanifest");
+  await context.setOffline(false);
+});

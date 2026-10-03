@@ -43,3 +43,8 @@ fontsReady().then(() => {
   // accesso per i test automatici e il debug dalla console
   Object.assign(window, { __game: game, __engine: getEngine });
 });
+
+// app installabile e giocabile offline: solo dal web (https o localhost), non aprendo il file direttamente
+if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
+  window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => undefined));
+}
