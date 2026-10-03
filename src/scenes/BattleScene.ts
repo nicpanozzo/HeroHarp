@@ -138,6 +138,8 @@ export class BattleScene extends Phaser.Scene {
       g.destroy();
     }
 
+    // cartello di carta dietro il titolo del turno: si legge su qualunque manifesto dello sfondo
+    panel(this, W / 2 - 290, 126, 580, 92);
     this.banner = txt(this, W / 2, 158, "", 46, HEX.inchiostro, "titoli")
       .setStroke(HEX.carta, 8)
       .setName("banner");
