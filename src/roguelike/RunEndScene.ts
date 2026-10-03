@@ -1,6 +1,7 @@
 // Fine della notte: com'è andata, la pagella dei fori da ripassare, e via con un'altra.
 import Phaser from "phaser";
 import { getEngine } from "../audio/engine";
+import { t } from "../i18n";
 import { C, HEX, W, txt, button, backdrop, panel, reducedMotion } from "../ui";
 import { areaOf, lastRun, meta, saveRun, weakest } from "./run";
 import { leaveRun, s } from "./ui";
@@ -45,7 +46,9 @@ export class RunEndScene extends Phaser.Scene {
       txt(this, 380, 254 + (i - 1) * 38, k, 21, HEX.inchiostro).setOrigin(0, 0.5);
       txt(this, 900, 254 + (i - 1) * 38, v, 26, HEX.inchiostro, "fori").setOrigin(1, 0.5);
     });
-    txt(this, 640, 356, s("bestRun", { n: meta().bestScore }), 16, HEX.indaco);
+    // il record comprende sempre questa notte; se l'ha battuto si festeggia
+    if (run.newBest) txt(this, 640, 356, t("newBest").toUpperCase(), 18, HEX.rosso, "titoli");
+    else txt(this, 640, 356, s("bestRun", { n: Math.max(meta().bestScore, st.score) }), 16, HEX.indaco);
 
     // pagella: i fori più sbagliati, grandi e leggibili, da allenare
     panel(this, 330, 396, 620, 196, 0xf6d9a0);

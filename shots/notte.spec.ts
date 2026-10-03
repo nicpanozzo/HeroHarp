@@ -88,7 +88,8 @@ test("schermate della Lunga Notte", async ({ page }) => {
   // la pagella di fine notte
   await page.evaluate(() => {
     const st = JSON.parse(localStorage.getItem("heroharp-lunga-notte")!);
-    Object.assign(st.run, { over: "lost", hp: 0, act: 1 });
+    Object.assign(st.run, { over: "lost", hp: 0, act: 1, newBest: false });
+    st.meta = { ...st.meta, nights: 4, bestScore: Math.max(st.run.stats.score, 5120) };
     Object.assign(st.run.stats, { misses: { "4↓": 6, "3↓'": 4, "6↑": 3, "5↓": 1 }, hits: { "4↓": 9, "3↓'": 2, "6↑": 12 } });
     localStorage.setItem("heroharp-lunga-notte", JSON.stringify(st));
     location.reload();
