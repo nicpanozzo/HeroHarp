@@ -17,6 +17,8 @@ import {
   shopItems,
   tally,
   weakest,
+  endRun,
+  meta,
 } from "../src/roguelike/run";
 import { EVENTS } from "../src/roguelike/data";
 
@@ -136,5 +138,18 @@ describe("La Lunga Notte", () => {
     for (let i = 0; i < 8; i++) tally(run, "3↓'", true);
     tally(run, "6↑", false);
     expect(weakest(run).map((w) => w.label)).toEqual(["4↓", "3↓'"]);
+  });
+
+  it("a fine notte il record si aggiorna e segnala quando è battuto", () => {
+    const a = newRun(road, 2);
+    a.stats.score = meta().bestScore + 500;
+    endRun(a, "lost");
+    expect(a.newBest).toBe(true);
+    expect(meta().bestScore).toBe(a.stats.score);
+    const b = newRun(road, 3);
+    b.stats.score = 10;
+    endRun(b, "lost");
+    expect(b.newBest).toBe(false);
+    expect(meta().bestScore).toBe(a.stats.score);
   });
 });

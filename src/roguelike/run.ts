@@ -60,6 +60,8 @@ export interface RunState {
   stats: RunStats;
   lessonsSeen: string[];
   over?: "won" | "lost";
+  /** La notte appena finita ha battuto il record dei punti. */
+  newBest?: boolean;
   /** Contatore del generatore casuale, per riprendere la run da dove era. */
   rngState: number;
 }
@@ -416,6 +418,7 @@ export function endRun(run: RunState, result: "won" | "lost"): void {
   const m = store.meta;
   m.nights++;
   if (result === "won") m.dawns++;
+  run.newBest = run.stats.score > m.bestScore;
   m.bestScore = Math.max(m.bestScore, run.stats.score);
   m.bestAct = Math.max(m.bestAct, run.act + 1);
   saveRun(run);
