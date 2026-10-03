@@ -84,3 +84,24 @@ test("schermata su telefono (orizzontale)", async ({ page }) => {
   await page.waitForTimeout(500);
   await page.screenshot({ path: `${OUT}/13-telefono-attacco.png` });
 });
+
+test("schermate del Juke Joint", async ({ page }) => {
+  await page.goto("file://" + resolve("dist/index.html"));
+  await active(page, "title");
+  await page.screenshot({ path: `${OUT}/20-titolo.png` });
+  await click(page, "title", "to-juke");
+  await active(page, "hub");
+  await page.waitForTimeout(800);
+  await page.screenshot({ path: `${OUT}/21-juke-joint.png` });
+  const go = async (key: string, data: object, name: string, wait = 3500) => {
+    await page.evaluate(([k, d]) => window.__game.scene.getScenes(true)[0].scene.start(k, d), [key, data] as const);
+    await active(page, key);
+    await page.waitForTimeout(wait);
+    await page.screenshot({ path: `${OUT}/${name}.png` });
+  };
+  await go("riffMenu", {}, "22-riff-menu", 800);
+  await go("riff", { id: "primi-passi", modo: "concerto", tempo: 1 }, "23-riff", 6000);
+  await go("voloMenu", {}, "24-volo-menu", 800);
+  await go("volo", { id: "primo-volo" }, "24b-volo", 5000);
+  await go("jamMenu", {}, "25-jam-menu", 800);
+});

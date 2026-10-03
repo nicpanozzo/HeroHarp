@@ -12,6 +12,7 @@ import { LatencyScene } from "./scenes/LatencyScene";
 import { installKeyboard } from "./input";
 import { W, H, C } from "./ui";
 import { getEngine } from "./audio/engine";
+import { MODE_SCENES, wireModes } from "./modi";
 
 // Aspetta che i caratteri inclusi siano pronti prima di disegnare i testi.
 async function fontsReady(): Promise<void> {
@@ -38,8 +39,9 @@ fontsReady().then(() => {
     height: H,
     backgroundColor: C.carta,
     scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
-    scene: [BootScene, TitleScene, JourneyScene, MapScene, BattleScene, ResultScene, OptionsScene, CalibrationScene, LatencyScene],
+    scene: [BootScene, TitleScene, JourneyScene, MapScene, BattleScene, ResultScene, OptionsScene, CalibrationScene, LatencyScene, ...MODE_SCENES],
   });
+  wireModes(game);
   // accesso per i test automatici e il debug dalla console
   Object.assign(window, { __game: game, __engine: getEngine });
 });

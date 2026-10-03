@@ -130,3 +130,24 @@ test("dopo la prima apertura il gioco funziona anche senza rete", async ({ page,
   expect(manifest).toBe("manifest.webmanifest");
   await context.setOffline(false);
 });
+
+test("dal titolo si entra nel Juke Joint, si aprono le tre modalità e si torna al titolo", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await page.goto(GAME);
+  await page.waitForFunction(() => window.__game?.scene.isActive("title"));
+  await click(page, "title", "to-juke");
+  await page.waitForFunction(() => window.__game.scene.isActive("hub"));
+  // le modalità sono a 960×540: la camera le porta a tutto schermo
+  expect(await page.evaluate(() => window.__game.scene.getScene("hub").cameras.main.zoom)).toBeCloseTo(4 / 3);
+  for (const mode of ["riff", "volo", "jam"]) {
+    await page.evaluate((m) => window.__game.scene.getScene("hub").scene.start(m === "jam" ? "jamMenu" : `${m}Menu`), mode);
+    await page.waitForFunction((m) => window.__game.scene.isActive(`${m}Menu`), mode);
+    await page.evaluate((m) => window.__game.scene.getScene(`${m}Menu`).scene.start("hub"), mode);
+    await page.waitForFunction(() => window.__game.scene.isActive("hub"));
+  }
+  await page.waitForTimeout(400);
+  await click(page, "hub", "hub-back");
+  await page.waitForFunction(() => window.__game.scene.isActive("title"));
+  expect(errors).toEqual([]);
+});

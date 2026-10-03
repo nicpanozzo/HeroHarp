@@ -3,6 +3,7 @@
 import { tabToMidi, keyById } from "./harp";
 import { getEngine } from "./audio/engine";
 import { save } from "./state";
+import { modesActive } from "./modi";
 
 const BLOW_KEYS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
 const DRAW_KEYS = ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"];
@@ -21,14 +22,15 @@ export function installKeyboard(): void {
   window.addEventListener("keydown", (ev) => {
     const k = ev.key.toLowerCase();
     const tab = tabForKey(k);
-    if (!tab || ev.repeat) return;
+    // nel Juke Joint la tastiera è quella delle modalità (con il bend sullo Spazio)
+    if (!tab || ev.repeat || modesActive()) return;
     const engine = getEngine();
     active = k;
     engine.keyboardHeld = true;
     engine.tracker.force(engine.now, tabToMidi(tab, keyById(save.keyId)));
   });
   window.addEventListener("keyup", (ev) => {
-    if (ev.key.toLowerCase() !== active) return;
+    if (ev.key.toLowerCase() !== active || modesActive()) return;
     const engine = getEngine();
     active = null;
     engine.keyboardHeld = false;

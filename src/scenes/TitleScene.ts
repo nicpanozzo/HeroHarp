@@ -77,7 +77,8 @@ export class TitleScene extends Phaser.Scene {
     const playBtn = button(this, W / 2, 452, `${t("play")} ▶`, play, 320, true, 70).setName("start");
     pulse(this, [title], 0.03);
     pulse(this, [playBtn], 0.05);
-    button(this, W / 2, 518, t("journey"), () => enter("journey"), 320, false, 44).setName("to-journey");
+    button(this, W / 2 - 162, 518, t("journey"), () => enter("journey"), 312, false, 44).setName("to-journey");
+    button(this, W / 2 + 162, 518, "Juke Joint ♪", () => enter("hub"), 312, false, 44).setName("to-juke");
     this.input.keyboard?.once("keydown-ENTER", play);
     this.add.rectangle(W / 2, H - 40, W, 2, C.inchiostro, 0.3);
     txt(this, W / 2, H - 22, t("keyboardHint"), 17, HEX.inchiostro).setAlpha(0.7);
