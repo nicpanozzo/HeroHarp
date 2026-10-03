@@ -172,6 +172,7 @@ test("il salvataggio si esporta in un file e si reimporta", async ({ page }, inf
     const raw = JSON.parse(localStorage.getItem("duello-dance-save")!);
     raw.beaten = ["draft", "sigh"];
     localStorage.setItem("duello-dance-save", JSON.stringify(raw));
+    localStorage.setItem("heroharp-lunga-notte", JSON.stringify({ prova: 7 }));
   });
   await page.reload();
   await page.waitForFunction(() => window.__game?.scene.isActive("title"));
@@ -193,6 +194,7 @@ test("il salvataggio si esporta in un file e si reimporta", async ({ page }, inf
   await Promise.all([page.waitForEvent("load"), (await chooser).setFiles(file)]);
   await page.waitForFunction(() => window.__game?.scene.isActive("title"));
   expect(await page.evaluate(() => JSON.parse(localStorage.getItem("duello-dance-save")!).beaten)).toEqual(["draft", "sigh"]);
+  expect(await page.evaluate(() => JSON.parse(localStorage.getItem("heroharp-lunga-notte")!))).toEqual({ prova: 7 });
   expect(errors).toEqual([]);
 });
 

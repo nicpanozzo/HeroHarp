@@ -21,8 +21,8 @@ export class TitleScene extends Phaser.Scene {
     const music = () => currentArea({ beaten: save.beaten, openAll: save.settings.openAll }).music;
     grooveOnGesture(this, music());
     txt(this, W / 2, 182, t("tagline"), 26, HEX.inchiostro);
-    this.add.image(150, 430, "personaggi-protagonista-suona").setScale(1.25);
-    this.add.image(W - 150, 440, "personaggi-zia-mae-sorride").setScale(1.2);
+    this.add.image(200, 330, "personaggi-protagonista-suona").setScale(0.95);
+    this.add.image(W - 200, 335, "personaggi-zia-mae-sorride").setScale(0.92);
 
     // tonalità dell'armonica
     panel(this, W / 2 - 220, 250, 440, 150);

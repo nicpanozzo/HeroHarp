@@ -71,17 +71,20 @@ export function persist(): void {
 }
 
 const MODES_KEY = "duello-dance-juke-joint";
+const NIGHT_KEY = "heroharp-lunga-notte";
+const readJson = (key: string): unknown => {
+  try {
+    return JSON.parse(localStorage.getItem(key) ?? "null");
+  } catch {
+    return null;
+  }
+};
 
-/** Tutto il salvataggio (viaggio e Juke Joint) in un file JSON da scaricare: per cambiare dispositivo o fare una copia. */
+/** Tutto il salvataggio (viaggio, Juke Joint e Lunga Notte) in un file JSON da scaricare: per cambiare dispositivo o fare una copia. */
 export function exportSave(): void {
   persist();
-  let modes: unknown = null;
-  try {
-    modes = JSON.parse(localStorage.getItem(MODES_KEY) ?? "null");
-  } catch {
-    /* niente record delle modalità */
-  }
-  const blob = new Blob([JSON.stringify({ app: "heroharp", version: 1, game: save, modes }, null, 2)], { type: "application/json" });
+  const data = { app: "heroharp", version: 1, game: save, modes: readJson(MODES_KEY), night: readJson(NIGHT_KEY) };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
   a.download = `heroharp-${new Date().toISOString().slice(0, 10)}.json`;
@@ -96,6 +99,7 @@ export function importSave(text: string): boolean {
     if (data?.app !== "heroharp" || typeof data.game !== "object" || !Array.isArray(data.game.beaten)) return false;
     localStorage.setItem(KEY, JSON.stringify(data.game));
     if (data.modes) localStorage.setItem(MODES_KEY, JSON.stringify(data.modes));
+    if (data.night) localStorage.setItem(NIGHT_KEY, JSON.stringify(data.night));
     return true;
   } catch {
     return false;
