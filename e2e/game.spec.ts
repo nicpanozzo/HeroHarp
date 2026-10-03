@@ -12,10 +12,21 @@ for (const enemy of ["draft", "silence"]) {
     const errors = await start(page);
     await page.evaluate((e) => window.__game.scene.getScene("journey").scene.start("battle", { enemyId: e }), enemy);
     await page.waitForFunction(() => window.__game.scene.isActive("battle"));
+    // diario degli eventi: se la prova fallisce si vede perché
+    await page.evaluate(() => {
+      const sc = window.__game.scene.getScene("battle");
+      const handle = sc.handle.bind(sc);
+      (window as any).__log = [];
+      sc.handle = (ev: any) => {
+        if (ev.type !== "responseHit") (window as any).__log.push(`${window.__engine().now.toFixed(2)} ${JSON.stringify(ev)}`);
+        handle(ev);
+      };
+    });
     await startBot(page);
     await page.waitForFunction(() => window.__game.scene.isActive("result"), null, { timeout: 280_000 });
     const result = await page.evaluate(() => window.__game.scene.getScene("result").children.getByName("result").text);
-    expect(result).toMatch(/VITTORIA|VICTORY/);
+    const log: string[] = await page.evaluate(() => (window as any).__log);
+    expect(result, log.filter((l) => !l.includes('"parry"')).join("\n")).toMatch(/VITTORIA|VICTORY/);
     expect(errors).toEqual([]);
   });
 }
