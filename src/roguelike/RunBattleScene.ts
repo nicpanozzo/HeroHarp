@@ -181,7 +181,9 @@ export class RunBattleScene extends Phaser.Scene {
     });
     this.playerImg = this.add.image(PLAYER.x, PLAYER.y, "personaggi-protagonista-idle").setDisplaySize(230, 230);
     const size = this.enemy.boss ? 330 : this.node.kind === "elite" ? 300 : 260;
-    this.add.image(ENEMY.x, ENEMY.y - (this.enemy.boss ? 30 : 0), this.spotTexture()).setDisplaySize(size * 1.25, size * 1.25);
+    // cono d'ombra solo sulla tappa notturna, come nella battaglia del viaggio
+    if (this.enemy.areaId === "after-hours")
+      this.add.image(ENEMY.x, ENEMY.y - (this.enemy.boss ? 30 : 0), this.spotTexture()).setDisplaySize(size * 1.25, size * 1.25);
     this.enemyImg = this.add.image(ENEMY.x, ENEMY.y - (this.enemy.boss ? 30 : 0), `nemici-${this.enemy.sprite}-idle`).setDisplaySize(size, size);
     if (this.node.kind === "elite") this.enemyImg.setTint(0xffd0c0);
     hop(this, this.enemyImg, 10);
@@ -498,6 +500,11 @@ export class RunBattleScene extends Phaser.Scene {
         }
         break;
       }
+      case "playerHealed":
+        pop(this, PLAYER.x, PLAYER.y - 150, `+${ev.amount} ♥`, HEX.ottone, 26);
+        engine.fx.critico();
+        this.redrawHp();
+        break;
       case "heal":
         pop(this, ENEMY.x, 210, `+${ev.amount}`, HEX.prugna, 28);
         pop(this, W / 2, 380, t("keepPlaying"), HEX.prugna, 24);
