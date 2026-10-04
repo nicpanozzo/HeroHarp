@@ -5,10 +5,57 @@ import { save } from "../state";
 import { updateSettings } from "../settings";
 import { getEngine, DEFAULT_GATE } from "../audio/engine";
 import { keyById, tabToMidi } from "../harp";
-import { W, HEX, C, txt, button, paper, panel } from "../ui";
+import { W, H, HEX, C, txt, button, paper, panel, portrait } from "../ui";
 import { HearingReadout } from "./readout";
 
 const STEP_SECONDS = 3;
+
+/** Le posizioni della calibrazione: in orizzontale quelle di sempre, in verticale in colonna. */
+function calLayout() {
+  if (!portrait())
+    return {
+      P: false,
+      msgX: 760,
+      msgY: 260,
+      msgW: 520,
+      readY: 470,
+      bar: { x: 520, y: 400, w: 480, h: 18 },
+      panelTop: 150,
+      panelBottom: 530,
+      maeY: 360,
+      mae: 0,
+      go: 620,
+      back: 620,
+      backH: 58,
+    };
+  const e = H - 1180;
+  const back = H - 64;
+  const backH = 72;
+  const go = back - backH / 2 - 24 - 44;
+  const panelTop = 168;
+  const panelBottom = go - 44 - 36;
+  const mae = 220 + e * 0.15;
+  // Zia Mae, il messaggio, la barra e cosa senti: un blocco centrato nel pannello
+  const block = mae + 150 + e * 0.1 + 150 + e * 0.05 + 90;
+  const maeY = panelTop + Math.max(16, (panelBottom - panelTop - block) / 2) + mae / 2;
+  const msgY = maeY + mae / 2 + 150 + e * 0.1;
+  const barY = msgY + 150 + e * 0.05;
+  return {
+    P: true,
+    msgX: W / 2,
+    msgY,
+    msgW: W - 120,
+    readY: barY + 74,
+    bar: { x: 80, y: barY, w: W - 160, h: 26 },
+    panelTop,
+    panelBottom,
+    maeY,
+    mae,
+    go,
+    back,
+    backH,
+  };
+}
 
 /**
  * Calibrazione: 3 secondi di silenzio per misurare il rumore della stanza,
@@ -26,6 +73,8 @@ export class CalibrationScene extends Phaser.Scene {
   private bar!: Phaser.GameObjects.Graphics;
   private readout!: HearingReadout;
   private actions?: Phaser.GameObjects.Container;
+  /** Posizioni: in verticale Zia Mae in alto, il messaggio sotto e i pulsanti grandi in fondo. */
+  private L = calLayout();
 
   constructor() {
     super("calibration");
@@ -41,15 +90,25 @@ export class CalibrationScene extends Phaser.Scene {
   create(): void {
     paper(this);
     hush();
-    txt(this, W / 2, 80, t("calTitle").toUpperCase(), 42, HEX.inchiostro, "titoli");
-    panel(this, 240, 150, W - 480, 380);
-    this.add.image(380, 360, "personaggi-zia-mae-spiega").setScale(0.9);
-    this.message = txt(this, 760, 260, "", 26, HEX.inchiostro).setWordWrapWidth(520).setName("cal-message");
+    const L = (this.L = calLayout());
+    if (L.P) {
+      txt(this, W / 2, 96, t("calTitle").toUpperCase(), 46, HEX.inchiostro, "titoli").setWordWrapWidth(W - 80);
+      panel(this, 24, L.panelTop, W - 48, L.panelBottom - L.panelTop);
+      this.add.image(W / 2, L.maeY, "personaggi-zia-mae-spiega").setDisplaySize(L.mae, L.mae);
+    } else {
+      txt(this, W / 2, 80, t("calTitle").toUpperCase(), 42, HEX.inchiostro, "titoli");
+      panel(this, 240, 150, W - 480, 380);
+      this.add.image(380, 360, "personaggi-zia-mae-spiega").setScale(0.9);
+    }
+    this.message = txt(this, L.msgX, L.msgY, "", L.P ? 28 : 26, HEX.inchiostro)
+      .setWordWrapWidth(L.msgW)
+      .setName("cal-message");
     this.bar = this.add.graphics();
-    this.readout = new HearingReadout(this, 760, 470);
+    this.readout = new HearingReadout(this, L.msgX, L.readY, HEX.inchiostro, L.P ? 22 : 20);
     if (getEngine().micStatus !== "on") {
       this.message.setText(t("calNoMic")).setColor(HEX.rosso);
-      button(this, W / 2, 620, t("back"), () => this.scene.start(this.from), 260);
+      if (L.P) button(this, W / 2, L.back, t("back"), () => this.scene.start(this.from), W - 80, true, L.backH);
+      else button(this, W / 2, 620, t("back"), () => this.scene.start(this.from), 260);
       return;
     }
     this.message.setText(t("calQuiet"));
@@ -59,6 +118,13 @@ export class CalibrationScene extends Phaser.Scene {
   private showActions(label: string | null, go?: () => void): void {
     this.actions?.destroy(true);
     const back = () => this.scene.start("options", { from: this.from });
+    const L = this.L;
+    if (L.P) {
+      // in verticale uno sopra l'altro, larghi quanto lo schermo
+      this.actions = this.add.container(0, 0, [button(this, W / 2, L.back, t("back"), back, W - 80, !label, L.backH)]);
+      if (label) this.actions.add(button(this, W / 2, L.go, label, go!, W - 80, true, 88).setName("cal-go"));
+      return;
+    }
     this.actions = label
       ? this.add.container(0, 0, [
           button(this, W / 2 - 150, 620, label, go!, 260).setName("cal-go"),
@@ -123,9 +189,10 @@ export class CalibrationScene extends Phaser.Scene {
   }
 
   private drawBar(frac: number): void {
+    const { x, y, w, h } = this.L.bar;
     this.bar.clear();
-    this.bar.fillStyle(C.carta2, 1).fillRect(520, 400, 480, 18);
-    this.bar.fillStyle(this.step === "play" ? C.ottone : C.indaco, 1).fillRect(520, 400, 480 * frac, 18);
-    this.bar.lineStyle(3, C.inchiostro, 1).strokeRect(520, 400, 480, 18);
+    this.bar.fillStyle(C.carta2, 1).fillRect(x, y, w, h);
+    this.bar.fillStyle(this.step === "play" ? C.ottone : C.indaco, 1).fillRect(x, y, w * frac, h);
+    this.bar.lineStyle(3, C.inchiostro, 1).strokeRect(x, y, w, h);
   }
 }

@@ -9,8 +9,8 @@ import { HEX, txt } from "../ui";
 export class HearingReadout {
   private label: Phaser.GameObjects.Text;
 
-  constructor(scene: Phaser.Scene, x: number, y: number, color: string = HEX.inchiostro) {
-    this.label = txt(scene, x, y, "", 20, color).setName("hearing");
+  constructor(scene: Phaser.Scene, x: number, y: number, color: string = HEX.inchiostro, size = 20) {
+    this.label = txt(scene, x, y, "", size, color).setName("hearing");
   }
 
   update(): void {

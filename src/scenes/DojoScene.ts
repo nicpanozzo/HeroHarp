@@ -4,11 +4,25 @@ import { getLang, t } from "../i18n";
 import { save } from "../state";
 import { getEngine } from "../audio/engine";
 import { groove, hush } from "../audio/music";
-import { C, W, HEX, txt, button, paper, panel } from "../ui";
+import { C, W, H, HEX, txt, button, paper, panel, portrait } from "../ui";
 
-const HOLE_W = 96;
-const HARP = { x: W / 2 - 5 * HOLE_W, y: 300, h: 96 };
-const METER = { x: 240, y: 560, w: 800 };
+/**
+ * Dove stanno l'armonica e il misuratore. In orizzontale le misure di sempre;
+ * in verticale l'armonica occupa tutta la larghezza e lo spazio in altezza si divide tra nota, armonica e misuratore.
+ */
+function dojoLayout() {
+  if (!portrait()) {
+    const holeW = 96;
+    return { P: false, holeW, pad: 10, harp: { x: W / 2 - 5 * holeW, y: 300, h: 96 }, meter: { x: 240, y: 560, w: 800 }, tab: 178, note: 238, keys: 690 };
+  }
+  const e = H - 1180;
+  const holeW = 58;
+  const tab = 296 + e * 0.2;
+  const harpY = tab + 236 + e * 0.22;
+  const h = 112 + e * 0.12;
+  const meterY = harpY + h + 210 + e * 0.22;
+  return { P: true, holeW, pad: 5, harp: { x: 100, y: harpY, h }, meter: { x: 70, y: meterY, w: W - 140 }, tab, note: tab + 100, keys: H - 54 };
+}
 /** Dopo il silenzio la nota resta a schermo ancora un attimo, per leggerla. */
 const LINGER = 0.35;
 
@@ -28,6 +42,7 @@ export class DojoScene extends Phaser.Scene {
   private smooth = 0;
   private backing = false;
   private meterKey = "";
+  private L = dojoLayout();
 
   constructor() {
     super("dojo");
@@ -39,13 +54,20 @@ export class DojoScene extends Phaser.Scene {
     paper(this);
     hush();
     this.backing = false;
-    txt(this, W / 2, 56, "DOJO", 52, HEX.inchiostro, "titoli").setShadow(4, 3, HEX.rosso, 0, false, true);
-    txt(this, W / 2, 100, t("dojoSub"), 19, HEX.inchiostro).setAlpha(0.8);
-    button(this, 70, 56, "‹", () => this.scene.start("title"), 64, false, 48).setName("dojo-back");
+    const L = (this.L = dojoLayout());
+    const { P, holeW: HOLE_W, harp: HARP, meter: METER } = L;
+    this.holes = [];
+    this.meterLabels = [];
+    this.meterKey = "";
+    txt(this, W / 2, P ? 70 : 56, "DOJO", P ? 64 : 52, HEX.inchiostro, "titoli").setShadow(4, 3, HEX.rosso, 0, false, true);
+    txt(this, W / 2, P ? 150 : 100, t("dojoSub"), P ? 23 : 19, HEX.inchiostro)
+      .setAlpha(0.8)
+      .setWordWrapWidth(P ? W - 80 : null);
+    button(this, P ? 76 : 70, P ? 70 : 56, "‹", () => this.scene.start("title"), P ? 84 : 64, false, P ? 72 : 48).setName("dojo-back");
     const music = button(
       this,
-      W - 130,
-      56,
+      P ? W - 134 : W - 130,
+      P ? 70 : 56,
       t("dojoBacking"),
       () => {
         this.backing = !this.backing;
@@ -55,40 +77,50 @@ export class DojoScene extends Phaser.Scene {
       },
       200,
       false,
-      44,
+      P ? 72 : 44,
     ).setName("dojo-backing");
     music.setAlpha(0.7);
 
     // il foro e la nota che senti, in grande
-    this.bigTab = txt(this, W / 2, 178, "", 84, HEX.inchiostro, "fori").setName("dojo-tab");
-    this.bigNote = txt(this, W / 2, 238, "", 24, HEX.inchiostro).setAlpha(0.8);
+    this.bigTab = txt(this, W / 2, L.tab, "", P ? 150 : 84, HEX.inchiostro, "fori").setName("dojo-tab");
+    this.bigNote = txt(this, W / 2, L.note, "", P ? 32 : 24, HEX.inchiostro).setAlpha(0.8);
 
     // l'armonica: note soffiate sopra, aspirate sotto, nella tonalità scelta
     panel(this, HARP.x - 20, HARP.y - 14, 10 * HOLE_W + 40, HARP.h + 28, C.carta2);
     for (let i = 0; i < 10; i++) {
       const x = HARP.x + i * HOLE_W + HOLE_W / 2;
       this.holes.push(this.add.graphics());
-      txt(this, x, HARP.y - 34, noteName(key.root + BLOW[i], lang).replace(/\d+$/, ""), 17, HEX.ottone);
-      txt(this, x, HARP.y + HARP.h + 36, noteName(key.root + DRAW[i], lang).replace(/\d+$/, ""), 17, HEX.indaco);
+      txt(this, x, HARP.y - 34, noteName(key.root + BLOW[i], lang).replace(/\d+$/, ""), P ? 22 : 17, HEX.ottone);
+      txt(this, x, HARP.y + HARP.h + 36, noteName(key.root + DRAW[i], lang).replace(/\d+$/, ""), P ? 22 : 17, HEX.indaco);
       txt(this, x, HARP.y + HARP.h / 2, String(i + 1), 34, HEX.inchiostro, "fori");
     }
-    txt(this, HARP.x - 60, HARP.y - 34, "↑", 22, HEX.ottone, "fori");
-    txt(this, HARP.x - 60, HARP.y + HARP.h + 36, "↓", 22, HEX.indaco, "fori");
+    txt(this, HARP.x - (P ? 52 : 60), HARP.y - 34, "↑", P ? 34 : 22, HEX.ottone, "fori");
+    txt(this, HARP.x - (P ? 52 : 60), HARP.y + HARP.h + 36, "↓", P ? 34 : 22, HEX.indaco, "fori");
     this.paintHoles(null);
 
     // misuratore: intonazione, o quanto pieghi sui fori che si piegano
-    this.meterTitle = txt(this, W / 2, METER.y - 58, "", 18, HEX.inchiostro).setAlpha(0.8);
+    this.meterTitle = txt(this, W / 2, METER.y - (P ? 72 : 58), "", P ? 23 : 18, HEX.inchiostro).setAlpha(0.8);
+    if (P) this.meterTitle.setWordWrapWidth(W - 80);
     this.meter = this.add.graphics();
-    txt(this, W / 2, 690, t("dojoKeys"), 16, HEX.inchiostro).setAlpha(0.6);
+    txt(this, W / 2, L.keys, t("dojoKeys"), P ? 20 : 16, HEX.inchiostro)
+      .setAlpha(0.6)
+      .setWordWrapWidth(P ? W - 80 : null);
   }
 
   private paintHoles(tab: Tab | null): void {
+    const { holeW: HOLE_W, harp: HARP, pad } = this.L;
     this.holes.forEach((g, i) => {
       const x = HARP.x + i * HOLE_W;
       g.clear();
       const on = tab?.hole === i + 1;
-      g.fillStyle(on ? (tab!.bend ? C.prugna : tab!.draw ? C.indaco : C.ottone) : C.carta, 1).fillRoundedRect(x + 10, HARP.y + 8, HOLE_W - 20, HARP.h - 16, 8);
-      g.lineStyle(3, C.inchiostro, 1).strokeRoundedRect(x + 10, HARP.y + 8, HOLE_W - 20, HARP.h - 16, 8);
+      g.fillStyle(on ? (tab!.bend ? C.prugna : tab!.draw ? C.indaco : C.ottone) : C.carta, 1).fillRoundedRect(
+        x + pad,
+        HARP.y + 8,
+        HOLE_W - 2 * pad,
+        HARP.h - 16,
+        8,
+      );
+      g.lineStyle(3, C.inchiostro, 1).strokeRoundedRect(x + pad, HARP.y + 8, HOLE_W - 2 * pad, HARP.h - 16, 8);
     });
   }
 
@@ -111,11 +143,12 @@ export class DojoScene extends Phaser.Scene {
       this.meterLabels = [];
       this.meterKey = k;
     }
+    const P = this.L.P;
     const label = (lx: number, ly: number, s: string, size: number, color: string) => {
-      if (relabel) this.meterLabels.push(txt(this, lx, ly, s, size, color, "fori"));
+      if (relabel) this.meterLabels.push(txt(this, lx, ly, s, P ? size + 6 : size, color, "fori"));
     };
     const max = maxBend(tab.hole, tab.draw);
-    const { x, y, w } = METER;
+    const { x, y, w } = this.L.meter;
     g.fillStyle(C.inchiostro, 1).fillRect(x + 5, y - 15, w, 36);
     g.fillStyle(C.carta2, 1).fillRect(x, y - 20, w, 36);
     g.lineStyle(3, C.inchiostro, 1).strokeRect(x, y - 20, w, 36);
