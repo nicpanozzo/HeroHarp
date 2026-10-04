@@ -5,8 +5,16 @@
 import Phaser from "phaser";
 import { COLORI, COLORI_NUM } from "../../style/tema";
 
-export const W = 960;
-export const H = 540;
+/**
+ * Il palco delle modalità: 960×540 in orizzontale. Sul telefono tenuto dritto il gioco lo porta
+ * a 540 di larghezza e all'altezza che serve (impostaPalco): le scene lo leggono quando si disegnano.
+ */
+export let W = 960;
+export let H = 540;
+/** true quando il palco è in verticale (telefono dritto): le scene scelgono l'impaginazione alta. */
+export const verticale = () => H > W;
+/** Cambia le dimensioni del palco; vale per le scene che si creano da qui in poi. */
+export function impostaPalco(w: number, h: number) { W = w; H = h; }
 export const COL = {
   ...COLORI_NUM,
   notte: 0x15110e,
@@ -72,9 +80,9 @@ export function bottone(scene: Phaser.Scene, x: number, y: number, etichetta: st
 
 /** Un'etichetta selezionabile (per le opzioni: modo, tempo, giri). */
 export function scelta(scene: Phaser.Scene, x: number, y: number, etichetta: string, attiva: () => boolean, azione: () => void, w = 130, scuro = false) {
-  const h = 38;
+  const h = verticale() ? 52 : 38;
   const g = scene.add.graphics();
-  const label = testo(scene, 0, 0, etichetta, 16, HEX.carta, "fori");
+  const label = testo(scene, 0, 0, etichetta, verticale() ? 17 : 16, HEX.carta, "fori");
   const c = scene.add.container(x, y, [g, label]).setSize(w, h).setInteractive({ useHandCursor: true });
   const disegna = () => {
     const on = attiva();
@@ -84,6 +92,9 @@ export function scelta(scene: Phaser.Scene, x: number, y: number, etichetta: str
     g.fillStyle(on ? COL.rosso : base, on ? 1 : scuro ? 0.08 : 0.18).fillRoundedRect(-w / 2, -h / 2, w, h, h / 2);
     g.lineStyle(on ? 3 : 2, on ? COL.inchiostro : base, on ? 1 : 0.6).strokeRoundedRect(-w / 2, -h / 2, w, h, h / 2);
     label.setColor(on || scuro ? HEX.carta : HEX.inchiostro).setText((on ? "● " : "") + etichetta);
+    // in verticale le etichette lunghe si stringono invece di uscire dal bottone
+    if (verticale()) label.setScale(Math.min(1, (w - 14) / label.width));
+
   };
   disegna();
   c.on("pointerup", () => { azione(); scene.events.emit("scelte-aggiorna"); });

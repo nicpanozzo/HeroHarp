@@ -3,6 +3,8 @@
 // Le note escono dall'armonica del protagonista e scorrono sul muro come nastri colorati
 // (soffio ottone, aspirato indaco, bend prugna, con la curva vera del bend).
 // Il pubblico (GiudiceJam) si scalda con il bel fraseggio e la band cresce con lui.
+// Sul telefono tenuto dritto il palco sta in alto e i nastri salgono dal foro che suoni verso la band;
+// le note di Zia Mae scendono dal palco verso l'armonica.
 
 import Phaser from "phaser";
 import { noteName } from "../../harp";
@@ -11,7 +13,7 @@ import { prendiAscolto } from "../core/ascolto";
 import { prendiSuono, Registratore } from "../core/suono";
 import { impostazioni, record, salva } from "../core/impostazioni";
 import { foroPerMidi, foroMidi, scriviForo, estensione, soloConBend } from "../core/armonica";
-import { COL, HEX, H, W, testo, titolo, pop, grana, textureLuce, coriandoli, vaiA, bottone } from "../core/ui";
+import { COL, HEX, H, W, testo, titolo, pop, grana, textureLuce, coriandoli, vaiA, bottone, verticale } from "../core/ui";
 import { VistaArmonica } from "../core/vistaArmonica";
 import { t, tx, type IdExtra } from "../core/testi";
 import { GiudiceJam, livelloHype, moltiplicatore, type EventoJam } from "./giudice";
@@ -26,6 +28,10 @@ const ORA_X = 228;         // dove nasce il nastro (davanti all'armonica del pro
 const VELOCITA = 92;       // pixel al secondo
 const MURO = { alto: 92, basso: 318 };
 const MAE_X = 790;
+/** In verticale i nastri salgono: pixel al secondo. */
+const VELOCITA_V = 80;
+
+type Punto2 = [number, number];
 
 /** Musicisti che entrano a ogni livello di pubblico. */
 const BAND_CUFFIE: Strumento[][] = [
@@ -76,6 +82,14 @@ export class JamScene extends Phaser.Scene {
   private avvisoGrande!: Phaser.GameObjects.Text;
   private chiamataNote: { midi: number; t: number; d: number }[] = [];
   private etichetteMae = new Map<Nastro, Phaser.GameObjects.Text>();
+  /** Telefono dritto: palco in alto, corsia dei nastri al centro, armonica in basso. */
+  private V = false;
+  private P = { palco: 226, pavimento: 400, corsia: 430, ora: 689, maeY: 350 };
+  /** x di ogni nota (midi intero dalla più grave) sopra il suo foro, in verticale */
+  private xNote: number[] = [];
+  private cella = { w: 40, h: 30 };
+  private scalaProt = 0.78;
+  private scalaStr = 1;
 
   constructor() { super("jam"); }
 
@@ -91,6 +105,15 @@ export class JamScene extends Phaser.Scene {
   create() {
     this.cameras.main.fadeIn(140, 21, 17, 14);
     this.ascolto.accendiMicrofono();
+    this.V = verticale();
+    if (this.V) {
+      // lo spazio in più dei telefoni lunghi va soprattutto alla corsia dei nastri
+      const pav = Math.round(400 + (H - 885) * 0.2);
+      this.P = { palco: 226, pavimento: pav, corsia: pav + 30, ora: H - 202, maeY: pav - 50 };
+      this.cella = { w: 118, h: 34 };
+      this.scalaProt = 0.7;
+      this.scalaStr = 0.75;
+    }
     const tonalita = impostazioni.tonalita;
     // La base: blues a 12 battute in seconda posizione nella tonalità dell'armonica.
     const s = this.suono;
@@ -105,13 +128,24 @@ export class JamScene extends Phaser.Scene {
     this.gNastri = this.add.graphics().setDepth(4).setBlendMode(Phaser.BlendModes.NORMAL);
     this.disegnaPalco();
     this.disegnaFolla();
-    this.armonica = new VistaArmonica(this, W / 2 + 40, 474, 440, 50).setDepth(20);
+    this.armonica = this.V
+      ? new VistaArmonica(this, W / 2, H - 112, 490, 52, true).setDepth(20)
+      : new VistaArmonica(this, W / 2 + 40, 474, 440, 50).setDepth(20);
+    if (this.V) this.preparaX();
     this.disegnaInterfaccia();
+    if (this.V) {
+      // i nastri restano nella corsia: salendo spariscono dietro il bordo del palco
+      const m = this.make.graphics({}, false).fillStyle(0xffffff).fillRect(0, this.P.corsia - 4, W, this.P.ora - this.P.corsia + 44);
+      this.gNastri.setMask(m.createGeometryMask());
+    }
     this.scie = this.add.particles(0, 0, textureLuce(this), {
+
       speed: { min: 20, max: 90 }, lifespan: 600, scale: { start: 0.35, end: 0 }, alpha: { start: 0.9, end: 0 },
       blendMode: "ADD", emitting: false,
     }).setDepth(5);
-    this.avvisoGrande = testo(this, W / 2 + 40, 200, "", 40, HEX.carta, "titoli").setStroke(HEX.inchiostro, 8).setDepth(40).setAlpha(0);
+    this.avvisoGrande = this.V
+      ? testo(this, W / 2, (this.P.corsia + this.P.ora) / 2 - 30, "", 34, HEX.carta, "titoli").setStroke(HEX.inchiostro, 8).setDepth(40).setAlpha(0).setWordWrapWidth(W - 40)
+      : testo(this, W / 2 + 40, 200, "", 40, HEX.carta, "titoli").setStroke(HEX.inchiostro, 8).setDepth(40).setAlpha(0);
     grana(this);
 
     this.giudice = new GiudiceJam({
@@ -147,6 +181,7 @@ export class JamScene extends Phaser.Scene {
   // ---------- Scenografia ----------
 
   private disegnaLocale() {
+    if (this.V) return this.disegnaLocaleAlto();
     const g = this.add.graphics();
     // muro di assi
     g.fillStyle(0x2a1d14, 1).fillRect(0, 0, W, 360);
@@ -185,7 +220,95 @@ export class JamScene extends Phaser.Scene {
     }
   }
 
+  /** Il locale in verticale: muro e palco in alto, sotto la corsia scura con una striscia per foro. */
+  private disegnaLocaleAlto() {
+    const g = this.add.graphics();
+    const { palco, pavimento: F, corsia, ora } = this.P;
+    g.fillStyle(0x2a1d14, 1).fillRect(0, 0, W, F);
+    for (let x = 0; x < W; x += 48) {
+      g.fillStyle(x % 96 === 0 ? 0x2f2117 : 0x281b12, 1).fillRect(x, 0, 46, F);
+      g.fillStyle(0x1a120c, 1).fillRect(x + 46, 0, 2, F);
+    }
+    // sotto i comandi una striscia più scura, così si leggono bene
+    g.fillStyle(0x15110e, 0.55).fillRect(0, 0, W, palco - 8);
+    g.fillStyle(COL.legno, 1).fillRect(0, palco - 10, W, 4);
+    // la corsia: una striscia per foro, allineata all'armonica
+    g.fillStyle(0x1a120c, 1).fillRect(0, F, W, H - F);
+    for (let i = 0; i < 10; i++) {
+      const x = W / 2 - 245 + i * 49;
+      g.fillStyle(i % 2 ? 0x221810 : 0x1e150e, 1).fillRect(x, corsia - 10, 49, ora - corsia + 40);
+    }
+    const manifesto = (x: number, y: number, w: number, h: number, colore: number, ang: number) => {
+      const c = this.add.container(x, y).setAngle(ang).setAlpha(0.32);
+      const m = this.add.graphics();
+      m.fillStyle(colore, 1).fillRect(-w / 2, -h / 2, w, h);
+      m.fillStyle(COL.inchiostro, 1).fillRect(-w / 2 + 8, -h / 2 + 10, w - 16, 10).fillRect(-w / 2 + 8, -h / 2 + 26, w - 30, 6);
+      m.fillStyle(COL.rosso, 1).fillCircle(0, 8, w * 0.22);
+      c.add(m);
+    };
+    manifesto(250, F - 70, 64, 84, COL.ottone, -4);
+    manifesto(430, F - 96, 60, 80, COL.carta, 3);
+    this.insegna = testo(this, 300, palco + 52, "JUKE JOINT", 30, "#FF8FC0", "titoli").setStroke("#FF5FA2", 3).setAlpha(0.35)
+      .setShadow(0, 0, "#FF5FA2", 18, true, true);
+    const filo = this.add.graphics();
+    filo.lineStyle(2, 0x111111, 1);
+    const lampX = (i: number) => 14 + i * 46;
+    const lampY = (i: number) => palco + 14 + Math.sin((i / 11) * Math.PI * 3) * 5;
+    filo.beginPath(); filo.moveTo(0, palco + 12);
+    for (let i = 0; i < 12; i++) filo.lineTo(lampX(i), lampY(i) - 6);
+    filo.strokePath();
+    const luce = textureLuce(this);
+    for (let i = 0; i < 12; i++) {
+      const l = this.add.image(lampX(i), lampY(i), luce).setScale(0.45).setTint(COL.lampada).setAlpha(0.15).setBlendMode(Phaser.BlendModes.ADD);
+      this.add.circle(lampX(i), lampY(i), 4, 0x6b5a3a);
+      this.lampadine.push(l);
+    }
+  }
+
+  /** In verticale ogni nota sta sopra il suo foro: soffio a sinistra del foro, aspirato a destra, i bend nel mezzo. */
+  private preparaX() {
+    const ton = impostazioni.tonalita;
+    const { min, max } = estensione(ton);
+    const xs: (number | null)[] = [];
+    for (let m = min; m <= max; m++) {
+      const tab = foroPerMidi(m, ton);
+      if (!tab) { xs.push(null); continue; }
+      const lato = tab.draw ? 0.24 - 0.12 * tab.bend : -0.24 + 0.12 * tab.bend;
+      xs.push(this.armonica.x + this.armonica.xForo(tab.hole) + lato * this.armonica.passo);
+    }
+    // le note che mancano (overblow) stanno a metà tra le vicine
+    this.xNote = xs.map((x, i) => {
+      if (x !== null) return x;
+      let a = i - 1, b = i + 1;
+      while (a >= 0 && xs[a] === null) a--;
+      while (b < xs.length && xs[b] === null) b++;
+      const xa = a >= 0 ? xs[a]! : null, xb = b < xs.length ? xs[b]! : null;
+      if (xa === null) return xb ?? W / 2;
+      if (xb === null) return xa;
+      return xa + ((xb - xa) * (i - a)) / (b - a);
+    });
+  }
+
+  private xm(m: number) {
+    const { min } = estensione(impostazioni.tonalita);
+    const k = Phaser.Math.Clamp(m - min, 0, this.xNote.length - 1);
+    const a = Math.floor(k), b = Math.min(this.xNote.length - 1, a + 1);
+    return this.xNote[a] + (this.xNote[b] - this.xNote[a]) * (k - a);
+  }
+
+  /** Dove nasce la nota che suoni adesso. */
+  private puntoOra(m: number): Punto2 { return this.V ? [this.xm(m), this.P.ora] : [ORA_X, this.y(m)]; }
+  /** I tuoi nastri: in orizzontale vanno a destra, in verticale salgono verso il palco. */
+  private pTu(ora: number, tm: number, m: number): Punto2 {
+    return this.V ? [this.xm(m), this.P.ora - (ora - tm) * VELOCITA_V] : [ORA_X + (ora - tm) * VELOCITA, this.y(m)];
+  }
+  /** I nastri di Zia Mae vengono verso di te. */
+  private pMae(ora: number, tm: number, m: number): Punto2 {
+    return this.V ? [this.xm(m), this.P.corsia + (ora - tm) * VELOCITA_V] : [MAE_X - 70 - (ora - tm) * VELOCITA, this.y(m)];
+  }
+
   private disegnaPalco() {
+    if (this.V) return this.disegnaPalcoAlto();
     const g = this.add.graphics().setDepth(6);
     g.fillStyle(0x4a321f, 1).fillRect(0, 360, W, 40);
     g.fillStyle(COL.legno, 1).fillRect(0, 352, W, 10);
@@ -213,9 +336,34 @@ export class JamScene extends Phaser.Scene {
     this.mae = this.add.container(MAE_X, 290, [ritratto, fumetto, this.maeTesto]).setDepth(8).setVisible(this.o.modo === "scambio");
   }
 
+  private disegnaPalcoAlto() {
+    const g = this.add.graphics().setDepth(6);
+    const { palco, pavimento: F } = this.P;
+    g.fillStyle(0x4a321f, 1).fillRect(0, F + 8, W, 22);
+    g.fillStyle(COL.legno, 1).fillRect(0, F, W, 10);
+    for (let x = 0; x < W; x += 80) g.fillStyle(0x3e2a1a, 1).fillRect(x, F + 10, 2, 20);
+    for (const x of [150, 400]) {
+      const f = this.add.graphics().setDepth(2).setBlendMode(Phaser.BlendModes.ADD).setAlpha(0);
+      f.fillStyle(COL.lampada, 0.18).fillTriangle(0, 0, -100, 380, 100, 380);
+      f.setPosition(x, palco - 8).setScale(1, (F - palco + 40) / 380);
+      this.fari.push(f);
+    }
+    this.protagonista = this.add.image(76, F - 47, "personaggi-protagonista-suona").setScale(this.scalaProt).setDepth(7);
+
+    const xs = this.o.modo === "scambio" ? [170, 245, 320, 392] : [190, 285, 385, 475];
+    this.strumenti = (["basso", "piano", "batteria", "elettrica"] as const).map((s, i) => this.strumento(s, xs[i]));
+    const ritratto = this.add.image(0, 0, "personaggi-zia-mae-spiega").setScale(0.5);
+    const fumetto = this.add.graphics();
+    fumetto.fillStyle(COL.inchiostro, 1).fillRoundedRect(-62, -127, 132, 44, 10);
+    fumetto.fillStyle(COL.carta, 1).fillRoundedRect(-66, -131, 132, 44, 10).fillTriangle(-10, -88, 14, -88, 6, -72);
+    fumetto.lineStyle(3, COL.inchiostro, 1).strokeRoundedRect(-66, -131, 132, 44, 10);
+    this.maeTesto = testo(this, 0, -109, "", 17, HEX.inchiostro, "titoli");
+    this.mae = this.add.container(W - 70, this.P.maeY, [ritratto, fumetto, this.maeTesto]).setDepth(8).setVisible(this.o.modo === "scambio");
+  }
+
   private strumento(tipo: string, x: number) {
     const g = this.add.graphics();
-    const y = 352;
+    const y = this.V ? this.P.pavimento : 352;
     if (tipo === "basso") {
       g.fillStyle(0x7a4a22, 1).fillEllipse(0, -40, 46, 70).fillEllipse(0, -78, 34, 40);
       g.fillStyle(COL.inchiostro, 1).fillRect(-3, -150, 6, 120).fillCircle(-6, -46, 3).fillCircle(6, -46, 3);
@@ -238,7 +386,7 @@ export class JamScene extends Phaser.Scene {
       g.fillStyle(COL.rosso, 1).fillEllipse(-50, -110, 26, 48);
       g.fillStyle(COL.inchiostro, 1).fillRect(-52, -170, 4, 60);
     }
-    const c = this.add.container(x, y, [g]).setDepth(5).setAlpha(0).setScale(0.7, 0.7);
+    const c = this.add.container(x, y, [g]).setDepth(5).setAlpha(0).setScale(0.7 * this.scalaStr);
     return c;
   }
 
@@ -259,6 +407,17 @@ export class JamScene extends Phaser.Scene {
       g.generateTexture(chiave, 100, 200); g.destroy();
     };
     tex("sagoma", false); tex("sagoma-braccia", true);
+    if (this.V) {
+      // in verticale il pubblico sta in fondo, dietro l'armonica
+      for (let i = 0; i < 9; i++) {
+        const x = (i + 0.5) * (W / 9) + Phaser.Math.Between(-10, 10);
+        const fila = i % 2;
+        const base = H - 14 + fila * 18 + Phaser.Math.Between(-5, 5);
+        const s = this.add.image(x, base, "sagoma").setTint(fila ? 0x120d0a : 0x2a1f17).setScale(0.62 + Math.random() * 0.2).setDepth(11 + fila * 2);
+        this.folla.push({ s, base, fase: Math.random() * Math.PI * 2 });
+      }
+      return;
+    }
     const n = 15;
     for (let i = 0; i < n; i++) {
       const x = (i + 0.5) * (W / n) + Phaser.Math.Between(-14, 14);
@@ -275,6 +434,7 @@ export class JamScene extends Phaser.Scene {
     // Le 12 battute: si vede dove sei e quale accordo suona
     const tonica = this.suono.basi.tonicaMidi;
     const nomeAcc = (grado: number) => noteName(tonica + grado, impostazioni.lingua).replace(/-?\d+$/, "") + "7";
+    if (this.V) return this.disegnaInterfacciaAlta(nomeAcc);
     for (let i = 0; i < 12; i++) {
       const grado = [0, 0, 0, 0, 5, 5, 0, 0, 7, 5, 0, 7][i];
       const x = 22 + i * 44, y = 30;
@@ -297,14 +457,41 @@ export class JamScene extends Phaser.Scene {
     bottone(this, 52, 520, t("esci"), () => this.esci(), { w: 84, h: 30, primario: false, size: 14 }).setDepth(35);
   }
 
+  /** In verticale: Esci, giro e punti in alto; le 12 battute in tre righe da quattro, come si scrive il blues. */
+  private disegnaInterfacciaAlta(nomeAcc: (grado: number) => string) {
+    const { w, h } = this.cella;
+    for (let i = 0; i < 12; i++) {
+      const grado = [0, 0, 0, 0, 5, 5, 0, 0, 7, 5, 0, 7][i];
+      const x = 22 + (i % 4) * (w + 8), y = 92 + Math.floor(i / 4) * (h + 6);
+      const g = this.add.graphics().setDepth(30);
+      const tt = testo(this, x + w / 2, y, nomeAcc(grado), 18, HEX.carta, "fori").setDepth(31);
+      g.setData("x", x).setData("y", y);
+      this.celle.push({ g, t: tt, grado });
+    }
+    this.disegnaCelle(-1);
+    bottone(this, 64, 36, t("esci"), () => this.esci(), { w: 108, h: 54, primario: false, size: 18 }).setDepth(35);
+    this.giroTesto = testo(this, W / 2 - 6, 36, "", 18, HEX.carta, "fori").setDepth(31);
+    this.puntiTesto = testo(this, W - 74, 30, "0", 34, HEX.carta, "titoli").setDepth(31).setStroke(HEX.inchiostro, 5);
+    this.moltTesto = testo(this, W - 74, 60, "", 17, HEX.ottone, "fori").setDepth(31);
+    // il termometro del pubblico, steso in orizzontale
+    const y = 206;
+    const fondo = this.add.graphics().setDepth(30);
+    fondo.fillStyle(COL.inchiostro, 0.85).fillRoundedRect(128, y - 11, 254, 22, 11);
+    fondo.lineStyle(3, COL.ottone, 1).strokeRoundedRect(128, y - 11, 254, 22, 11);
+    this.hypeBarra = this.add.graphics().setDepth(31);
+    testo(this, 22, y, t("hype").toUpperCase(), 15, HEX.carta, "fori").setOrigin(0, 0.5).setDepth(31);
+    this.hypeTesto = testo(this, W - 22, y, t("hype0"), 17, HEX.ottone, "titoli").setOrigin(1, 0.5).setDepth(31);
+  }
+
   private disegnaCelle(attiva: number) {
+    const { w, h } = this.cella;
     for (let i = 0; i < 12; i++) {
       const c = this.celle[i];
       const x = c.g.getData("x"), y = c.g.getData("y");
       const colore = c.grado === 0 ? COL.ottone : c.grado === 5 ? COL.indaco : COL.prugna;
       c.g.clear();
-      c.g.fillStyle(i === attiva ? colore : COL.inchiostro, i === attiva ? 1 : 0.75).fillRoundedRect(x, y - 15, 40, 30, 6);
-      c.g.lineStyle(2, colore, 1).strokeRoundedRect(x, y - 15, 40, 30, 6);
+      c.g.fillStyle(i === attiva ? colore : COL.inchiostro, i === attiva ? 1 : 0.75).fillRoundedRect(x, y - h / 2, w, h, 6);
+      c.g.lineStyle(2, colore, 1).strokeRoundedRect(x, y - h / 2, w, h, 6);
       c.t.setColor(i === attiva ? HEX.inchiostro : HEX.carta);
     }
   }
@@ -316,8 +503,8 @@ export class JamScene extends Phaser.Scene {
     this.faseBattito = 0;
     this.ultimoBattito = this.time.now;
     for (const l of this.lampadine) if (l.alpha > 0.3) this.tweens.add({ targets: l, scale: { from: 0.62, to: 0.45 }, duration: 260 });
-    for (const s of this.strumenti) if (s.alpha > 0.5) this.tweens.add({ targets: s, scaleY: { from: 0.97, to: 1 }, duration: 180 });
-    this.tweens.add({ targets: this.protagonista, scaleY: { from: 0.76, to: 0.78 }, duration: 200 });
+    for (const s of this.strumenti) if (s.alpha > 0.5) this.tweens.add({ targets: s, scaleY: { from: 0.97 * this.scalaStr, to: this.scalaStr }, duration: 180 });
+    this.tweens.add({ targets: this.protagonista, scaleY: { from: this.scalaProt - 0.02, to: this.scalaProt }, duration: 200 });
     if (n === 0) this.nuovaBattuta();
   }
 
@@ -356,7 +543,8 @@ export class JamScene extends Phaser.Scene {
       const midi = lick.fori.map((f) => foroMidi(f, impostazioni.tonalita));
       this.giudice.apriRisposta(midi, inizio + 8 * b, 8 * b);
       this.maeTesto.setText(t("ascoltaMae").split(" ")[0] + "…");
-      this.tweens.add({ targets: this.mae, y: { from: 300, to: 290 }, duration: 300, ease: "Back.easeOut" });
+      const maeY = this.V ? this.P.maeY : 290;
+      this.tweens.add({ targets: this.mae, y: { from: maeY + 10, to: maeY }, duration: 300, ease: "Back.easeOut" });
       this.time.delayedCall(Math.max(0, (inizio + 8 * b - this.suono.ctx.currentTime) * 1000), () => {
         if (this.finito) return;
         this.maeTesto.setText(t("tuoTurno"));
@@ -489,7 +677,7 @@ export class JamScene extends Phaser.Scene {
       this.nastri.push(n);
       this.storico.push(n);
       this.nastroCorrente = n;
-      if (!this.finito) this.scie.explode(6, ORA_X, this.y(midiF));
+      if (!this.finito) this.scie.explode(6, ...this.puntoOra(midiF));
     }
     if (colore === COL.prugna) n.colore = COL.prugna;
     if (colore === COL.prugna && tab) n.etichetta = scriviForo(tab);
@@ -499,14 +687,18 @@ export class JamScene extends Phaser.Scene {
   private disegnaNastri(ora: number) {
     const g = this.gNastri;
     g.clear();
-    const xTu = (tm: number) => ORA_X + (ora - tm) * VELOCITA;
+    const pTu = (tm: number, m: number) => this.pTu(ora, tm, m);
     // le note di Zia Mae partono da lei e volano verso di te
-    const xMae = (tm: number) => MAE_X - 70 - (ora - tm) * VELOCITA;
-    this.nastri = this.nastri.filter((n) => (n.fine === null ? true : n.mae ? xMae(n.fine) > ORA_X - 40 : xTu(n.fine) < W + 40));
+    const pMae = (tm: number, m: number) => this.pMae(ora, tm, m);
+    this.nastri = this.nastri.filter((n) => {
+      if (n.fine === null) return true;
+      if (this.V) return n.mae ? pMae(n.fine, 0)[1] < this.P.ora + 40 : pTu(n.fine, 0)[1] > -40;
+      return n.mae ? pMae(n.fine, 0)[0] > ORA_X - 40 : pTu(n.fine, 0)[0] < W + 40;
+    });
     for (const n of this.nastri) {
       if (n.punti.length < 1) continue;
-      const xDi = n.mae ? xMae : xTu;
-      const spessore = n.mae ? 6 : 12;
+      const xDi = n.mae ? pMae : pTu;
+      const spessore = (n.mae ? 6 : 12) + (this.V ? 2 : 0);
       // alone
       g.lineStyle(spessore + 10, n.colore, n.mae ? 0.08 : 0.18);
       this.traccia(g, n, xDi);
@@ -519,25 +711,32 @@ export class JamScene extends Phaser.Scene {
     for (const n of this.nastri) {
       if (!n.mae || !n.punti.length) continue;
       let et = this.etichetteMae.get(n);
-      if (!et) { et = testo(this, 0, 0, n.etichetta, 20, HEX.carta, "titoli").setStroke(HEX.inchiostro, 5).setDepth(5); this.etichetteMae.set(n, et); }
+      if (!et) { et = testo(this, 0, 0, n.etichetta, this.V ? 26 : 20, HEX.carta, "titoli").setStroke(HEX.inchiostro, 5).setDepth(5); this.etichetteMae.set(n, et); }
       const p0 = n.punti[0];
-      et.setPosition(xMae(p0.t), this.y(p0.m) - 22);
+      const [x0, y0] = pMae(p0.t, p0.m);
+      // in verticale il nome del foro va davanti al nastro che scende
+      if (this.V) et.setPosition(x0, y0 + 26); else et.setPosition(x0, y0 - 22);
     }
     for (const [n, et] of this.etichetteMae) if (!this.nastri.includes(n)) { et.destroy(); this.etichetteMae.delete(n); }
     // punta luminosa all'origine
     if (this.nastroCorrente) {
       const p = this.nastroCorrente.punti[this.nastroCorrente.punti.length - 1];
-      g.fillStyle(COL.carta, 1).fillCircle(ORA_X, this.y(p.m), 7);
-      g.fillStyle(this.nastroCorrente.colore, 0.4).fillCircle(ORA_X, this.y(p.m), 14);
+      const [x, y] = this.puntoOra(p.m);
+      g.fillStyle(COL.carta, 1).fillCircle(x, y, 7);
+      g.fillStyle(this.nastroCorrente.colore, 0.4).fillCircle(x, y, 14);
     }
   }
 
-  private traccia(g: Phaser.GameObjects.Graphics, n: Nastro, xDi: (t: number) => number) {
+  private traccia(g: Phaser.GameObjects.Graphics, n: Nastro, pDi: (t: number, m: number) => Punto2) {
     const p = n.punti;
-    if (p.length === 1) { g.lineBetween(xDi(p[0].t), this.y(p[0].m), xDi(p[0].t) + 2, this.y(p[0].m)); return; }
+    if (p.length === 1) {
+      const [x, y] = pDi(p[0].t, p[0].m);
+      if (this.V) g.lineBetween(x, y, x, y - 2); else g.lineBetween(x, y, x + 2, y);
+      return;
+    }
     g.beginPath();
-    g.moveTo(xDi(p[0].t), this.y(p[0].m));
-    for (let i = 1; i < p.length; i++) g.lineTo(xDi(p[i].t), this.y(p[i].m));
+    g.moveTo(...pDi(p[0].t, p[0].m));
+    for (let i = 1; i < p.length; i++) g.lineTo(...pDi(p[i].t, p[i].m));
     g.strokePath();
   }
 
@@ -557,9 +756,14 @@ export class JamScene extends Phaser.Scene {
       const tab = foroPerMidi(m, impostazioni.tonalita);
       if (!tab) continue;
       const radice = iv === grado % 12;
-      const y = this.y(m);
       g.lineStyle(radice ? 2 : 1, COL.lampada, radice ? 0.35 : 0.14);
-      for (let x = ORA_X + 30; x < W - 60; x += 18) g.lineBetween(x, y, x + 9, y);
+      if (this.V) {
+        const x = this.xm(m);
+        for (let y = this.P.corsia; y < this.P.ora - 24; y += 18) g.lineBetween(x, y, x, y + 9);
+      } else {
+        const y = this.y(m);
+        for (let x = ORA_X + 30; x < W - 60; x += 18) g.lineBetween(x, y, x + 9, y);
+      }
       fori.push(tab);
     }
     if (!this.finito) this.armonica.suggerisci(fori.filter((f) => f.hole >= 1));
@@ -569,8 +773,15 @@ export class JamScene extends Phaser.Scene {
   private aggiornaHype(h: number) {
     const g = this.hypeBarra;
     g.clear();
-    const alt = 224 * (h / 100);
     const colori = [COL.indaco, COL.ottone, COL.ottone, COL.rosso, 0xff5fa2];
+    if (this.V) {
+      const lung = 242 * (h / 100), x = 134, y = 206;
+      g.fillStyle(colori[livelloHype(h)], 1).fillRoundedRect(x, y - 6, Math.max(12, lung), 12, 6);
+      g.lineStyle(2, COL.carta, 0.25);
+      for (const l of [25, 50, 75, 95]) g.lineBetween(x + 242 * (l / 100), y - 9, x + 242 * (l / 100), y + 9);
+      return;
+    }
+    const alt = 224 * (h / 100);
     g.fillStyle(colori[livelloHype(h)], 1).fillRoundedRect(W - 40, 322 - alt, 18, Math.max(6, alt), 9);
     g.lineStyle(2, COL.carta, 0.25);
     for (const l of [25, 50, 75, 95]) g.lineBetween(W - 44, 322 - 224 * (l / 100), W - 18, 322 - 224 * (l / 100));
@@ -588,8 +799,10 @@ export class JamScene extends Phaser.Scene {
     // con le casse suonano solo i tamburi: si presenta sul palco solo chi si sente davvero
     if (nuovo && (record.cuffie || nuovo === "strumento_batteria")) {
       const s = this.strumenti[liv - 1];
-      this.tweens.add({ targets: s, alpha: 1, scale: 1, duration: 500, ease: "Back.easeOut" });
-      this.time.delayedCall(900, () => pop(this, s.x, 230, `${tx("entra")} ${tx(nuovo)}!`, HEX.carta, 18, 1800));
+      this.tweens.add({ targets: s, alpha: 1, scale: this.scalaStr, duration: 500, ease: "Back.easeOut" });
+
+      const [px, py] = this.V ? [Phaser.Math.Clamp(s.x, 120, W - 120), this.P.pavimento - 150] : [s.x, 230];
+      this.time.delayedCall(900, () => pop(this, px, py, `${tx("entra")} ${tx(nuovo)}!`, HEX.carta, this.V ? 20 : 18, 1800));
     }
     if (liv >= 4) coriandoli(this);
     this.cameras.main.shake(180, 0.004);
@@ -604,8 +817,14 @@ export class JamScene extends Phaser.Scene {
   }
 
   private mostraEvento(e: EventoJam) {
-    const y = this.nastroCorrente ? this.y(this.nastroCorrente.punti[this.nastroCorrente.punti.length - 1].m) - 34 : 200;
-    const x = ORA_X + 60 + Phaser.Math.Between(-20, 60);
+    const ultimo = this.nastroCorrente?.punti[this.nastroCorrente.punti.length - 1];
+    let y = ultimo ? this.y(ultimo.m) - 34 : 200;
+    let x = ORA_X + 60 + Phaser.Math.Between(-20, 60);
+    if (this.V) {
+      // poco sopra il foro che stai suonando, senza uscire dallo schermo
+      x = Phaser.Math.Clamp((ultimo ? this.xm(ultimo.m) : W / 2) + Phaser.Math.Between(-40, 40), 110, W - 110);
+      y = this.P.ora - 70 - Phaser.Math.Between(0, 50);
+    }
     const colori: Partial<Record<EventoJam["tipo"], string>> = {
       cambio: HEX.lampada, bend: "#C79BE8", blue: "#8FB3E6", lunga: HEX.carta, fiato: HEX.ottone, eco: HEX.lampada,
       tasca: HEX.carta, lick: HEX.ottone, lickNuovo: HEX.ottone, risposta: HEX.lampada, copia: HEX.lampada, risolta: HEX.carta, estensione: HEX.lampada,
@@ -618,9 +837,9 @@ export class JamScene extends Phaser.Scene {
       if (e.tipo === "lickNuovo") { this.suono.effetti.critico(); coriandoli(this, W / 2, -10, 40); }
       return;
     }
-    if (e.tipo === "frase") { pop(this, x, y, `+${e.punti} ${tx("ev_frase")}`, HEX.grigio, 15, 900); return; }
+    if (e.tipo === "frase") { pop(this, x, y, `+${e.punti} ${tx("ev_frase")}`, HEX.grigio, this.V ? 18 : 15, 900); return; }
     const testoEv = tx(`ev_${e.tipo}` as IdExtra);
-    pop(this, x, Math.max(110, y), `${testoEv} +${e.punti}`, colori[e.tipo] ?? HEX.carta, e.punti >= 10 ? 26 : 20);
+    pop(this, x, this.V ? y : Math.max(110, y), `${testoEv} +${e.punti}`, colori[e.tipo] ?? HEX.carta, e.punti >= 10 ? 26 : 20);
     if (e.tipo === "cambio" || e.tipo === "copia" || e.tipo === "fiato") this.suono.effetti.notaGiusta();
   }
 
@@ -628,14 +847,18 @@ export class JamScene extends Phaser.Scene {
   private consiglio(s: string) {
     if (this.time.now - this.ultimoConsiglio < 6000) return;
     this.ultimoConsiglio = this.time.now;
-    const box = this.add.container(W / 2 + 40, 420).setDepth(45).setAlpha(0);
-    const tt = testo(this, 0, 0, s, 17, HEX.inchiostro, "titoli");
+    // in verticale il consiglio sta in cima alla corsia, lontano dai complimenti che saltano sopra il foro
+    const y0 = this.V ? this.P.corsia + 44 : 420;
+    const box = this.add.container(this.V ? W / 2 : W / 2 + 40, y0).setDepth(45).setAlpha(0);
+    const tt = testo(this, 0, 0, s, this.V ? 18 : 17, HEX.inchiostro, "titoli");
+    if (this.V) tt.setWordWrapWidth(W - 80);
     const g = this.add.graphics();
     const w = tt.width + 40;
-    g.fillStyle(COL.inchiostro, 1).fillRoundedRect(-w / 2 + 4, -20, w, 40, 10);
-    g.fillStyle(COL.carta, 1).fillRoundedRect(-w / 2, -24, w, 40, 10);
-    tt.setY(-4);
+    const bh = Math.max(40, tt.height + 14);
+    g.fillStyle(COL.inchiostro, 1).fillRoundedRect(-w / 2 + 4, -20, w, bh, 10);
+    g.fillStyle(COL.carta, 1).fillRoundedRect(-w / 2, -24, w, bh, 10);
+    tt.setY(-24 + bh / 2);
     box.add([g, tt]);
-    this.tweens.add({ targets: box, alpha: 1, y: 410, duration: 250, yoyo: true, hold: 2600, onComplete: () => box.destroy() });
+    this.tweens.add({ targets: box, alpha: 1, y: y0 - 10, duration: 250, yoyo: true, hold: 2600, onComplete: () => box.destroy() });
   }
 }

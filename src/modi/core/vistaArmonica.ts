@@ -13,7 +13,8 @@ export class VistaArmonica extends Phaser.GameObjects.Container {
   private bendTxt: Phaser.GameObjects.Text;
   private ultimo = "";
 
-  constructor(scene: Phaser.Scene, x: number, y: number, readonly larghezza = 520, readonly altezza = 64) {
+  /** grande = numeri dei fori più grossi, per il telefono tenuto dritto. */
+  constructor(scene: Phaser.Scene, x: number, y: number, readonly larghezza = 520, readonly altezza = 64, readonly grande = false) {
     super(scene, x, y);
     this.passo = larghezza / 10;
     const g = scene.add.graphics();
@@ -34,11 +35,12 @@ export class VistaArmonica extends Phaser.GameObjects.Container {
     for (let i = 0; i < 10; i++) {
       const cx = -w / 2 + this.passo * (i + 0.5);
       const badge = scene.add.graphics();
-      badge.fillStyle(COL.inchiostro, 1).fillRoundedRect(cx - 14, -h / 2 - 38, 28, 26, 6);
+      const [bw, bh] = grande ? [Math.min(40, this.passo - 6), 34] : [28, 26];
+      badge.fillStyle(COL.inchiostro, 1).fillRoundedRect(cx - bw / 2, -h / 2 - 12 - bh, bw, bh, 6);
       this.add(badge);
-      this.add(testo(scene, cx, -h / 2 - 25, String(i + 1), 20, HEX.carta, "titoli"));
+      this.add(testo(scene, cx, -h / 2 - 12 - bh / 2, String(i + 1), grande ? 25 : 20, HEX.carta, "titoli"));
     }
-    this.bendTxt = testo(scene, 0, h / 2 + 24, "", 18, HEX.lampada, "titoli").setStroke(HEX.inchiostro, 4);
+    this.bendTxt = testo(scene, 0, h / 2 + (grande ? 28 : 24), "", grande ? 22 : 18, HEX.lampada, "titoli").setStroke(HEX.inchiostro, 4);
     this.add(this.bendTxt);
     scene.add.existing(this);
   }
@@ -60,8 +62,9 @@ export class VistaArmonica extends Phaser.GameObjects.Container {
     this.luce.fillStyle(colore, 1).fillRoundedRect(cx - this.passo * 0.32, -h / 2 + 12, this.passo * 0.64, h - 24, 4);
     this.luce.lineStyle(3, COL.carta, 1).strokeRoundedRect(cx - this.passo * 0.32, -h / 2 + 12, this.passo * 0.64, h - 24, 4);
     // freccia: su per il soffio, giù per l'aspirato
-    const dy = tab.draw ? 8 : -8;
-    this.luce.fillStyle(COL.carta, 1).fillTriangle(cx - 7, -dy * 0.2, cx + 7, -dy * 0.2, cx, dy);
+    const k = this.grande ? 1.5 : 1;
+    const dy = (tab.draw ? 8 : -8) * k;
+    this.luce.fillStyle(COL.carta, 1).fillTriangle(cx - 7 * k, -dy * 0.2, cx + 7 * k, -dy * 0.2, cx, dy);
     for (let b = 0; b < tab.bend; b++) this.luce.lineStyle(2, COL.prugna, 1).strokeCircle(cx, 0, this.passo * (0.62 + b * 0.16));
   }
 

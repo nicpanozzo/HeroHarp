@@ -4,7 +4,7 @@
 import Phaser from "phaser";
 import { keyById, noteName } from "../../harp";
 import { foroPerMidi, scriviForo } from "../core/armonica";
-import { COL, HEX, W, H, testo, titolo, grana, vaiA, textureLuce, bottone } from "../core/ui";
+import { COL, HEX, W, H, testo, titolo, grana, vaiA, textureLuce, bottone, verticale } from "../core/ui";
 import { t } from "../core/testi";
 import { impostazioni, record, salva, TONALITA } from "../core/impostazioni";
 import { prendiAscolto } from "../core/ascolto";
@@ -20,14 +20,18 @@ export class HubScene extends Phaser.Scene {
   private micTesto!: Phaser.GameObjects.Text;
   private livello!: Phaser.GameObjects.Graphics;
   private notaTesto!: Phaser.GameObjects.Text;
+  /** dove si disegna il livello del microfono */
+  private barraLivello = { x: 372, y: 522, w: 196 };
 
   constructor() { super("hub"); }
 
   create() {
     this.cameras.main.fadeIn(140, 21, 17, 14);
-    this.disegnaEsterno();
-    titolo(this, W / 2, 50, t("jukeJoint"), 46, HEX.lampada, HEX.rosso);
-    testo(this, W / 2, 88, t("sottotitolo"), 16, HEX.carta).setAlpha(0.85);
+    const V = verticale();
+    if (V) this.disegnaEsternoAlto(); else this.disegnaEsterno();
+    // in verticale il titolo scende un po': in alto a sinistra c'è il pulsante per tornare al viaggio
+    titolo(this, W / 2, V ? 108 : 50, t("jukeJoint"), 46, HEX.lampada, HEX.rosso, W - 40);
+    testo(this, W / 2, V ? 150 : 88, t("sottotitolo"), V ? 17 : 16, HEX.carta).setAlpha(0.85);
 
     const voliFatti = Object.values(record.volo).reduce((a, v) => a + v.stelle, 0);
     const riffFatti = Object.values(record.riff).reduce((a, v) => a + v.stelle, 0);
@@ -39,9 +43,16 @@ export class HubScene extends Phaser.Scene {
       { chiave: "voloMenu", via: () => ["volo", { id: (VOLI.find((v) => (record.volo[v.id]?.stelle ?? 0) < 3) ?? VOLI[0]).id }], titolo: t("voloTitolo"), testo: t("voloPoster"), colore: COL.indaco, inchiostro: HEX.carta, disegno: (g) => this.disegnoVolo(g),
         record: voliFatti ? `★ ${voliFatti}` : "" },
     ];
-    locandine.forEach((l, i) => this.locandina(170 + i * 310, 272, l, [-2.5, 1.5, -1][i]));
-
-    this.barraImpostazioni();
+    if (V) {
+      // locandine una sopra l'altra, alte quanto lo schermo permette
+      const alto = 186, basso = H - 166, posto = (basso - alto) / 3;
+      const hp = Math.min(250, posto - 22);
+      locandine.forEach((l, i) => this.locandinaLarga(W / 2, alto + posto * (i + 0.5), l, [-1.2, 0.9, -0.6][i], hp));
+      this.barraImpostazioniAlta();
+    } else {
+      locandine.forEach((l, i) => this.locandina(170 + i * 310, 272, l, [-2.5, 1.5, -1][i]));
+      this.barraImpostazioni();
+    }
     grana(this);
   }
 
@@ -64,6 +75,59 @@ export class HubScene extends Phaser.Scene {
       this.tweens.add({ targets: l, alpha: 0.35, duration: 900 + Math.random() * 900, yoyo: true, repeat: -1 });
       this.add.circle(x, y, 3.5, 0xffe2a0);
     }
+  }
+
+  /** Il locale visto dal telefono tenuto dritto: cielo in alto, muro di assi lungo, pavimento in basso. */
+  private disegnaEsternoAlto() {
+    const g = this.add.graphics();
+    const muro = 172, pavimento = H - 172;
+    g.fillGradientStyle(0x0d1424, 0x0d1424, 0x2a1d14, 0x2a1d14, 1).fillRect(0, 0, W, H);
+    for (let x = 0; x < W; x += 40) {
+      g.fillStyle(x % 80 ? 0x3a2818 : 0x412d1c, 1).fillRect(x, muro, 38, pavimento - muro);
+      g.fillStyle(0x24170f, 1).fillRect(x + 38, muro, 2, pavimento - muro);
+    }
+    g.fillStyle(COL.legno, 1).fillRect(0, muro - 8, W, 10);
+    g.fillStyle(0x1a120c, 1).fillRect(0, pavimento, W, H - pavimento);
+    for (let i = 0; i < 40; i++) g.fillStyle(COL.carta, Math.random() * 0.6 + 0.2).fillCircle(Math.random() * W, Math.random() * (muro - 20), Math.random() * 1.5 + 0.3);
+    const luce = textureLuce(this);
+    for (let i = 0; i < 13; i++) {
+      const x = 21 + i * 41.5, y = muro + 6 + Math.sin(i * 0.9) * 4;
+      const l = this.add.image(x, y, luce).setScale(0.4).setTint(COL.lampada).setBlendMode(Phaser.BlendModes.ADD).setAlpha(0.7);
+      this.tweens.add({ targets: l, alpha: 0.35, duration: 900 + Math.random() * 900, yoyo: true, repeat: -1 });
+      this.add.circle(x, y, 3.5, 0xffe2a0);
+    }
+  }
+
+  /** Locandina larga (telefono dritto): disegno a sinistra, titolo e "Suona"/"Scegli" a destra. */
+  private locandinaLarga(x: number, y: number, l: Locandina, angolo: number, h: number) {
+    const w = 500;
+    const c = this.add.container(x, y).setAngle(angolo);
+    const g = this.add.graphics();
+    g.fillStyle(COL.inchiostro, 1).fillRect(-w / 2 + 7, -h / 2 + 7, w, h);
+    g.fillStyle(l.colore, 1).fillRect(-w / 2, -h / 2, w, h);
+    g.lineStyle(3, COL.inchiostro, 1).strokeRect(-w / 2, -h / 2, w, h);
+    g.fillStyle(COL.carta, 1).fillCircle(-w / 2 + 14, -h / 2 + 12, 5); // puntina
+    // il disegno (circa 240×170) rimpicciolito nella colonna di sinistra
+    const k = Math.min(0.8, (h - 50) / 170);
+    const sx = -w / 2 + 18 + 120 * k;
+    const disegno = this.add.graphics().setPosition(sx, 12 * k - 12).setScale(k);
+    l.disegno(disegno);
+    const x0 = -w / 2 + 40 + 240 * k, x1 = w / 2 - 16, cx = (x0 + x1) / 2, tw = x1 - x0;
+    const tit = titolo(this, cx, -h / 2 + 32, l.titolo, 25, l.inchiostro, l.colore === COL.ottone ? HEX.rosso : HEX.inchiostro, tw);
+    const desc = testo(this, cx, -h / 2 + 58, l.testo, 16, l.inchiostro).setOrigin(0.5, 0).setWordWrapWidth(tw);
+    const rec = testo(this, sx, h / 2 - 18, l.record, 15, l.inchiostro, "fori").setAlpha(0.9);
+    if (rec.width > 240 * k + 20) rec.setScale((240 * k + 20) / rec.width);
+    c.add([g, disegno, tit, desc, rec]);
+    c.setSize(w, h).setInteractive({ useHandCursor: true });
+    c.on("pointerover", () => this.tweens.add({ targets: c, scale: 1.02, angle: 0, duration: 160 }));
+    c.on("pointerout", () => this.tweens.add({ targets: c, scale: 1, angle: angolo, duration: 160 }));
+    c.on("pointerup", () => { this.ascolto.accendiMicrofono(); const [k2, d] = l.via(); vaiA(this, k2, d); });
+    // in fondo a destra: "Suona" parte subito, "Scegli" apre il menu
+    const yb = h / 2 - 36, bw = 128;
+    const play = testo(this, x0 + (tw - bw - 8) / 2, yb, "▶ " + t("gioca").toUpperCase(), 21, l.inchiostro, "titoli");
+    c.add(play);
+    this.tweens.add({ targets: play, scale: 1.1, duration: 420, yoyo: true, repeat: -1, ease: "Sine.easeInOut" });
+    bottone(this, x + x1 - bw / 2, y + yb, "≡ " + (impostazioni.lingua === "it" ? "Scegli" : "Choose"), () => vaiA(this, l.chiave), { w: bw, h: 54, primario: false, size: 17 });
   }
 
   private locandina(x: number, y: number, l: Locandina, angolo: number) {
@@ -160,16 +224,50 @@ export class HubScene extends Phaser.Scene {
     this.aggiornaMic();
   }
 
+  /** Impostazioni su due righe (telefono dritto): armonica e lingua, poi il microfono. */
+  private barraImpostazioniAlta() {
+    const y1 = H - 122, y2 = H - 52;
+    const g = this.add.graphics();
+    g.fillStyle(COL.inchiostro, 0.9).fillRoundedRect(12, H - 158, W - 24, 144, 14);
+    testo(this, 30, y1, t("tuaArmonica").toUpperCase(), 15, HEX.grigio, "fori").setOrigin(0, 0.5);
+    const nome = () => { const k = keyById(impostazioni.tonalita); return impostazioni.lingua === "it" ? k.it : k.en; };
+    const ton = testo(this, 262, y1, nome(), 24, HEX.ottone, "titoli");
+    const cambia = (d: number) => {
+      const i = TONALITA.indexOf(impostazioni.tonalita);
+      impostazioni.tonalita = TONALITA[(i + d + TONALITA.length) % TONALITA.length];
+      ton.setText(nome()); salva();
+    };
+    bottone(this, 180, y1, "◀", () => cambia(-1), { w: 56, h: 54, primario: false, size: 18 });
+    bottone(this, 344, y1, "▶", () => cambia(1), { w: 56, h: 54, primario: false, size: 18 });
+    bottone(this, 460, y1, impostazioni.lingua.toUpperCase(), () => {
+      impostazioni.lingua = impostazioni.lingua === "it" ? "en" : "it"; salva(); this.scene.restart();
+    }, { w: 84, h: 54, primario: false, size: 18 });
+    // microfono: un pulsante largo, con il livello che si muove sotto la scritta
+    const mw = 340, mx = 30 + mw / 2;
+    g.lineStyle(2, COL.ottone, 0.8).strokeRoundedRect(mx - mw / 2, y2 - 27, mw, 54, 10);
+    this.micTesto = testo(this, mx, y2 - 4, "", 17, HEX.carta, "titoli").setWordWrapWidth(mw - 20);
+    const mic = this.add.zone(mx, y2, mw, 56).setInteractive({ useHandCursor: true });
+    mic.on("pointerup", async () => { this.micTesto.setText("…"); await this.ascolto.accendiMicrofono(); this.aggiornaMic(); });
+    this.barraLivello = { x: mx - mw / 2 + 14, y: y2 + 17, w: mw - 28 };
+    this.livello = this.add.graphics();
+    this.notaTesto = testo(this, 450, y2, "", 24, HEX.lampada, "fori");
+    this.aggiornaMic();
+  }
+
   private aggiornaMic() {
     const s = this.ascolto.engine.micStatus;
     this.micTesto.setText(s === "on" ? "🎤 " + t("micAcceso") : s === "off" ? "🎤 " + t("micAccendi") : t("micNegato"))
-      .setColor(s === "on" ? HEX.lampada : s === "off" ? HEX.carta : HEX.grigio).setFontSize(s === "denied" || s === "unsupported" ? 11 : 14);
+      .setColor(s === "on" ? HEX.lampada : s === "off" ? HEX.carta : HEX.grigio);
+    const piccolo = s === "denied" || s === "unsupported";
+    this.micTesto.setFontSize(verticale() ? (piccolo ? 15 : 17) : piccolo ? 11 : 14);
   }
 
   update(_: number, dms: number) {
     this.ascolto.aggiorna(dms / 1000);
     const lv = Math.min(1, this.ascolto.livello * 12);
-    this.livello.clear().fillStyle(COL.ottone, 1).fillRect(372, 522, 196 * lv, 3);
+    const b = this.barraLivello;
+    this.livello.clear().fillStyle(COL.ottone, 1).fillRect(b.x, b.y, b.w * lv, 3);
+
     const m = this.ascolto.midi;
     this.notaTesto.setText(m === null ? "" : `♪ ${this.foro(m)}`);
   }

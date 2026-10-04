@@ -1,5 +1,6 @@
 // Il Juke Joint dentro il gioco: le modalità libere (jam, riff, volo) arrivano da modes/ (copiate in src/modi).
 // Sono disegnate a 960×540: qui si ingrandisce la camera di 4/3 e si tengono allineate lingua, tonalità e cuffie.
+// Sul telefono tenuto dritto il palco del gioco è 720×H: le modalità si impaginano in 540×(H·3/4), con lo stesso zoom.
 
 import Phaser from "phaser";
 import { HubScene } from "./modi/scene/HubScene";
@@ -12,7 +13,8 @@ import { RiffFineScene } from "./modi/riff/RiffFineScene";
 import { VoloMenuScene } from "./modi/volo/VoloMenuScene";
 import { VoloScene } from "./modi/volo/VoloScene";
 import { impostazioni, record } from "./modi/core/impostazioni";
-import { bottone } from "./modi/core/ui";
+import { bottone, impostaPalco, verticale, W as modiW, H as modiH } from "./modi/core/ui";
+import { W as gameW, H as gameH } from "./ui";
 import { getLang, setLang } from "./i18n";
 import { save, persist } from "./state";
 import { grooveOnGesture, hush } from "./audio/music";
@@ -53,20 +55,25 @@ export function wireModes(game: Phaser.Game): void {
   const hook = (scene: Phaser.Scene): void => {
     const key = scene.sys.settings.key;
     const mode = keys.has(key);
+    // prima di init/create: la scena si disegna già sul palco giusto (anche quando si riavvia girando il telefono)
+    scene.sys.events.on(Phaser.Scenes.Events.START, () => {
+      if (!mode) return;
+      if (gameH > gameW) impostaPalco((gameW * 3) / 4, Math.round((gameH * 3) / 4));
+      else impostaPalco(960, 540);
+    });
     scene.sys.events.on(Phaser.Scenes.Events.CREATE, () => {
       if (!mode) return leaveModes();
       enterModes();
-      scene.cameras.main.setZoom(4 / 3).centerOn(480, 270);
+      scene.cameras.main.setZoom(4 / 3).centerOn(modiW / 2, modiH / 2);
       if (OWN_MUSIC.has(key)) hush();
       else grooveOnGesture(scene, "juke");
       // dall'ingresso del locale si torna al viaggio
-      if (key === "hub")
-        bottone(scene, 64, 24, "‹ " + (getLang() === "it" ? "Indietro" : "Back"), () => scene.scene.start("title"), {
-          w: 112,
-          h: 32,
-          primario: false,
-          size: 13,
-        }).setName("hub-back");
+      if (key === "hub") {
+        const back = "‹ " + (getLang() === "it" ? "Indietro" : "Back");
+        const go = (): void => void scene.scene.start("title");
+        if (verticale()) bottone(scene, 70, 40, back, go, { w: 124, h: 54, primario: false, size: 17 }).setName("hub-back");
+        else bottone(scene, 64, 24, back, go, { w: 112, h: 32, primario: false, size: 13 }).setName("hub-back");
+      }
     });
   };
 }

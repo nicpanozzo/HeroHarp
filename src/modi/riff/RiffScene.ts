@@ -1,6 +1,7 @@
 // Copiato da modes/src/riff/RiffScene.ts con scripts/sync-content.mjs, non modificare qui.
 // La Strada dei Riff: le note arrivano lungo una highway notturna, una corsia per foro,
 // e vanno suonate quando toccano l'armonica. Concerto = a tempo con la band; Prova = il riff ti aspetta.
+// Sul telefono tenuto dritto la strada si allunga verso l'alto: più spazio tra le note, numeri più grandi.
 
 import Phaser from "phaser";
 import { noteName } from "../../harp";
@@ -8,7 +9,7 @@ import { prendiAscolto } from "../core/ascolto";
 import { prendiSuono } from "../core/suono";
 import { impostazioni, record, salva } from "../core/impostazioni";
 import { foroMidi, foroPerMidi, leggiForo, scriviForo } from "../core/armonica";
-import { COL, HEX, W, H, testo, pop, grana, textureLuce, vaiA, bottone, coriandoli } from "../core/ui";
+import { COL, HEX, W, H, testo, pop, grana, textureLuce, vaiA, bottone, coriandoli, verticale } from "../core/ui";
 import { VistaArmonica } from "../core/vistaArmonica";
 import { t } from "../core/testi";
 import { Partitura, moltiplicatoreCombo, type NotaInGioco } from "./partitura";
@@ -16,8 +17,8 @@ import { TUTTI_I_RIFF, type Riff } from "./riff";
 
 export interface OpzioniRiff { id: string; modo: "concerto" | "prova"; tempo: number }
 
-const CX = W / 2, HIT = 432, HOR = 118, CORSIA = 56;
-const ANTICIPO = 1.7; // secondi di strada visibili: corta = arcade
+/** Impaginazione della strada in orizzontale (960×540). */
+const STRADA = { CX: 480, HIT: 432, HOR: 118, CORSIA: 56, ANTICIPO: 1.7 }; // ANTICIPO: secondi di strada visibili, corta = arcade
 
 export class RiffScene extends Phaser.Scene {
   private o!: OpzioniRiff;
@@ -45,6 +46,13 @@ export class RiffScene extends Phaser.Scene {
   private lampi: number[] = new Array(11).fill(0);
   private avviso!: Phaser.GameObjects.Text;
   private ultimoMolt = 1;
+  private V = false;
+  private CX = STRADA.CX;
+  private HIT = STRADA.HIT;
+  private HOR = STRADA.HOR;
+  private CORSIA = STRADA.CORSIA;
+  private ANTICIPO = STRADA.ANTICIPO;
+  private barraPos = { x: 20, y: 60, w: 220, h: 6 };
 
   constructor() { super("riff"); }
 
@@ -57,6 +65,12 @@ export class RiffScene extends Phaser.Scene {
   create() {
     this.cameras.main.fadeIn(140, 21, 17, 14);
     this.ascolto.accendiMicrofono();
+    this.V = verticale();
+    const yArmonica = this.V ? H - 108 : 474;
+    if (this.V) {
+      // telefono dritto: strada lunga dall'orizzonte (sotto i comandi) fino ai numeri dell'armonica
+      Object.assign(this, { CX: W / 2, CORSIA: 50, HOR: Math.round(204 + (H - 885) * 0.2), HIT: yArmonica - 52, ANTICIPO: 2 });
+    } else Object.assign(this, STRADA);
     const r = this.riff;
     this.battito = 60 / (r.bpm * this.o.tempo);
     const ton = impostazioni.tonalita;
@@ -69,14 +83,14 @@ export class RiffScene extends Phaser.Scene {
     this.disegnaPaesaggio();
     this.gStrada = this.add.graphics().setDepth(2);
     this.gNote = this.add.graphics().setDepth(6);
-    this.armonica = new VistaArmonica(this, CX, 474, CORSIA * 10, 46).setDepth(10);
+    this.armonica = new VistaArmonica(this, this.CX, yArmonica, this.CORSIA * 10, this.V ? 48 : 46, this.V).setDepth(10);
     const luce = textureLuce(this);
     this.scintille = this.add.particles(0, 0, luce, {
       speed: { min: 80, max: 260 }, angle: { min: 200, max: 340 }, lifespan: 500, scale: { start: 0.5, end: 0 },
       blendMode: "ADD", emitting: false, gravityY: 300,
     }).setDepth(12);
-    this.fiamme = this.add.particles(0, HIT + 18, luce, {
-      x: { min: CX - CORSIA * 5, max: CX + CORSIA * 5 }, speedY: { min: -160, max: -60 }, lifespan: 600,
+    this.fiamme = this.add.particles(0, this.HIT + 18, luce, {
+      x: { min: this.CX - this.CORSIA * 5, max: this.CX + this.CORSIA * 5 }, speedY: { min: -160, max: -60 }, lifespan: 600,
       scale: { start: 0.45, end: 0 }, tint: [COL.ottone, COL.rosso, 0xffd27a], blendMode: "ADD", frequency: 30, emitting: false,
     }).setDepth(9);
     this.interfaccia();
@@ -106,45 +120,63 @@ export class RiffScene extends Phaser.Scene {
     this.input.keyboard?.on("keydown-ESC", () => vaiA(this, "riffMenu"));
   }
 
-  private xCorsia(foro: number) { return CX + (foro - 5.5) * CORSIA; }
+  private xCorsia(foro: number) { return this.CX + (foro - 5.5) * this.CORSIA; }
 
   /** Proiezione prospettica: z = 0 sulla linea di colpo, 1 all'orizzonte. */
   private proietta(foro: number, dtempo: number) {
-    const z = dtempo / ANTICIPO;
-    const p = 1 / (1 + 3 * Math.max(-0.3, z));
-    const y = HOR + (HIT - HOR) * (p - 0.25) / 0.75;
-    return { x: CX + (this.xCorsia(foro) - CX) * p, y, s: p };
+    // in verticale la strada si stringe meno verso l'orizzonte: le note lontane restano grandi
+    const k = this.V ? 2 : 3, lontano = 1 / (1 + k);
+    const z = dtempo / this.ANTICIPO;
+    const p = 1 / (1 + k * Math.max(-0.3, z));
+    const y = this.HOR + (this.HIT - this.HOR) * (p - lontano) / (1 - lontano);
+    return { x: this.CX + (this.xCorsia(foro) - this.CX) * p, y, s: p };
   }
 
   private disegnaPaesaggio() {
     const g = this.add.graphics();
-    g.fillGradientStyle(0x0b1022, 0x0b1022, 0x3a2340, 0x3a2340, 1).fillRect(0, 0, W, HOR + 10);
-    for (let i = 0; i < 50; i++) g.fillStyle(COL.carta, Math.random() * 0.7 + 0.1).fillCircle(Math.random() * W, Math.random() * (HOR - 20), Math.random() * 1.4 + 0.3);
-    g.fillStyle(COL.carta, 1).fillCircle(790, 52, 24);
-    g.fillStyle(0x0b1022, 1).fillCircle(800, 46, 20);
+    g.fillGradientStyle(0x0b1022, 0x0b1022, 0x3a2340, 0x3a2340, 1).fillRect(0, 0, W, this.HOR + 10);
+    for (let i = 0; i < 50; i++) g.fillStyle(COL.carta, Math.random() * 0.7 + 0.1).fillCircle(Math.random() * W, Math.random() * (this.HOR - 20), Math.random() * 1.4 + 0.3);
+    const [lx, ly] = this.V ? [458, this.HOR - 46] : [790, 52];
+    g.fillStyle(COL.carta, 1).fillCircle(lx, ly, 24);
+    g.fillStyle(0x0b1022, 1).fillCircle(lx + 10, ly - 6, 20);
     // colline e campi ai lati
     g.fillStyle(0x1b1a2a, 1);
-    g.beginPath(); g.moveTo(0, HOR + 6);
-    for (let x = 0; x <= W; x += 40) g.lineTo(x, HOR - 10 - Math.sin(x / 90) * 10 - Math.sin(x / 37) * 4);
-    g.lineTo(W, HOR + 10); g.lineTo(0, HOR + 10); g.closePath(); g.fillPath();
-    g.fillStyle(0x15120f, 1).fillRect(0, HOR + 4, W, H - HOR);
+    g.beginPath(); g.moveTo(0, this.HOR + 6);
+    for (let x = 0; x <= W; x += 40) g.lineTo(x, this.HOR - 10 - Math.sin(x / 90) * 10 - Math.sin(x / 37) * 4);
+    g.lineTo(W, this.HOR + 10); g.lineTo(0, this.HOR + 10); g.closePath(); g.fillPath();
+    g.fillStyle(0x15120f, 1).fillRect(0, this.HOR + 4, W, H - this.HOR);
     // insegna stradale
-    g.fillStyle(COL.carta, 1).fillRect(118, 72, 52, 40);
-    g.lineStyle(3, COL.inchiostro, 1).strokeRect(118, 72, 52, 40);
-    g.fillStyle(COL.inchiostro, 1).fillRect(141, 112, 5, 20);
-    testo(this, 144, 82, "HWY", 11, HEX.inchiostro, "titoli");
-    testo(this, 144, 99, "61", 16, HEX.inchiostro, "titoli");
+    const [ix, iy] = this.V ? [44, this.HOR - 52] : [118, 72];
+    g.fillStyle(COL.carta, 1).fillRect(ix, iy, 52, 40);
+    g.lineStyle(3, COL.inchiostro, 1).strokeRect(ix, iy, 52, 40);
+    g.fillStyle(COL.inchiostro, 1).fillRect(ix + 23, iy + 40, 5, 20);
+    testo(this, ix + 26, iy + 10, "HWY", 11, HEX.inchiostro, "titoli");
+    testo(this, ix + 26, iy + 27, "61", 16, HEX.inchiostro, "titoli");
   }
 
   private interfaccia() {
     const r = this.riff;
+    if (this.V) {
+      // in alto: Esci e punti, sotto il nome del riff e quanto manca
+      bottone(this, 64, 36, t("esci"), () => vaiA(this, "riffMenu"), { w: 108, h: 54, primario: false, size: 18 }).setDepth(20);
+      this.puntiTesto = testo(this, W - 22, 32, "0", 34, HEX.carta, "titoli").setOrigin(1, 0.5).setStroke(HEX.inchiostro, 5).setDepth(20);
+      this.comboTesto = testo(this, W - 22, 66, "", 17, HEX.carta, "fori").setOrigin(1, 0.5).setDepth(20);
+      const nome = testo(this, W / 2, 98, r.nome[impostazioni.lingua].toUpperCase(), 22, HEX.lampada, "titoli").setDepth(20);
+      if (nome.width > W - 40) nome.setScale((W - 40) / nome.width);
+      testo(this, W / 2, 126, `${"★".repeat(r.livello)}  ·  ${Math.round(r.bpm * this.o.tempo)} bpm  ·  ${t(this.o.modo === "concerto" ? "concerto" : "pratica")}`, 15, HEX.carta, "fori").setDepth(20);
+      this.barraPos = { x: 20, y: 144, w: W - 40, h: 8 };
+      this.barra = this.add.graphics().setDepth(20);
+      this.moltTesto = testo(this, W - 70, this.HOR + 80, "", 34, HEX.ottone, "titoli").setStroke(HEX.inchiostro, 6).setDepth(20).setAngle(8);
+      this.avviso = testo(this, this.CX, (this.HOR + this.HIT) / 2 - 40, "", 60, HEX.carta, "titoli").setStroke(HEX.inchiostro, 8).setDepth(30).setAlpha(0);
+      return;
+    }
     testo(this, 20, 22, r.nome[impostazioni.lingua].toUpperCase(), 18, HEX.lampada, "titoli").setOrigin(0, 0.5).setDepth(20);
     testo(this, 20, 44, `${"★".repeat(r.livello)}  ·  ${Math.round(r.bpm * this.o.tempo)} bpm  ·  ${t(this.o.modo === "concerto" ? "concerto" : "pratica")}`, 12, HEX.carta, "fori").setOrigin(0, 0.5).setDepth(20);
     this.barra = this.add.graphics().setDepth(20);
     this.puntiTesto = testo(this, W - 24, 24, "0", 28, HEX.carta, "titoli").setOrigin(1, 0.5).setStroke(HEX.inchiostro, 5).setDepth(20);
     this.comboTesto = testo(this, W - 24, 54, "", 14, HEX.carta, "fori").setOrigin(1, 0.5).setDepth(20);
     this.moltTesto = testo(this, W - 120, 214, "", 30, HEX.ottone, "titoli").setStroke(HEX.inchiostro, 6).setDepth(20).setAngle(8);
-    this.avviso = testo(this, CX, 250, "", 54, HEX.carta, "titoli").setStroke(HEX.inchiostro, 8).setDepth(30).setAlpha(0);
+    this.avviso = testo(this, this.CX, 250, "", 54, HEX.carta, "titoli").setStroke(HEX.inchiostro, 8).setDepth(30).setAlpha(0);
     bottone(this, 52, 520, t("esci"), () => vaiA(this, "riffMenu"), { w: 84, h: 30, primario: false, size: 14 }).setDepth(20);
   }
 
@@ -161,8 +193,8 @@ export class RiffScene extends Phaser.Scene {
     this.lampi[tab.hole] = 1;
     const colore = tab.bend ? COL.prugna : tab.draw ? COL.indacoChiaro : COL.ottone;
     this.scintille.setParticleTint(colore);
-    this.scintille.explode(perfetto ? 18 : 9, x, HIT);
-    pop(this, x, HIT - 50, t(perfetto ? "perfetto" : "bene"), perfetto ? HEX.lampada : HEX.carta, perfetto ? 20 : 16, 600);
+    this.scintille.explode(perfetto ? 18 : 9, x, this.HIT);
+    pop(this, Phaser.Math.Clamp(x, 70, W - 70), this.HIT - (this.V ? 64 : 50), t(perfetto ? "perfetto" : "bene"), perfetto ? HEX.lampada : HEX.carta, (perfetto ? 20 : 16) + (this.V ? 4 : 0), 600);
     const molt = moltiplicatoreCombo(this.partitura.combo);
     if (molt > this.ultimoMolt) {
       this.mostraAvviso(`${t("fuoco")}${molt}`, HEX.ottone);
@@ -174,7 +206,7 @@ export class RiffScene extends Phaser.Scene {
     if (perfetto) this.suono.effetti.notaGiusta(this.partitura.combo);
     // l'armonica "salta" a ogni colpo
     this.tweens.add({ targets: this.armonica, scale: { from: perfetto ? 1.06 : 1.03, to: 1 }, duration: 120 });
-    if (this.partitura.combo > 0 && this.partitura.combo % 25 === 0) { pop(this, CX, 300, `${this.partitura.combo}!`, HEX.lampada, 48); this.cameras.main.flash(120, 255, 230, 160); }
+    if (this.partitura.combo > 0 && this.partitura.combo % 25 === 0) { pop(this, this.CX, this.V ? (this.HOR + this.HIT) / 2 : 300, `${this.partitura.combo}!`, HEX.lampada, 48); this.cameras.main.flash(120, 255, 230, 160); }
   }
 
   update(_: number, dms: number) {
@@ -221,13 +253,14 @@ export class RiffScene extends Phaser.Scene {
     this.puntiTesto.setText(String(Math.round(p.punti)));
     this.comboTesto.setText(p.combo >= 2 ? `${p.combo} ${t("combo")}` : "");
     const avanzamento = Phaser.Math.Clamp(tc / this.fine, 0, 1);
-    this.barra.clear().fillStyle(COL.inchiostro, 0.8).fillRoundedRect(20, 60, 220, 6, 3).fillStyle(COL.ottone, 1).fillRoundedRect(20, 60, 220 * avanzamento, 6, 3);
+    const b = this.barraPos;
+    this.barra.clear().fillStyle(COL.inchiostro, 0.8).fillRoundedRect(b.x, b.y, b.w, b.h, b.h / 2).fillStyle(COL.ottone, 1).fillRoundedRect(b.x, b.y, b.w * avanzamento, b.h, b.h / 2);
     for (let i = 1; i <= 10; i++) this.lampi[i] = Math.max(0, this.lampi[i] - dt * 4);
   }
 
   private mancata(n: NotaInGioco) {
     const tab = leggiForo(n.foro);
-    pop(this, this.xCorsia(tab.hole), HIT - 40, t("mancata"), HEX.grigio, 14, 500);
+    pop(this, Phaser.Math.Clamp(this.xCorsia(tab.hole), 70, W - 70), this.HIT - 40, t("mancata"), HEX.grigio, this.V ? 18 : 14, 500);
     if (this.ultimoMolt > 1) this.suono.effetti.notaMancata();
     this.ultimoMolt = 1;
   }
@@ -236,13 +269,13 @@ export class RiffScene extends Phaser.Scene {
     const g = this.gStrada;
     g.clear();
     const molt = moltiplicatoreCombo(this.partitura.combo);
-    const sx = this.proietta(0.5, ANTICIPO), dx = this.proietta(10.5, ANTICIPO);
+    const sx = this.proietta(0.5, this.ANTICIPO), dx = this.proietta(10.5, this.ANTICIPO);
     const sxb = this.proietta(0.5, -0.35), dxb = this.proietta(10.5, -0.35);
     // campi a strisce che scorrono (come nei vecchi giochi di corse): danno il senso della velocità
     const meta = this.battito / 2;
-    for (let k = Math.floor((tc - 0.4) / meta); k * meta - tc < ANTICIPO; k++) {
+    for (let k = Math.floor((tc - 0.4) / meta); k * meta - tc < this.ANTICIPO; k++) {
       if (k % 2) continue;
-      const y1 = this.proietta(0, Math.max(-0.35, k * meta - tc)).y, y2 = this.proietta(0, Math.min(ANTICIPO, (k + 1) * meta - tc)).y;
+      const y1 = this.proietta(0, Math.max(-0.35, k * meta - tc)).y, y2 = this.proietta(0, Math.min(this.ANTICIPO, (k + 1) * meta - tc)).y;
       g.fillStyle(0x221c15, 1).fillRect(0, Math.min(y1, y2), W, Math.abs(y1 - y2));
     }
     // asfalto
@@ -252,20 +285,20 @@ export class RiffScene extends Phaser.Scene {
     g.lineStyle(molt > 1 ? 5 : 3, bordo, molt > 1 ? 1 : 0.6).lineBetween(sx.x, sx.y, sxb.x, sxb.y).lineBetween(dx.x, dx.y, dxb.x, dxb.y);
     // corsie (una per foro), con il lampo quando colpisci
     for (let f = 1; f <= 10; f++) {
-      const a = this.proietta(f, ANTICIPO), b = this.proietta(f, -0.35);
+      const a = this.proietta(f, this.ANTICIPO), b = this.proietta(f, -0.35);
       if (this.lampi[f] > 0) {
-        const a1 = this.proietta(f - 0.5, ANTICIPO), a2 = this.proietta(f + 0.5, ANTICIPO), b1 = this.proietta(f - 0.5, -0.35), b2 = this.proietta(f + 0.5, -0.35);
+        const a1 = this.proietta(f - 0.5, this.ANTICIPO), a2 = this.proietta(f + 0.5, this.ANTICIPO), b1 = this.proietta(f - 0.5, -0.35), b2 = this.proietta(f + 0.5, -0.35);
         g.fillStyle(COL.lampada, 0.25 * this.lampi[f]).fillPoints([{ x: a1.x, y: a1.y }, { x: a2.x, y: a2.y }, { x: b2.x, y: b2.y }, { x: b1.x, y: b1.y }], true);
       }
       void a; void b;
       if (f < 10) {
-        const c = this.proietta(f + 0.5, ANTICIPO), d = this.proietta(f + 0.5, -0.35);
+        const c = this.proietta(f + 0.5, this.ANTICIPO), d = this.proietta(f + 0.5, -0.35);
         g.lineStyle(1, COL.carta, 0.12).lineBetween(c.x, c.y, d.x, d.y);
       }
     }
     // righe dei battiti che scorrono verso di te
     const primo = Math.ceil((tc - 0.3) / this.battito);
-    for (let b = primo; b * this.battito - tc < ANTICIPO; b++) {
+    for (let b = primo; b * this.battito - tc < this.ANTICIPO; b++) {
       if (b < 0) continue;
       const dtb = b * this.battito - tc;
       const l = this.proietta(0.5, dtb), r = this.proietta(10.5, dtb);
@@ -273,9 +306,9 @@ export class RiffScene extends Phaser.Scene {
       g.lineStyle(battuta ? 3 : 1, COL.carta, (battuta ? 0.3 : 0.1) * Math.min(1, l.s * 1.4)).lineBetween(l.x, l.y, r.x, r.y);
     }
     // tratteggio sui bordi della strada
-    for (let k = Math.floor((tc - 0.4) / meta); k * meta - tc < ANTICIPO; k++) {
+    for (let k = Math.floor((tc - 0.4) / meta); k * meta - tc < this.ANTICIPO; k++) {
       if (k % 2) continue;
-      const d1 = Math.max(-0.35, k * meta - tc), d2 = Math.min(ANTICIPO, (k + 1) * meta - tc);
+      const d1 = Math.max(-0.35, k * meta - tc), d2 = Math.min(this.ANTICIPO, (k + 1) * meta - tc);
       for (const lato of [0.2, 10.8]) {
         const a = this.proietta(lato, d1), b = this.proietta(lato, d2);
         g.lineStyle(Math.max(1, 5 * a.s), COL.lampada, 0.7).lineBetween(a.x, a.y, b.x, b.y);
@@ -286,7 +319,7 @@ export class RiffScene extends Phaser.Scene {
     g.lineStyle(4, COL.ottone, 0.9).lineBetween(l.x, l.y, r.x, r.y);
     // pali ai lati della strada, per sentire la velocità
     const passo = this.battito * 2;
-    for (let k = Math.ceil((tc - 0.3) / passo); k * passo - tc < ANTICIPO; k++) {
+    for (let k = Math.ceil((tc - 0.3) / passo); k * passo - tc < this.ANTICIPO; k++) {
       const d = k * passo - tc;
       for (const lato of [-1.6, 12.6]) {
         const q = this.proietta(lato, d);
@@ -301,7 +334,7 @@ export class RiffScene extends Phaser.Scene {
     g.clear();
     const visibili = new Set<number>();
     // dalle più lontane alle più vicine, così le vicine stanno sopra
-    const note = this.partitura.note.filter((n) => n.t - tc < ANTICIPO && n.t + n.durata - tc > -0.4);
+    const note = this.partitura.note.filter((n) => n.t - tc < this.ANTICIPO && n.t + n.durata - tc > -0.4);
     for (let k = note.length - 1; k >= 0; k--) {
       const n = note[k];
       const tab = leggiForo(n.foro);
@@ -311,7 +344,8 @@ export class RiffScene extends Phaser.Scene {
       // coda delle note lunghe
       if (n.durata >= this.battito * 1.4) {
         const fine = this.proietta(tab.hole, n.t + n.durata - tc);
-        const w1 = 14 * testa.s, w2 = 14 * fine.s;
+        const largo = this.V ? 16 : 14;
+        const w1 = largo * testa.s, w2 = largo * fine.s;
         const tenuta = n.giudizio && n.giudizio !== "mancata" && this.ascolto.midi === n.midi && tc >= n.t;
         g.fillStyle(colore, tenuta ? 0.95 : 0.5).fillPoints([
           { x: testa.x - w1, y: testa.y }, { x: testa.x + w1, y: testa.y }, { x: fine.x + w2, y: fine.y }, { x: fine.x - w2, y: fine.y }], true);
@@ -320,8 +354,9 @@ export class RiffScene extends Phaser.Scene {
       if (n.giudizio && n.giudizio !== "mancata") continue;
       // Leggibilità prima di tutto: dischetto pieno, numero del foro grande e scuro/chiaro ad alto contrasto,
       // freccia fuori dal disco (su = soffio, giù = aspirato). Mai più piccolo di metà grandezza.
-      const sc = Math.max(0.55, testa.s);
-      const r = 25 * sc;
+      const sc = Math.max(this.V ? 0.7 : 0.55, testa.s);
+
+      const r = (this.V ? 27 : 25) * sc;
       const alfa = dtn < -0.1 ? Math.max(0, 1 + dtn * 3) : 1;
       const pieno = tab.bend ? COL.prugna : tab.draw ? COL.indaco : COL.ottone;
       const freccia = 11 * sc, dir = tab.draw ? 1 : -1;
@@ -336,11 +371,12 @@ export class RiffScene extends Phaser.Scene {
       let et = this.etichette.get(n.i);
       if (!et) {
         // soffio: numero scuro su ottone; aspirato e bend: numero bianco su indaco/prugna
-        et = testo(this, 0, 0, `${tab.hole}${"'".repeat(tab.bend)}`, 30, tab.draw || tab.bend ? "#FFFFFF" : HEX.inchiostro, "titoli").setDepth(7);
+        et = testo(this, 0, 0, `${tab.hole}${"'".repeat(tab.bend)}`, this.V ? 33 : 30, tab.draw || tab.bend ? "#FFFFFF" : HEX.inchiostro, "titoli").setDepth(7);
+
         if (tab.draw || tab.bend) et.setStroke(HEX.inchiostro, 3);
         this.etichette.set(n.i, et);
       }
-      et.setPosition(testa.x, testa.y + 1).setScale(sc * (tab.hole === 10 ? 0.8 : 1)).setAlpha(alfa).setDepth(7 + (ANTICIPO - dtn));
+      et.setPosition(testa.x, testa.y + 1).setScale(sc * (tab.hole === 10 ? 0.8 : 1)).setAlpha(alfa).setDepth(7 + (this.ANTICIPO - dtn));
       // in prova, la nota attesa pulsa
       if (this.attesa && n === this.partitura.prossima()) {
         g.lineStyle(4, COL.lampada, 0.5 + 0.5 * Math.sin(this.time.now / 120)).strokeCircle(testa.x, testa.y, r + 14);
