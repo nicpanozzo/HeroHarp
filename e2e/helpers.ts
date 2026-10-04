@@ -26,7 +26,7 @@ export async function click(page: Page, scene: string, name: string) {
       if (!o) throw new Error(`"${n}" non trovato nella scena ${s}`);
       const m = o.getWorldTransformMatrix ? o.getWorldTransformMatrix() : { tx: o.x, ty: o.y };
       const r = g.canvas.getBoundingClientRect();
-      return { x: r.left + (m.tx * r.width) / g.config.width, y: r.top + (m.ty * r.height) / g.config.height };
+      return { x: r.left + (m.tx * r.width) / g.scale.gameSize.width, y: r.top + (m.ty * r.height) / g.scale.gameSize.height };
     },
     [scene, name],
   );
