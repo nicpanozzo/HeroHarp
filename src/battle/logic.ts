@@ -53,7 +53,8 @@ export interface Round {
 export type BattleEvent =
   | { type: "phase"; phase: Phase }
   | { type: "responseHit"; index: number; offset: number; rating: Rating; points: number; streak: number }
-  | { type: "wrongNote"; midi: number }
+  /** `index`: la nota della risposta che si aspettava. */
+  | { type: "wrongNote"; midi: number; index: number }
   | { type: "streakLost"; streak: number }
   | { type: "shortNote"; index: number }
   | { type: "enemyDamaged"; amount: number; accuracy: number; onTime: boolean; combo: number }
@@ -256,7 +257,7 @@ export class Battle {
       this.events.push({ type: "responseHit", index: this.respIndex, offset, rating, points, streak: this.streak });
       this.respIndex++;
     } else {
-      this.events.push({ type: "wrongNote", midi });
+      this.events.push({ type: "wrongNote", midi, index: this.respIndex });
       this.breakStreak();
     }
   }
@@ -364,7 +365,8 @@ export class Battle {
     this.combo = accuracy === 1 ? this.combo + 1 : 0;
     if (r.response.some((n) => !n.hit)) this.breakStreak();
     // pochi round per nemico: battaglie corte e intense
-    const base = this.enemy.hp / (this.enemy.boss ? 4 : 3);
+    // l'allenamento dura un paio di round in più: servono ripetizioni
+    const base = this.enemy.hp / (this.enemy.boss ? 4 : this.enemy.drill ? 5 : 3);
     const amount = Math.round(base * accuracy * (onTime ? 1.25 : 1) * (1 + 0.15 * Math.max(0, this.combo - 1)));
     this.enemyHp = Math.max(0, this.enemyHp - amount);
     this.events.push({ type: "enemyDamaged", amount, accuracy, onTime, combo: this.combo });

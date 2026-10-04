@@ -59,6 +59,8 @@ export class TitleScene extends Phaser.Scene {
       false,
     ).setName("lang");
     button(this, 120, 56, t("options"), () => this.scene.start("options", { from: "title" }), 180, false).setName("options");
+    // la pagella: statistiche, errori più frequenti e lezioni mirate
+    button(this, 120, 128, `${t("stats")} ★`, () => enter("stats"), 180, false, 50).setName("to-stats");
 
     const status = txt(this, W / 2, 588, t("micAsk"), 18, HEX.inchiostro).setWordWrapWidth(560);
     // un tocco e si suona: il microfono si accende qui (serve un gesto), poi dritti in battaglia

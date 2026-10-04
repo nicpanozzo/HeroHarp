@@ -92,6 +92,8 @@ export interface EnemyDef {
   comingSoon?: boolean;
   /** Nemici del club: improvvisi a tempo con le note permesse invece di ripetere la frase. */
   jam?: JamRules;
+  /** Allenamento mirato (stats/drill.ts): non conta per il viaggio né per i record. */
+  drill?: { weaknessId: string };
 }
 
 export interface Lesson {
@@ -460,4 +462,7 @@ export const ONBOARDING: Lesson[] = ((percorso as any).onboarding ?? []).map((l:
 export const JOURNEY = AREAS.filter((a) => !a.extra);
 export const AREA1 = AREAS[0];
 export const areaById = (id: string): AreaDef => AREAS.find((a) => a.id === id)!;
-export const enemyById = (id: string): EnemyDef => AREAS.flatMap((a) => a.enemies).find((e) => e.id === id)!;
+/** Nemici costruiti al volo (l'allenamento mirato), cercati prima di quelli del viaggio. */
+const EXTRA_ENEMIES = new Map<string, EnemyDef>();
+export const registerEnemy = (e: EnemyDef): void => void EXTRA_ENEMIES.set(e.id, e);
+export const enemyById = (id: string): EnemyDef => EXTRA_ENEMIES.get(id) ?? AREAS.flatMap((a) => a.enemies).find((e) => e.id === id)!;

@@ -11,6 +11,8 @@ import { hop } from "./beat";
 import { C, W, H, HEX, txt, backdrop, pop, panel, button, reducedMotion } from "../ui";
 import { HearingReadout } from "./readout";
 import { applySettings } from "../settings";
+import { BattleRecorder, sessionHint } from "../stats/stats";
+import { stats, persistStats } from "../stats/store";
 
 // Pannello di battaglia (in basso): corsie verticali, una per foro, come nella guida di stile.
 const BOARD = { x: 300, y: 370, w: 680, h: 340 };
@@ -69,6 +71,8 @@ export class BattleScene extends Phaser.Scene {
   private playerTurn = false;
   private poseUntil = 0;
   private enemyPoseUntil = 0;
+  private recorder!: BattleRecorder;
+  private startedAt = 0;
 
   constructor() {
     super("battle");
@@ -104,6 +108,9 @@ export class BattleScene extends Phaser.Scene {
       return s;
     };
     this.battle = new Battle(this.enemy, keyById(save.keyId), { align });
+    // ogni nota finisce nelle statistiche: da lì la pagella trova gli errori più frequenti
+    this.recorder = new BattleRecorder(stats, keyById(save.keyId));
+    this.startedAt = engine.now;
     // la base dei menu continua: cambia solo il tempo (o il luogo, se si arriva da un'altra tappa)
     groove(area.music, this.battle.bpm);
     this.cleanup.push(() => engine.duckBand(false));
@@ -131,8 +138,10 @@ export class BattleScene extends Phaser.Scene {
     this.streakText = txt(this, W / 2, 112, "", 26, HEX.ottone, "titoli")
       .setStroke(HEX.inchiostro, 6)
       .setAlpha(0);
-    button(this, 70, 122, "‹", () => this.scene.start("map", { areaId: this.enemy.areaId }), 64, false, 44).setName("exit");
-    this.input.keyboard?.on("keydown-ESC", () => this.scene.start("map", { areaId: this.enemy.areaId }));
+    // dall'allenamento si torna alla pagella, dal viaggio alla mappa della tappa
+    const leave = () => (this.enemy.drill ? this.scene.start("stats") : this.scene.start("map", { areaId: this.enemy.areaId }));
+    button(this, 70, 122, "‹", leave, 64, false, 44).setName("exit");
+    this.input.keyboard?.on("keydown-ESC", leave);
     this.flash = this.add.rectangle(W / 2, H / 2, W, H, C.rosso, 0).setDepth(30);
     if (!this.textures.exists("dot")) {
       const g = this.make.graphics({}, false);
@@ -175,7 +184,15 @@ export class BattleScene extends Phaser.Scene {
     this.readout = new HearingReadout(this, BOARD.x + BOARD.w / 2, BOARD.y + BOARD.h - 18, HEX.carta);
 
     this.cleanup.push(engine.tracker.onOnset((o) => this.battle.onset(o.midi, o.time)));
-    this.events.once("shutdown", () => this.cleanup.forEach((f) => f()));
+    this.events.once("shutdown", () => {
+      this.cleanup.forEach((f) => f());
+      this.input.keyboard?.off("keydown-ESC");
+      // battaglia lasciata a metà: il tempo suonato conta lo stesso
+      if (!this.ending) {
+        this.recorder.finish(false, getEngine().now - this.startedAt, this.battle.stats.bestStreak, false);
+        persistStats();
+      }
+    });
 
     this.battle.startRound(engine.now + 0.3);
     this.redrawHp();
@@ -195,7 +212,10 @@ export class BattleScene extends Phaser.Scene {
     if (this.battle.round.number !== this.scheduledRound) this.scheduleRound(this.battle.round);
     const held = engine.tracker.state.midi;
     this.battle.update(now, held);
-    for (const ev of this.battle.drain()) this.handle(ev);
+    for (const ev of this.battle.drain()) {
+      this.recorder.observe(ev, this.battle);
+      this.handle(ev);
+    }
     this.animateBeat(now);
     // il punteggio sale a scatti fino al valore vero
     const target = this.battle.stats.score;
@@ -557,12 +577,15 @@ export class BattleScene extends Phaser.Scene {
       engine.fx.vittoria(engine.now + 0.2);
       this.setEnemyPose("sconfitto", Infinity);
       this.setPose("vittoria", Infinity);
-      if (!save.beaten.includes(this.enemy.id)) save.beaten.push(this.enemy.id);
+      if (!this.enemy.drill && !save.beaten.includes(this.enemy.id)) save.beaten.push(this.enemy.id);
       persist();
     } else {
       engine.fx.sconfitta(engine.now + 0.2);
       this.setPose("colpito", Infinity);
     }
-    this.time.delayedCall(1300, () => this.scene.start("result", { won, enemyId: this.enemy.id, stats: this.battle.stats }));
+    this.recorder.finish(won, engine.now - this.startedAt, this.battle.stats.bestStreak, !this.enemy.drill);
+    persistStats();
+    const hint = sessionHint(this.recorder);
+    this.time.delayedCall(1300, () => this.scene.start("result", { won, enemyId: this.enemy.id, stats: this.battle.stats, hint }));
   }
 }
