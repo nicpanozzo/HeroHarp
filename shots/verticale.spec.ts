@@ -7,7 +7,9 @@ import { click, startBot } from "../e2e/helpers";
 // Uso: SHOTS=<cartella> npm run shots -- verticale   ·   SOLO=battaglia,titolo per farne solo alcune
 const OUT = resolve(process.env.SHOTS ?? "test-results/verticale");
 mkdirSync(OUT, { recursive: true });
-test.use({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, hasTouch: true });
+// VP=360x640 per un telefono più corto
+const [vw, vh] = (process.env.VP ?? "390x844").split("x").map(Number);
+test.use({ viewport: { width: vw, height: vh }, deviceScaleFactor: 2, hasTouch: true });
 const SOLO = process.env.SOLO?.split(",");
 const want = (name: string) => !SOLO || SOLO.some((s) => name.includes(s));
 
