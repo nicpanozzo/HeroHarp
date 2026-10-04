@@ -8,7 +8,7 @@ import { save, persist } from "../state";
 import { getEngine } from "../audio/engine";
 import { groove } from "../audio/music";
 import { hop } from "./beat";
-import { C, W, H, HEX, txt, backdrop, pop, panel, button, reducedMotion } from "../ui";
+import { C, W, H, HEX, txt, backdrop, pop, panel, button, reducedMotion, feedback } from "../ui";
 import { HearingReadout } from "./readout";
 import { applySettings } from "../settings";
 import { BattleRecorder, sessionHint } from "../stats/stats";
@@ -48,7 +48,6 @@ export class BattleScene extends Phaser.Scene {
   private battle!: Battle;
   private enemy!: EnemyDef;
   private enemyImg!: Phaser.GameObjects.Image;
-  private wrongPop?: Phaser.GameObjects.Text;
   private playerImg!: Phaser.GameObjects.Image;
   private banner!: Phaser.GameObjects.Text;
   private sub!: Phaser.GameObjects.Text;
@@ -440,7 +439,7 @@ export class BattleScene extends Phaser.Scene {
         const chip = this.chips[ev.index];
         const cx = this.chipLayer.x + (chip?.x ?? 0);
         const color = ev.rating === "perfect" ? HEX.ottone : ev.rating === "good" ? HEX.indaco : HEX.inchiostro;
-        pop(this, cx, 420, t(ev.rating).toUpperCase(), color, ev.rating === "perfect" ? 30 : 24);
+        feedback(this, cx, t(ev.rating).toUpperCase(), color, ev.rating === "perfect" ? 30 : 24);
         this.burst(cx, this.chipLayer.y, ev.rating === "perfect" ? C.ottone : C.indaco, ev.rating === "perfect" ? 16 : 8);
         if (chip && !reducedMotion()) this.tweens.add({ targets: chip.label, scale: 1.35, duration: 90, yoyo: true });
         this.showStreak(ev.streak);
@@ -452,15 +451,11 @@ export class BattleScene extends Phaser.Scene {
         break;
       case "shortNote":
         this.paintChip(ev.index, "short");
-        pop(this, W / 2, 380, t("hold"), HEX.prugna, 26);
+        feedback(this, W / 2, t("hold"), HEX.prugna, 26);
         break;
       case "wrongNote":
-        // una sola scritta alla volta: le note sbagliate di fila non si impilano
-        if (this.wrongPop?.active) {
-          this.tweens.killTweensOf(this.wrongPop);
-          this.wrongPop.destroy();
-        }
-        this.wrongPop = pop(this, W / 2, 460, `${t("wrong")}: ${noteName(ev.midi, getLang())}`, HEX.rosso, 22);
+        // una sola scritta alla volta: giudizi e note sbagliate si sostituiscono, non si impilano
+        feedback(this, W / 2, `${t("wrong")}: ${noteName(ev.midi, getLang())}`, HEX.rosso, 22);
         break;
       case "enemyDamaged":
         if (ev.amount > 0) {
