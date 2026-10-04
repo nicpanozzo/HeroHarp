@@ -12,7 +12,7 @@ import { LatencyScene } from "./scenes/LatencyScene";
 import { DojoScene } from "./scenes/DojoScene";
 import { StatsScene } from "./scenes/StatsScene";
 import { installKeyboard } from "./input";
-import { W, H, C } from "./ui";
+import { W, H, C, fitStage } from "./ui";
 import { getEngine } from "./audio/engine";
 import { MODE_SCENES, wireModes } from "./modi";
 import { RUN_SCENES } from "./roguelike";
@@ -35,6 +35,13 @@ async function fontsReady(): Promise<void> {
 
 fontsReady().then(() => {
   installKeyboard();
+  // telefono dritto: palco verticale; telefono girato, tablet o computer: palco orizzontale
+  // (si misura lo spazio vero del gioco, già senza tacche e barre di sistema)
+  const room = (): [number, number] => {
+    const r = document.getElementById("game")?.getBoundingClientRect();
+    return r && r.width > 0 ? [r.width, r.height] : [window.innerWidth, window.innerHeight];
+  };
+  fitStage(...room());
   const game = new Phaser.Game({
     type: Phaser.AUTO,
     parent: "game",
@@ -59,6 +66,16 @@ fontsReady().then(() => {
     ],
   });
   wireModes(game);
+  // girando il telefono il palco cambia forma e la scena in corso si ridisegna (i salvataggi restano)
+  let resizeTimer = 0;
+  window.addEventListener("resize", () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = window.setTimeout(() => {
+      if (!fitStage(...room())) return;
+      game.scale.setGameSize(W, H);
+      game.scene.getScenes(true).forEach((s) => s.scene.restart());
+    }, 250);
+  });
   // accesso per i test automatici e il debug dalla console
   Object.assign(window, { __game: game, __engine: getEngine });
 });

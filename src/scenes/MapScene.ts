@@ -5,7 +5,7 @@ import { enemyUnlocked } from "../progress";
 import { getLang, t } from "../i18n";
 import { save } from "../state";
 import { getEngine } from "../audio/engine";
-import { C, W, H, HEX, txt, button, backdrop, panel, reducedMotion } from "../ui";
+import { C, W, H, HEX, txt, button, backdrop, panel, portrait, reducedMotion } from "../ui";
 import { HearingReadout } from "./readout";
 import { showLessons } from "./lessons";
 
@@ -29,6 +29,7 @@ export class MapScene extends Phaser.Scene {
     backdrop(this, a.backdrop, 0.35);
     // ogni tappa ha il suo groove
     grooveOnGesture(this, a.music);
+    if (portrait()) return this.createPortrait();
     panel(this, 140, 24, W - 280, 104);
     const head = `${a.extra ? t("extra") : t("area", { n: a.order })} · ${a.name[lang]}`.toUpperCase();
     txt(this, W / 2, 60, head, 34, HEX.inchiostro, "titoli").setName("area-title");
@@ -83,6 +84,92 @@ export class MapScene extends Phaser.Scene {
     button(this, 100, H - 34, `‹ ${t("toJourney")}`, () => this.scene.start("journey"), 170, false, 48).setName("journey");
     if (a.lessons.length) button(this, 290, H - 34, t("lessons"), () => showLessons(this, a), 170, false, 48).setName("lessons");
     button(this, W - 110, H - 34, t("options"), () => this.scene.start("options", { from: "map" }), 180, false, 48).setName("options");
+  }
+
+  /** In verticale i nemici stanno uno sotto l'altro, ognuno su una scheda larga: figura a sinistra, nome e pulsante a destra. */
+  private createPortrait(): void {
+    const lang = getLang();
+    const a = this.area;
+    const progress = { beaten: save.beaten, openAll: save.settings.openAll };
+    const head = `${a.extra ? t("extra") : t("area", { n: a.order })} · ${a.name[lang]}`.toUpperCase();
+    const top = 24;
+    const title = txt(this, W / 2, top + 22, head, 36, HEX.inchiostro, "titoli")
+      .setOrigin(0.5, 0)
+      .setWordWrapWidth(W - 100)
+      .setDepth(1)
+      .setName("area-title");
+    const goal = txt(this, W / 2, title.y + title.height + 10, a.goal[lang], 22, HEX.inchiostro)
+      .setOrigin(0.5, 0)
+      .setWordWrapWidth(W - 100)
+      .setDepth(1);
+    // il pannello si adatta al titolo e all'obiettivo, che possono andare a capo
+    const headH = goal.y + goal.height + 22 - top;
+    panel(this, 24, top, W - 48, headH);
+
+    const barTop = H - 176;
+    const n = a.enemies.length;
+    const gap = 16;
+    const y0 = top + headH + 26;
+    const cw = W - 48;
+    const ch = Math.min(250, Math.floor((barTop - 22 - y0 - (n - 1) * gap) / n));
+    const img = Math.min(170, ch - 30);
+    a.enemies.forEach((e, i) => {
+      const x = 24;
+      const y = y0 + i * (ch + gap);
+      const open = enemyUnlocked(e, progress);
+      const beaten = save.beaten.includes(e.id);
+      panel(this, x, y, cw, ch, e.boss ? C.carta2 : C.carta);
+      const pic = this.add.image(x + 24 + img / 2, y + ch / 2, `nemici-${e.sprite}-${beaten ? "sconfitto" : "idle"}`);
+      if (pic.texture.key === "__MISSING") pic.setVisible(false);
+      pic.setDisplaySize(img, img);
+      if (!open) pic.setTint(0x555555).setAlpha(0.5);
+      else if (!reducedMotion()) this.tweens.add({ targets: pic, y: y + ch / 2 - 8, duration: 1100 + i * 170, yoyo: true, repeat: -1, ease: "Sine.easeInOut" });
+      const tx = x + img + 48;
+      const tw = x + cw - 20 - tx;
+      if (e.boss)
+        txt(this, x + cw - 18, y + 24, t("boss").toUpperCase(), 20, HEX.rosso)
+          .setOrigin(1, 0.5)
+          .setLetterSpacing(4);
+      const name = txt(this, tx, y + 16, e.name[lang].toUpperCase(), 28, HEX.inchiostro, "titoli")
+        .setOrigin(0, 0)
+        .setAlign("left")
+        .setWordWrapWidth(tw - (e.boss ? 90 : 0));
+      const trains = txt(this, tx, name.y + name.height + 6, e.trains[lang], 21, HEX.inchiostro)
+        .setOrigin(0, 0)
+        .setAlign("left")
+        .setWordWrapWidth(tw);
+      // pulsante in basso a destra: alto quanto lo spazio lascia, senza coprire il testo
+      const bh = Phaser.Math.Clamp(ch - 30 - (trains.y + trains.height - y), 52, 68);
+      const by = y + ch - 14 - bh / 2;
+      if (e.comingSoon || !open)
+        txt(this, x + cw - 20, by, e.comingSoon ? t("comingSoon") : t("locked"), 20, e.comingSoon ? HEX.rosso : HEX.inchiostro)
+          .setOrigin(1, 0.5)
+          .setAlign("right")
+          .setWordWrapWidth(tw)
+          .setAlpha(e.comingSoon ? 0.8 : 0.7);
+      else
+        button(
+          this,
+          x + cw - 20 - 115,
+          by,
+          beaten ? `${t("again")} ✓` : t("fight"),
+          () => this.scene.start("battle", { enemyId: e.id }),
+          230,
+          !beaten,
+          bh,
+        ).setName(`fight-${e.id}`);
+    });
+
+    // in fondo: cosa sente il microfono e tre pulsanti grandi
+    this.add.rectangle(W / 2, barTop + (H - barTop) / 2, W, H - barTop, C.carta, 0.94);
+    this.add.rectangle(W / 2, barTop, W, 3, C.inchiostro, 0.4);
+    this.readout = new HearingReadout(this, W / 2, barTop + 36, HEX.inchiostro, 22);
+    const bw = (W - 48 - 32) / 3;
+    const bx = (k: number) => 24 + bw / 2 + k * (bw + 16);
+    const by = H - 64;
+    button(this, bx(0), by, `‹ ${t("toJourney")}`, () => this.scene.start("journey"), bw, false, 72).setName("journey");
+    if (a.lessons.length) button(this, bx(1), by, t("lessons"), () => showLessons(this, a), bw, false, 72).setName("lessons");
+    button(this, bx(2), by, t("options"), () => this.scene.start("options", { from: "map" }), bw, false, 72).setName("options");
   }
 
   update(): void {

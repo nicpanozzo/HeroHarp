@@ -8,22 +8,19 @@ import { save, persist } from "../state";
 import { getEngine } from "../audio/engine";
 import { groove } from "../audio/music";
 import { hop } from "./beat";
-import { C, W, H, HEX, txt, backdrop, pop, panel, button, reducedMotion, feedback } from "../ui";
+import { C, W, H, HEX, txt, backdrop, pop, panel, button, reducedMotion, feedback, setFeedbackY } from "../ui";
+import { battleLayout, type BattleLayout } from "./battleLayout";
 import { HearingReadout } from "./readout";
 import { applySettings } from "../settings";
 import { BattleRecorder, sessionHint } from "../stats/stats";
 import { stats, persistStats } from "../stats/store";
 
 // Pannello di battaglia (in basso): corsie verticali, una per foro, come nella guida di stile.
-const BOARD = { x: 300, y: 370, w: 680, h: 340 };
-const LANE_TOP = BOARD.y + 14;
-const HIT_Y = BOARD.y + BOARD.h - 62;
+// Le posizioni di tutto stanno in battleLayout.ts (orizzontale o telefono dritto).
 /** Battiti che un colpo impiega a scendere fino alla linea. */
 // quattro battiti per leggere il foro prima di pararlo
 const TRAVEL_BEATS = 4;
 const SPOT_AREAS = new Set(["after-hours"]);
-const PLAYER = { x: 175, y: 470 };
-const ENEMY = { x: 1110, y: 440 };
 
 interface Chip {
   bg: Phaser.GameObjects.Graphics;
@@ -72,6 +69,7 @@ export class BattleScene extends Phaser.Scene {
   private enemyPoseUntil = 0;
   private recorder!: BattleRecorder;
   private startedAt = 0;
+  private L!: BattleLayout;
 
   constructor() {
     super("battle");
@@ -96,7 +94,11 @@ export class BattleScene extends Phaser.Scene {
     const lang = getLang();
     applySettings();
     const area = areaById(this.enemy.areaId);
-    backdrop(this, area.backdrop);
+    const L = (this.L = battleLayout());
+    const { player: PLAYER, enemy: ENEMY } = L;
+    if (L.portrait) this.add.rectangle(W / 2, H / 2, W, H, C.inchiostro);
+    backdrop(this, area.backdrop, 0, L.stage);
+    setFeedbackY(this, L.feedbackY);
 
     // base musicale nella tonalità dell'armonica: i round partono sempre a inizio battuta
     const basi = engine.basi;
@@ -123,23 +125,36 @@ export class BattleScene extends Phaser.Scene {
     );
     engine.duckBand(false);
 
-    // intestazione: vita del nemico a sinistra, la tua a destra (come nel mockup della guida)
-    panel(this, 24, 16, W - 48, 74);
-    this.hp = this.add.graphics();
+    // intestazione: vita del nemico a sinistra, la tua a destra (come nel mockup della guida);
+    // in verticale le due vite stanno una sopra l'altra, con l'uscita a sinistra
     const k = keyById(save.keyId);
-    txt(this, 44, 38, this.enemy.name[lang].toUpperCase(), 18, HEX.rosso).setOrigin(0, 0.5).setLetterSpacing(2);
-    txt(this, W - 44, 38, `${t("you").toUpperCase()} · ${t("harpIn").toUpperCase()} ${(lang === "it" ? k.it : k.en).toUpperCase()}`, 18, HEX.ottone)
-      .setOrigin(1, 0.5)
-      .setLetterSpacing(2);
-
-    // punteggio al centro dell'intestazione, serie di colpi sotto
-    this.scoreText = txt(this, W / 2, 53, "0", 34, HEX.inchiostro, "fori").setName("score");
-    this.streakText = txt(this, W / 2, 112, "", 26, HEX.ottone, "titoli")
-      .setStroke(HEX.inchiostro, 6)
-      .setAlpha(0);
+    const you = `${t("you").toUpperCase()} · ${t("harpIn").toUpperCase()} ${(lang === "it" ? k.it : k.en).toUpperCase()}`;
     // dall'allenamento si torna alla pagella, dal viaggio alla mappa della tappa
     const leave = () => (this.enemy.drill ? this.scene.start("stats") : this.scene.start("map", { areaId: this.enemy.areaId }));
-    button(this, 70, 122, "‹", leave, 64, false, 44).setName("exit");
+    if (L.portrait) {
+      panel(this, 24, 16, W - 48, 132);
+      txt(this, 116, 38, this.enemy.name[lang].toUpperCase(), 20, HEX.rosso).setOrigin(0, 0.5).setLetterSpacing(2);
+      txt(this, 116, 98, you, 18, HEX.ottone).setOrigin(0, 0.5).setLetterSpacing(1);
+      this.scoreText = txt(this, W - 44, 38, "0", 32, HEX.inchiostro, "fori")
+        .setOrigin(1, 0.5)
+        .setName("score");
+      const exit = button(this, 68, 82, "‹", leave, 68, false, 100).setName("exit");
+      (exit.list[1] as Phaser.GameObjects.Text).setFontSize(52);
+    } else {
+      panel(this, 24, 16, W - 48, 74);
+      txt(this, 44, 38, this.enemy.name[lang].toUpperCase(), 18, HEX.rosso).setOrigin(0, 0.5).setLetterSpacing(2);
+      txt(this, W - 44, 38, you, 18, HEX.ottone)
+        .setOrigin(1, 0.5)
+        .setLetterSpacing(2);
+      // punteggio al centro dell'intestazione, serie di colpi sotto
+      this.scoreText = txt(this, W / 2, 53, "0", 34, HEX.inchiostro, "fori").setName("score");
+      button(this, 70, 122, "‹", leave, 64, false, 44).setName("exit");
+    }
+    this.hp = this.add.graphics();
+    this.streakText = txt(this, W / 2, L.streakY, "", 26, HEX.ottone, "titoli")
+      .setStroke(HEX.inchiostro, 6)
+      .setAlpha(0)
+      .setDepth(5);
     this.input.keyboard?.on("keydown-ESC", leave);
     this.flash = this.add.rectangle(W / 2, H / 2, W, H, C.rosso, 0).setDepth(30);
     if (!this.textures.exists("dot")) {
@@ -150,19 +165,20 @@ export class BattleScene extends Phaser.Scene {
     }
 
     // cartello di carta dietro il titolo del turno: si legge su qualunque manifesto dello sfondo
-    panel(this, W / 2 - 290, 126, 580, 102);
-    this.banner = txt(this, W / 2, 158, "", 46, HEX.inchiostro, "titoli")
+    const bb = L.bannerBox;
+    panel(this, bb.x, bb.y, bb.w, bb.h);
+    this.banner = txt(this, W / 2, L.bannerY, "", 46, HEX.inchiostro, "titoli")
       .setStroke(HEX.carta, 8)
       .setName("banner");
     // resta dentro il cartello: va a capo e, se serve, si rimpicciolisce
-    this.sub = txt(this, W / 2, 200, "", 19, HEX.inchiostro)
+    this.sub = txt(this, W / 2, L.subY, "", 19, HEX.inchiostro)
       .setStroke(HEX.carta, 5)
-      .setWordWrapWidth(540);
+      .setWordWrapWidth(L.subWrap);
 
-    this.beatDot = this.add.circle(W / 2, 242, 8, C.rosso).setAlpha(0.25);
+    this.beatDot = this.add.circle(W / 2, L.beatY, 8, C.rosso).setAlpha(0.25);
 
-    this.playerImg = this.add.image(PLAYER.x, PLAYER.y, "personaggi-protagonista-idle").setDisplaySize(250, 250);
-    const size = this.enemy.boss ? 330 : 260;
+    this.playerImg = this.add.image(PLAYER.x, PLAYER.y, "personaggi-protagonista-idle").setDisplaySize(PLAYER.size, PLAYER.size);
+    const size = this.enemy.boss ? ENEMY.bossSize : ENEMY.size;
     // un cono d'ombra dietro il nemico dove lo sfondo notturno ha insegne che altrimenti gli trasparirebbero addosso
     if (SPOT_AREAS.has(this.enemy.areaId))
       this.add.image(ENEMY.x, ENEMY.y - (this.enemy.boss ? 30 : 0), this.spotTexture()).setDisplaySize(size * 1.25, size * 1.25);
@@ -172,15 +188,15 @@ export class BattleScene extends Phaser.Scene {
     hop(this, this.playerImg, 6);
 
     // frase del nemico, su una targa scura
-    this.chipLayer = this.add.container(W / 2, 300);
+    this.chipLayer = this.add.container(W / 2, L.chipY);
 
     // pannello delle corsie
     const board = this.add.graphics();
-    board.fillStyle(C.inchiostro, 1).fillRect(BOARD.x + 6, BOARD.y + 6, BOARD.w, BOARD.h);
-    board.fillStyle(C.palcoScuro, 1).fillRect(BOARD.x, BOARD.y, BOARD.w, BOARD.h);
+    board.fillStyle(C.inchiostro, 1).fillRect(this.L.board.x + 6, this.L.board.y + 6, this.L.board.w, this.L.board.h);
+    board.fillStyle(C.palcoScuro, 1).fillRect(this.L.board.x, this.L.board.y, this.L.board.w, this.L.board.h);
     this.laneG = this.add.graphics();
     this.drawLanes(false);
-    this.readout = new HearingReadout(this, BOARD.x + BOARD.w / 2, BOARD.y + BOARD.h - 18, HEX.carta);
+    this.readout = new HearingReadout(this, this.L.board.x + this.L.board.w / 2, this.L.board.y + this.L.board.h - 18, HEX.carta);
 
     this.cleanup.push(engine.tracker.onOnset((o) => this.battle.onset(o.midi, o.time)));
     this.events.once("shutdown", () => {
@@ -240,16 +256,17 @@ export class BattleScene extends Phaser.Scene {
     this.projectiles.forEach((p) => p.destroy());
     this.projectiles.clear();
     for (const p of r.volley) {
-      const c = this.badge(p.tab).setPosition(this.laneX(p.lane), LANE_TOP);
+      const c = this.badge(p.tab).setPosition(this.laneX(p.lane), this.L.laneTop);
       c.setVisible(false);
       this.projectiles.set(p.id, c);
     }
   }
 
   private setSub(v: string): Phaser.GameObjects.Text {
-    this.sub.setFontSize(19).setText(v).setY(200);
+    const big = this.L.portrait ? 22 : 19;
+    this.sub.setFontSize(big).setText(v).setY(this.L.subY);
     // su due righe: più piccolo e un po' più su, sempre dentro il cartello
-    if (this.sub.height > 30) this.sub.setFontSize(15).setY(205);
+    if (this.sub.height > big * 1.6) this.sub.setFontSize(this.L.portrait ? 18 : 15).setY(this.L.subY + 5);
     return this.sub;
   }
 
@@ -276,7 +293,8 @@ export class BattleScene extends Phaser.Scene {
    * Stesso stile dei gettoni delle modalità del Juke Joint.
    */
   private badge(tab: PhraseNote["tab"]): Phaser.GameObjects.Container {
-    const R = 32;
+    // in verticale i gettoni sono più grandi, ma restano dentro la loro corsia
+    const R = this.L.portrait ? Math.min(this.L.badgeR, (0.38 * this.L.board.w) / this.battle.lanes.length) : this.L.badgeR;
     const g = this.add.graphics();
     const shape = (dx: number, color: number) => {
       g.fillStyle(color, 1);
@@ -289,10 +307,11 @@ export class BattleScene extends Phaser.Scene {
     if (tab.draw) g.strokeRoundedRect(-R, -R, 2 * R, 2 * R, 10);
     else g.strokeCircle(0, 0, R);
     const label = `${tab.hole}${"'".repeat(tab.bend)}`;
-    const num = txt(this, 0, 1, label, label.length > 2 ? 30 : 42, tab.draw ? HEX.carta : HEX.inchiostro, "fori");
+    const k = R / 32;
+    const num = txt(this, 0, 1, label, Math.round((label.length > 2 ? 30 : 42) * k), tab.draw ? HEX.carta : HEX.inchiostro, "fori");
     // freccia in un bollino d'inchiostro nell'angolo
-    const dot = this.add.circle(R - 4, -R + 4, 15, C.inchiostro);
-    const arrow = txt(this, R - 4, -R + 4, tab.draw ? "↓" : "↑", 22, tab.draw ? HEX.indacoChiaro : HEX.ottone, "fori");
+    const dot = this.add.circle(R - 4, -R + 4, Math.round(15 * k), C.inchiostro);
+    const arrow = txt(this, R - 4, -R + 4, tab.draw ? "↓" : "↑", Math.round(22 * k), tab.draw ? HEX.indacoChiaro : HEX.ottone, "fori");
     return this.add.container(0, 0, [g, num, dot, arrow]);
   }
 
@@ -309,17 +328,19 @@ export class BattleScene extends Phaser.Scene {
     this.chipLayer.removeAll(true);
     this.chips = [];
     const n = r.call.length;
-    const gap = Math.min(86, 1000 / n);
+    const k = this.L.chipScale;
+    const gap = Math.min(86 * k, this.L.chipSpan / n);
     const plate = this.add.graphics();
     const pw = n * gap + 40;
-    plate.fillStyle(C.inchiostro, 1).fillRect(-pw / 2 + 5, -39, pw, 88);
-    plate.fillStyle(C.palcoScuro, 1).fillRect(-pw / 2, -44, pw, 88);
+    plate.fillStyle(C.inchiostro, 1).fillRect(-pw / 2 + 5, -44 * k + 5, pw, 88 * k);
+    plate.fillStyle(C.palcoScuro, 1).fillRect(-pw / 2, -44 * k, pw, 88 * k);
     this.chipLayer.add(plate);
     r.call.forEach((note, i) => {
       const x = (i - (n - 1) / 2) * gap;
       const bg = this.add.graphics();
       const s = chipLabel(note);
-      const label = txt(this, x, 0, s, s.length > 3 ? (gap > 70 ? 28 : 22) : gap > 70 ? 40 : 32, HEX.carta, "fori");
+      const roomy = gap > 70 * k;
+      const label = txt(this, x, 0, s, Math.round((s.length > 3 ? (roomy ? 28 : 22) : roomy ? 40 : 32) * k), HEX.carta, "fori");
       this.chipLayer.add([bg, label]);
       this.chips.push({ bg, label, x, tab: note.tab });
       this.paintChip(i, "idle");
@@ -330,9 +351,11 @@ export class BattleScene extends Phaser.Scene {
     const c = this.chips[i];
     if (!c) return;
     c.bg.clear();
-    if (state === "lit") c.bg.fillStyle(c.tab.draw ? C.indaco : C.ottone, 1).fillRoundedRect(c.x - 36, -36, 72, 72, 8);
-    if (state === "target") c.bg.lineStyle(4, C.carta, 1).lineBetween(c.x - 26, 32, c.x + 26, 32);
-    if (state === "hit" || state === "short") c.bg.fillStyle(state === "hit" ? 0x5f8f4a : C.prugna, 1).fillRoundedRect(c.x - 36, -36, 72, 72, 8);
+    const k = this.L.chipScale;
+    if (state === "lit") c.bg.fillStyle(c.tab.draw ? C.indaco : C.ottone, 1).fillRoundedRect(c.x - 36 * k, -36 * k, 72 * k, 72 * k, 8);
+    if (state === "target") c.bg.lineStyle(4, C.carta, 1).lineBetween(c.x - 26 * k, 32 * k, c.x + 26 * k, 32 * k);
+    if (state === "hit" || state === "short")
+      c.bg.fillStyle(state === "hit" ? 0x5f8f4a : C.prugna, 1).fillRoundedRect(c.x - 36 * k, -36 * k, 72 * k, 72 * k, 8);
     const plain = c.tab.draw ? HEX.indacoChiaro : HEX.ottone;
     c.label.setColor(state === "idle" || state === "target" ? plain : HEX.carta);
   }
@@ -351,19 +374,20 @@ export class BattleScene extends Phaser.Scene {
   // ---------- raffica: Para! ----------
 
   private laneX(lane: number): number {
-    return BOARD.x + ((lane + 0.5) * BOARD.w) / this.battle.lanes.length;
+    return this.L.board.x + ((lane + 0.5) * this.L.board.w) / this.battle.lanes.length;
   }
 
   private drawLanes(active: boolean): void {
     const g = this.laneG;
     g.clear();
-    const lw = BOARD.w / this.battle.lanes.length;
+    const lw = this.L.board.w / this.battle.lanes.length;
     this.battle.lanes.forEach((_, i) => {
-      g.lineStyle(2, C.carta, active ? 0.35 : 0.15).strokeRect(BOARD.x + i * lw + 6, LANE_TOP, lw - 12, HIT_Y - LANE_TOP + 36);
+      g.lineStyle(2, C.carta, active ? 0.35 : 0.15).strokeRect(this.L.board.x + i * lw + 6, this.L.laneTop, lw - 12, this.L.hitY - this.L.laneTop + 36);
     });
     // linea di parata tratteggiata
-    for (let x = BOARD.x + 10; x < BOARD.x + BOARD.w - 10; x += 16) g.lineStyle(3, C.ottone, active ? 1 : 0.35).lineBetween(x, HIT_Y, x + 8, HIT_Y);
-    this.laneLabels ??= this.battle.lanes.map((hole, i) => txt(this, this.laneX(i), HIT_Y + 26, String(hole), 34, HEX.carta, "fori"));
+    for (let x = this.L.board.x + 10; x < this.L.board.x + this.L.board.w - 10; x += 16)
+      g.lineStyle(3, C.ottone, active ? 1 : 0.35).lineBetween(x, this.L.hitY, x + 8, this.L.hitY);
+    this.laneLabels ??= this.battle.lanes.map((hole, i) => txt(this, this.laneX(i), this.L.hitY + 26, String(hole), this.L.laneLabelSize, HEX.carta, "fori"));
     this.laneLabels.forEach((l) => l.setAlpha(active ? 1 : 0.5));
   }
 
@@ -378,7 +402,7 @@ export class BattleScene extends Phaser.Scene {
       const show = k >= 0 && (b.phase === "volley" || b.phase === "response");
       c.setVisible(show).setAlpha(b.phase === "volley" ? 1 : 0.6);
       // a pixel interi: il numero resta nitido mentre scende
-      c.y = Math.round(Phaser.Math.Linear(LANE_TOP + 34, HIT_Y, Phaser.Math.Clamp(k, 0, 1.15)));
+      c.y = Math.round(Phaser.Math.Linear(this.L.laneTop + 34, this.L.hitY, Phaser.Math.Clamp(k, 0, 1.15)));
     }
   }
 
@@ -408,6 +432,8 @@ export class BattleScene extends Phaser.Scene {
   private handle(ev: BattleEvent): void {
     const engine = getEngine();
     const now = engine.now;
+    const L = this.L;
+    const { player: PLAYER, enemy: ENEMY } = L;
     switch (ev.type) {
       case "phase": {
         const label = { countin: t("countin"), call: t("call"), response: t("response"), volley: t("volley"), won: t("won"), lost: t("lost") }[ev.phase];
@@ -446,7 +472,7 @@ export class BattleScene extends Phaser.Scene {
         break;
       }
       case "streakLost":
-        pop(this, W / 2, 112, t("streakLost").toUpperCase(), HEX.rosso, 22);
+        pop(this, W / 2, this.L.streakY, t("streakLost").toUpperCase(), HEX.rosso, 22);
         this.showStreak(0);
         break;
       case "shortNote":
@@ -466,12 +492,12 @@ export class BattleScene extends Phaser.Scene {
           this.time.delayedCall(90, () => this.enemyImg.clearTint());
           this.burst(ENEMY.x, ENEMY.y - 40, C.rosso, 26);
           if (!reducedMotion()) this.cameras.main.shake(180, 0.006 + Math.min(0.01, ev.amount / 4000));
-          pop(this, ENEMY.x, 200, `-${ev.amount}`, HEX.rosso, 56);
+          pop(this, ENEMY.x, L.enemyHitY, `-${ev.amount}`, HEX.rosso, 56);
         } else {
           engine.fx.notaMancata();
         }
-        if (ev.onTime) pop(this, ENEMY.x, 262, t("onTime"), HEX.inchiostro, 26);
-        if (ev.combo >= 2) pop(this, W / 2, 300, `${t("combo")} x${ev.combo}`, HEX.ottone, 36);
+        if (ev.onTime) pop(this, ENEMY.x, L.enemyOnTimeY, t("onTime"), HEX.inchiostro, 26);
+        if (ev.combo >= 2) pop(this, W / 2, L.comboY, `${t("combo")} x${ev.combo}`, HEX.ottone, 36);
         this.redrawHp();
         break;
       case "playerHealed":
@@ -479,8 +505,8 @@ export class BattleScene extends Phaser.Scene {
         engine.fx.critico();
         break;
       case "heal":
-        pop(this, ENEMY.x, 210, `+${ev.amount}`, HEX.prugna, 28);
-        pop(this, W / 2, 380, t("keepPlaying"), HEX.prugna, 24);
+        pop(this, ENEMY.x, L.enemyHealY, `+${ev.amount}`, HEX.prugna, 28);
+        pop(this, W / 2, L.keepPlayingY, t("keepPlaying"), HEX.prugna, 24);
         this.redrawHp();
         break;
       case "bossPhase": {
@@ -491,10 +517,10 @@ export class BattleScene extends Phaser.Scene {
       case "parry": {
         const c = this.projectiles.get(ev.id);
         if (c) {
-          const star = this.add.image(c.x, HIT_Y, "ui-nota-giusta").setDisplaySize(56, 56);
+          const star = this.add.image(c.x, this.L.hitY, "ui-nota-giusta").setDisplaySize(56, 56);
           this.tweens.add({ targets: star, scale: star.scale * 1.8, alpha: 0, duration: 380, onComplete: () => star.destroy() });
-          this.burst(c.x, HIT_Y, C.ottone, 12);
-          pop(this, c.x, HIT_Y - 50, `+${ev.points}`, HEX.ottone, 24);
+          this.burst(c.x, this.L.hitY, C.ottone, 12);
+          pop(this, c.x, this.L.hitY - 50, `+${ev.points}`, HEX.ottone, 24);
           c.setVisible(false);
         }
         engine.fx.notaGiusta(Math.min(ev.streak, 12));
@@ -504,7 +530,7 @@ export class BattleScene extends Phaser.Scene {
       case "playerDamaged": {
         const c = this.projectiles.get(ev.id);
         if (c) {
-          const miss = this.add.image(c.x, HIT_Y, "ui-nota-mancata").setDisplaySize(48, 48);
+          const miss = this.add.image(c.x, this.L.hitY, "ui-nota-mancata").setDisplaySize(48, 48);
           this.tweens.add({ targets: miss, alpha: 0, duration: 500, onComplete: () => miss.destroy() });
           c.setVisible(false);
         }
@@ -513,7 +539,7 @@ export class BattleScene extends Phaser.Scene {
         if (!reducedMotion()) this.cameras.main.shake(160, 0.008);
         this.flash.setAlpha(0.28);
         this.tweens.add({ targets: this.flash, alpha: 0, duration: 260 });
-        pop(this, PLAYER.x, 300, `-${ev.amount}`, HEX.rosso, 36);
+        pop(this, PLAYER.x, L.playerHitY, `-${ev.amount}`, HEX.rosso, 36);
         this.redrawHp();
         break;
       }
@@ -544,23 +570,30 @@ export class BattleScene extends Phaser.Scene {
     if (!reducedMotion()) this.tweens.add({ targets: this.streakText, scale: { from: 1.3, to: 1 }, duration: 160 });
     if (n % 10 === 0) {
       getEngine().fx.critico();
-      pop(this, W / 2, 330, `${n}!`, HEX.ottone, 72);
-      this.burst(W / 2, 330, C.ottone, 30);
+      pop(this, W / 2, this.L.bigY, `${n}!`, HEX.ottone, 72);
+      this.burst(W / 2, this.L.bigY, C.ottone, 30);
     }
   }
 
   private redrawHp(): void {
     const g = this.hp;
     g.clear();
-    const bar = (x: number, frac: number, col: number, right: boolean) => {
-      const w = 520;
-      g.fillStyle(C.carta2, 1).fillRect(x, 54, w, 20);
+    const bar = (x: number, y: number, w: number, frac: number, col: number, right: boolean) => {
+      g.fillStyle(C.carta2, 1).fillRect(x, y, w, 20);
       const fw = Math.max(0, w * frac);
-      g.fillStyle(col, 1).fillRect(right ? x + w - fw : x, 54, fw, 20);
-      g.lineStyle(3, C.inchiostro, 1).strokeRect(x, 54, w, 20);
+      g.fillStyle(col, 1).fillRect(right ? x + w - fw : x, y, fw, 20);
+      g.lineStyle(3, C.inchiostro, 1).strokeRect(x, y, w, 20);
     };
-    bar(44, this.battle.enemyHp / this.enemy.hp, C.rosso, false);
-    bar(W - 44 - 520, this.battle.playerHp / PLAYER_HP, C.ottone, true);
+    const enemy = this.battle.enemyHp / this.enemy.hp;
+    const you = this.battle.playerHp / PLAYER_HP;
+    if (this.L.portrait) {
+      // una sopra l'altra, a tutta larghezza accanto all'uscita
+      bar(116, 56, W - 160, enemy, C.rosso, false);
+      bar(116, 116, W - 160, you, C.ottone, false);
+    } else {
+      bar(44, 54, 520, enemy, C.rosso, false);
+      bar(W - 44 - 520, 54, 520, you, C.ottone, true);
+    }
   }
 
   private finish(won: boolean): void {

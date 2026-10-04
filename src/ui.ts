@@ -4,8 +4,31 @@ import { COLORI, COLORI_NUM, FONT } from "./style/tema";
 import { save } from "./state";
 import { getEngine } from "./audio/engine";
 
-export const W = 1280;
-export const H = 720;
+/**
+ * Dimensioni del palco. In orizzontale 1280×720; sul telefono in verticale il palco è largo 720
+ * e alto quanto serve per riempire lo schermo (da 1180 a 1560), così non restano bande nere.
+ * Sono `let`: le scene le leggono al momento di disegnarsi, quindi girando il telefono basta ridisegnarle.
+ */
+export let W = 1280;
+export let H = 720;
+/** true quando il palco è in verticale (telefono tenuto dritto). */
+export const portrait = (): boolean => H > W;
+
+/** Il formato che serve alla finestra attuale. */
+export function stageFor(width: number, height: number): { w: number; h: number } {
+  if (height <= width) return { w: 1280, h: 720 };
+  const h = Math.round(Phaser.Math.Clamp((720 * height) / Math.max(1, width), 1180, 1560) / 2) * 2;
+  return { w: 720, h };
+}
+
+/** Adatta il palco alla finestra; true se il formato è cambiato. */
+export function fitStage(width = window.innerWidth, height = window.innerHeight): boolean {
+  const s = stageFor(width, height);
+  const changed = s.w !== W || s.h !== H;
+  W = s.w;
+  H = s.h;
+  return changed;
+}
 export const C = COLORI_NUM;
 export const HEX = COLORI;
 
@@ -48,7 +71,11 @@ export function button(
     g.lineStyle(3, C.inchiostro, 1).strokeRect(-w / 2, -h / 2, w, h);
   };
   draw(false);
-  const t = txt(scene, 0, 0, label.toUpperCase(), 22, HEX.inchiostro, "titoli");
+  // sul telefono dritto i pulsanti sono più alti: la scritta cresce con loro (le frecce ancora di più)
+  const size = portrait() ? Math.round(Phaser.Math.Clamp(h * (label.length <= 2 ? 0.55 : 0.36), 22, label.length <= 2 ? 52 : 30)) : 22;
+  const t = txt(scene, 0, 0, label.toUpperCase(), size, HEX.inchiostro, "titoli");
+  // la scritta resta dentro il pulsante
+  if (portrait() && t.width > w - 16) t.setFontSize(Math.max(16, Math.floor((size * (w - 16)) / t.width)));
   const c = scene.add.container(x, y, [g, t]).setSize(w, h).setInteractive({ useHandCursor: true });
   c.on("pointerover", () => draw(true));
   c.on("pointerout", () => draw(false));
@@ -77,10 +104,25 @@ export function panel(scene: Phaser.Scene, x: number, y: number, w: number, h: n
 
 const PORCH = ["sfondi-portico-1-cielo", "sfondi-portico-2-casa", "sfondi-portico-3-primo-piano"];
 
-/** Sfondo di un luogo (tre livelli di parallasse). `dim` lo scurisce per far risaltare i pannelli. */
-export function backdrop(scene: Phaser.Scene, layers: string[] | null = PORCH, dim = 0): Phaser.GameObjects.Image[] {
-  const imgs = (layers ?? PORCH).map((k) => scene.add.image(W / 2, H / 2, k).setDisplaySize(W, H));
-  if (dim > 0) scene.add.rectangle(W / 2, H / 2, W, H, C.inchiostro, dim);
+/**
+ * Sfondo di un luogo (tre livelli di parallasse). `dim` lo scurisce per far risaltare i pannelli.
+ * Riempie il riquadro `area` (di solito tutto il palco) senza deformarsi: in verticale si vede la parte centrale.
+ */
+export function backdrop(
+  scene: Phaser.Scene,
+  layers: string[] | null = PORCH,
+  dim = 0,
+  area: { x: number; y: number; w: number; h: number } = { x: 0, y: 0, w: W, h: H },
+): Phaser.GameObjects.Image[] {
+  const imgs = (layers ?? PORCH).map((k) => {
+    const img = scene.add.image(area.x + area.w / 2, area.y + area.h, k).setOrigin(0.5, 1);
+    // copre il riquadro: la scala più grande tra le due, ancorata in basso (il palco e il pavimento restano)
+    const s = Math.max(area.w / img.width, area.h / img.height);
+    img.setScale(s);
+    img.setCrop((img.width - area.w / s) / 2, img.height - area.h / s, area.w / s, area.h / s);
+    return img;
+  });
+  if (dim > 0) scene.add.rectangle(area.x + area.w / 2, area.y + area.h / 2, area.w, area.h, C.inchiostro, dim);
   return imgs;
 }
 
@@ -107,6 +149,9 @@ export function pop(scene: Phaser.Scene, x: number, y: number, s: string, color:
 export const reducedMotion = (): boolean => save.settings.reduceMotion || !!window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 
 const feedbackText = new WeakMap<Phaser.Scene, Phaser.GameObjects.Text>();
+const feedbackY = new WeakMap<Phaser.Scene, number>();
+/** Dove compaiono i giudizi delle note in questa scena (in verticale il palco è disposto diversamente). */
+export const setFeedbackY = (scene: Phaser.Scene, y: number): void => void feedbackY.set(scene, y);
 /**
  * Il giudizio della nota (perfetto, bene, nota sbagliata, tieni…): uno solo alla volta, nello stesso punto,
  * così le scritte non si sovrappongono mai, nemmeno quando arrivano di fila.
@@ -117,7 +162,7 @@ export function feedback(scene: Phaser.Scene, x: number, s: string, color: strin
     scene.tweens.killTweensOf(prev);
     prev.destroy();
   }
-  const t = pop(scene, x, 430, s, color, size);
+  const t = pop(scene, x, feedbackY.get(scene) ?? 430, s, color, size);
   feedbackText.set(scene, t);
   return t;
 }
