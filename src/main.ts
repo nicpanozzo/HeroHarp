@@ -36,7 +36,12 @@ async function fontsReady(): Promise<void> {
 fontsReady().then(() => {
   installKeyboard();
   // telefono dritto: palco verticale; telefono girato, tablet o computer: palco orizzontale
-  fitStage();
+  // (si misura lo spazio vero del gioco, già senza tacche e barre di sistema)
+  const room = (): [number, number] => {
+    const r = document.getElementById("game")?.getBoundingClientRect();
+    return r && r.width > 0 ? [r.width, r.height] : [window.innerWidth, window.innerHeight];
+  };
+  fitStage(...room());
   const game = new Phaser.Game({
     type: Phaser.AUTO,
     parent: "game",
@@ -66,7 +71,7 @@ fontsReady().then(() => {
   window.addEventListener("resize", () => {
     clearTimeout(resizeTimer);
     resizeTimer = window.setTimeout(() => {
-      if (!fitStage()) return;
+      if (!fitStage(...room())) return;
       game.scale.setGameSize(W, H);
       game.scene.getScenes(true).forEach((s) => s.scene.restart());
     }, 250);
