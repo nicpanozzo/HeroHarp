@@ -71,7 +71,11 @@ export function button(
     g.lineStyle(3, C.inchiostro, 1).strokeRect(-w / 2, -h / 2, w, h);
   };
   draw(false);
-  const t = txt(scene, 0, 0, label.toUpperCase(), 22, HEX.inchiostro, "titoli");
+  // sul telefono dritto i pulsanti sono più alti: la scritta cresce con loro (le frecce ancora di più)
+  const size = portrait() ? Math.round(Phaser.Math.Clamp(h * (label.length <= 2 ? 0.55 : 0.36), 22, label.length <= 2 ? 52 : 30)) : 22;
+  const t = txt(scene, 0, 0, label.toUpperCase(), size, HEX.inchiostro, "titoli");
+  // la scritta resta dentro il pulsante
+  if (portrait() && t.width > w - 16) t.setFontSize(Math.max(16, Math.floor((size * (w - 16)) / t.width)));
   const c = scene.add.container(x, y, [g, t]).setSize(w, h).setInteractive({ useHandCursor: true });
   c.on("pointerover", () => draw(true));
   c.on("pointerout", () => draw(false));
