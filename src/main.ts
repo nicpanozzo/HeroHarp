@@ -10,6 +10,7 @@ import { OptionsScene } from "./scenes/OptionsScene";
 import { CalibrationScene } from "./scenes/CalibrationScene";
 import { LatencyScene } from "./scenes/LatencyScene";
 import { DojoScene } from "./scenes/DojoScene";
+import { StatsScene } from "./scenes/StatsScene";
 import { installKeyboard } from "./input";
 import { W, H, C } from "./ui";
 import { getEngine } from "./audio/engine";
@@ -52,6 +53,7 @@ fontsReady().then(() => {
       CalibrationScene,
       LatencyScene,
       DojoScene,
+      StatsScene,
       ...MODE_SCENES,
       ...RUN_SCENES,
     ],

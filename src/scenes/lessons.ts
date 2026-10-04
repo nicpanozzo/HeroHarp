@@ -92,3 +92,9 @@ export function showIntro(scene: Phaser.Scene, onDone?: () => void): void {
     onDone,
   );
 }
+
+/** Una sola lezione, aperta dalla pagella per ripassare un punto debole. */
+export function showLesson(scene: Phaser.Scene, area: AreaDef, lessonId: string, onDone?: () => void): void {
+  const l = area.lessons.find((x) => x.id === lessonId) ?? area.lessons[0];
+  if (l) overlay(scene, [lessonPage(scene, area, l)], onDone);
+}

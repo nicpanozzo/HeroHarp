@@ -15,6 +15,8 @@ import { C, W, H, HEX, txt, backdrop, pop, panel, button, reducedMotion } from "
 import type { Mods } from "./data";
 import { addStats, coinsFor, endRun, mods, nodeById, runEnemy, savedRun, saveRun, tally, type MapNode, type RunState } from "./run";
 import { runGroove, s } from "./ui";
+import { BattleRecorder } from "../stats/stats";
+import { stats, persistStats } from "../stats/store";
 
 const BOARD = { x: 300, y: 370, w: 680, h: 340 };
 const LANE_TOP = BOARD.y + 14;
@@ -53,6 +55,8 @@ export class RunBattleScene extends Phaser.Scene {
   private node!: MapNode;
   private mods!: Mods;
   private battle!: RunBattle;
+  private recorder!: BattleRecorder;
+  private startedAt = 0;
   private enemy!: EnemyDef;
   private enemyImg!: Phaser.GameObjects.Image;
   private playerImg!: Phaser.GameObjects.Image;
@@ -124,6 +128,9 @@ export class RunBattleScene extends Phaser.Scene {
       return st;
     };
     this.battle = new RunBattle(this.enemy, keyById(save.keyId), { align }, this.mods.parry);
+    // anche la Lunga Notte alimenta la pagella
+    this.recorder = new BattleRecorder(stats, keyById(save.keyId));
+    this.startedAt = engine.now;
     this.battle.playerHp = this.run.hp;
     // la tua band accompagna il duello, al tempo del nemico
     runGroove(this.run, this.battle.bpm);
@@ -200,6 +207,10 @@ export class RunBattleScene extends Phaser.Scene {
     this.cleanup.push(engine.tracker.onOnset((o) => this.battle.onset(o.midi, o.time)));
     this.events.once("shutdown", () => {
       this.cleanup.forEach((f) => f());
+      if (!this.ending) {
+        this.recorder.finish(false, getEngine().now - this.startedAt, this.battle.stats.bestStreak, false);
+        persistStats();
+      }
       this.input.keyboard?.off("keydown-ESC");
     });
 
@@ -216,7 +227,10 @@ export class RunBattleScene extends Phaser.Scene {
     if (this.battle.round.number !== this.scheduledRound) this.scheduleRound(this.battle.round);
     const held = engine.tracker.state.midi;
     this.battle.update(now, held);
-    for (const ev of this.battle.drain()) this.handle(ev);
+    for (const ev of this.battle.drain()) {
+      this.recorder.observe(ev, this.battle);
+      this.handle(ev);
+    }
     this.animateBeat(now);
     const target = this.battle.stats.score;
     if (this.shownScore !== target) {
@@ -633,6 +647,8 @@ export class RunBattleScene extends Phaser.Scene {
     const run = this.run;
     const st = this.battle.stats;
     addStats(run, st, won);
+    this.recorder.finish(won, engine.now - this.startedAt, st.bestStreak);
+    persistStats();
     if (won) {
       engine.fx.vittoria(engine.now + 0.2);
       this.setEnemyPose("sconfitto", Infinity);

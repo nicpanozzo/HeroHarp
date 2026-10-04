@@ -72,6 +72,8 @@ export function persist(): void {
 
 const MODES_KEY = "duello-dance-juke-joint";
 const NIGHT_KEY = "heroharp-lunga-notte";
+// stessa chiave di stats/store.ts (qui senza importarlo, per non legare i progressi alle statistiche)
+const STATS_KEY = "heroharp-stats";
 const readJson = (key: string): unknown => {
   try {
     return JSON.parse(localStorage.getItem(key) ?? "null");
@@ -80,10 +82,10 @@ const readJson = (key: string): unknown => {
   }
 };
 
-/** Tutto il salvataggio (viaggio, Juke Joint e Lunga Notte) in un file JSON da scaricare: per cambiare dispositivo o fare una copia. */
+/** Tutto il salvataggio (viaggio, Juke Joint, Lunga Notte e statistiche) in un file JSON da scaricare: per cambiare dispositivo o fare una copia. */
 export function exportSave(): void {
   persist();
-  const data = { app: "heroharp", version: 1, game: save, modes: readJson(MODES_KEY), night: readJson(NIGHT_KEY) };
+  const data = { app: "heroharp", version: 1, game: save, modes: readJson(MODES_KEY), night: readJson(NIGHT_KEY), stats: readJson(STATS_KEY) };
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
@@ -100,6 +102,7 @@ export function importSave(text: string): boolean {
     localStorage.setItem(KEY, JSON.stringify(data.game));
     if (data.modes) localStorage.setItem(MODES_KEY, JSON.stringify(data.modes));
     if (data.night) localStorage.setItem(NIGHT_KEY, JSON.stringify(data.night));
+    if (data.stats) localStorage.setItem(STATS_KEY, JSON.stringify(data.stats));
     return true;
   } catch {
     return false;
