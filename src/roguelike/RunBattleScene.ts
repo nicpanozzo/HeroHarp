@@ -11,7 +11,7 @@ import { getEngine } from "../audio/engine";
 import { hop } from "../scenes/beat";
 import { applySettings } from "../settings";
 import { HearingReadout } from "../scenes/readout";
-import { C, W, H, HEX, txt, backdrop, pop, panel, button, reducedMotion } from "../ui";
+import { C, W, H, HEX, txt, backdrop, pop, panel, button, reducedMotion, feedback } from "../ui";
 import type { Mods } from "./data";
 import { addStats, coinsFor, endRun, mods, nodeById, runEnemy, savedRun, saveRun, tally, type MapNode, type RunState } from "./run";
 import { runGroove, s } from "./ui";
@@ -459,7 +459,7 @@ export class RunBattleScene extends Phaser.Scene {
         const chip = this.chips[ev.index];
         const cx = this.chipLayer.x + (chip?.x ?? 0);
         const color = ev.rating === "perfect" ? HEX.ottone : ev.rating === "good" ? HEX.indaco : HEX.inchiostro;
-        pop(this, cx, 420, t(ev.rating).toUpperCase(), color, ev.rating === "perfect" ? 30 : 24);
+        feedback(this, cx, t(ev.rating).toUpperCase(), color, ev.rating === "perfect" ? 30 : 24);
         this.burst(cx, this.chipLayer.y, ev.rating === "perfect" ? C.ottone : C.indaco, ev.rating === "perfect" ? 16 : 8);
         if (chip && !reducedMotion()) this.tweens.add({ targets: chip.label, scale: 1.35, duration: 90, yoyo: true });
         if (ev.rating === "perfect") {
@@ -482,10 +482,10 @@ export class RunBattleScene extends Phaser.Scene {
         break;
       case "shortNote":
         this.paintChip(ev.index, "short");
-        pop(this, W / 2, 380, t("hold"), HEX.prugna, 26);
+        feedback(this, W / 2, t("hold"), HEX.prugna, 26);
         break;
       case "wrongNote":
-        pop(this, W / 2, 460, `${t("wrong")}: ${noteName(ev.midi, getLang())}`, HEX.rosso, 22);
+        feedback(this, W / 2, `${t("wrong")}: ${noteName(ev.midi, getLang())}`, HEX.rosso, 22);
         break;
       case "enemyDamaged": {
         // la band e gli attrezzi colpiscono più forte

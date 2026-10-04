@@ -105,3 +105,19 @@ export function pop(scene: Phaser.Scene, x: number, y: number, s: string, color:
 }
 
 export const reducedMotion = (): boolean => save.settings.reduceMotion || !!window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+
+const feedbackText = new WeakMap<Phaser.Scene, Phaser.GameObjects.Text>();
+/**
+ * Il giudizio della nota (perfetto, bene, nota sbagliata, tieni…): uno solo alla volta, nello stesso punto,
+ * così le scritte non si sovrappongono mai, nemmeno quando arrivano di fila.
+ */
+export function feedback(scene: Phaser.Scene, x: number, s: string, color: string, size = 26): Phaser.GameObjects.Text {
+  const prev = feedbackText.get(scene);
+  if (prev?.active) {
+    scene.tweens.killTweensOf(prev);
+    prev.destroy();
+  }
+  const t = pop(scene, x, 430, s, color, size);
+  feedbackText.set(scene, t);
+  return t;
+}
