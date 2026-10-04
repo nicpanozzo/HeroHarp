@@ -5,7 +5,7 @@ import { save } from "../state";
 import { getEngine } from "../audio/engine";
 import { hush } from "../audio/music";
 import { PRESET, type TonalitaArmonica } from "../style/basi";
-import { C, HEX, W, txt, panel } from "../ui";
+import { C, HEX, W, txt, panel, portrait, button } from "../ui";
 import { S, GROOVES, gearById, musicianById, type GearId, type StringKey } from "./data";
 import { areaOf, bandInstruments, type Offer, type RunState } from "./run";
 import type { L10n } from "../content/areas";
@@ -65,13 +65,23 @@ export function leaveRun(scene: Phaser.Scene, to: string, data?: object): void {
 
 // ---------- intestazione: atto, vita, dollari, band ----------
 
+/** Dove finisce l'intestazione (ombra compresa): sotto si può disegnare. In orizzontale 96, in verticale 186 (96 senza vita). */
+export const hudBottom = (opts: { hp?: boolean } = {}): number => (portrait() ? (opts.hp === false ? 96 : 186) : 96);
+
+/** Accorcia un testo con i puntini finché non sta nella larghezza data. */
+function fit(t: Phaser.GameObjects.Text, width: number): Phaser.GameObjects.Text {
+  while (t.width > width && t.text.length > 10) t.setText(t.text.slice(0, -2).trimEnd() + "…");
+  return t;
+}
+
 export function hud(scene: Phaser.Scene, run: RunState, opts: { hp?: boolean } = {}): void {
+  if (portrait()) return hudPortrait(scene, run, opts);
   const area = areaOf(run);
   panel(scene, 24, 14, W - 48, 76);
   txt(scene, 44, 36, `${s("act", { n: run.act + 1 })} · ${l(area.name)}`.toUpperCase(), 20, HEX.inchiostro, "titoli").setOrigin(0, 0.5);
   const tech = txt(scene, 44, 66, `${s("technique")}: ${l(area.technique)}`, 16, HEX.indaco).setOrigin(0, 0.5);
   // la tecnica resta sulla sua riga, accorciata se non ci sta
-  while (tech.width > 480 && tech.text.length > 10) tech.setText(tech.text.slice(0, -2).trimEnd() + "…");
+  fit(tech, 480);
   if (opts.hp !== false) {
     // vita
     const g = scene.add.graphics();
@@ -99,6 +109,42 @@ export function hud(scene: Phaser.Scene, run: RunState, opts: { hp?: boolean } =
       .setOrigin(0, 0.5)
       .setAlpha(0.85);
   }
+}
+
+/**
+ * Intestazione in verticale: tutta la larghezza, su quattro righe (atto e tappa, tecnica, vita e dollari, groove e band).
+ * Occupa y 14–180 (ombra fino a 186); senza vita solo le prime due righe, y 14–90.
+ */
+function hudPortrait(scene: Phaser.Scene, run: RunState, opts: { hp?: boolean }): void {
+  const area = areaOf(run);
+  const x = 16;
+  const w = W - 32;
+  const hp = opts.hp !== false;
+  panel(scene, x, 14, w, hp ? 166 : 76);
+  fit(txt(scene, x + 20, 38, `${s("act", { n: run.act + 1 })} · ${l(area.name)}`.toUpperCase(), 24, HEX.inchiostro, "titoli").setOrigin(0, 0.5), w - 40);
+  fit(txt(scene, x + 20, 70, `${s("technique")}: ${l(area.technique)}`, 19, HEX.indaco).setOrigin(0, 0.5), w - 40);
+  if (!hp) return;
+  // vita: barra larga col cuore a sinistra, dollari grandi a destra
+  const g = scene.add.graphics();
+  const bx = x + 64;
+  const bw = 360;
+  g.fillStyle(C.carta2, 1).fillRect(bx, 96, bw, 30);
+  g.fillStyle(C.rosso, 1).fillRect(bx, 96, (bw * Math.max(0, run.hp)) / run.maxHp, 30);
+  g.lineStyle(3, C.inchiostro, 1).strokeRect(bx, 96, bw, 30);
+  scene.add.image(x + 34, 111, "ui-cuore").setDisplaySize(40, 40);
+  txt(scene, bx + bw / 2, 111, `${run.hp} / ${run.maxHp}`, 21, HEX.inchiostro, "fori")
+    .setStroke(HEX.carta, 5)
+    .setName("hp");
+  txt(scene, x + w - 20, 111, `$ ${run.coins}`, 34, HEX.inchiostro, "fori")
+    .setOrigin(1, 0.5)
+    .setName("coins");
+  const band = run.band.length ? run.band.map((id) => musicianById(id).name).join(", ") : s("footOnly");
+  fit(
+    txt(scene, x + 20, 154, `${l(GROOVES[run.groove].name)} · ${s("band")}: ${band}`, 19, HEX.inchiostro)
+      .setOrigin(0, 0.5)
+      .setAlpha(0.85),
+    w - 40,
+  );
 }
 
 // ---------- icone degli attrezzi (disegnate, nello stile dei manifesti) ----------
@@ -213,4 +259,98 @@ export function offerCard(scene: Phaser.Scene, o: Offer, x: number, y: number, o
   c.on("pointerout", () => draw(false));
   c.on("pointerup", onPick);
   return c;
+}
+
+/**
+ * Offerta in verticale: una carta larga quanto lo schermo, immagine a sinistra e testo a destra.
+ * `aside` lascia libera una colonna a destra (per il prezzo nel negozio).
+ */
+export function offerRow(
+  scene: Phaser.Scene,
+  o: Offer,
+  x: number,
+  y: number,
+  onPick: () => void,
+  w: number,
+  h: number,
+  aside = 0,
+): Phaser.GameObjects.Container {
+  const g = scene.add.graphics();
+  const fill = o.type === "musician" ? 0xf6d9a0 : o.type === "heal" ? 0xf3cfc6 : C.carta;
+  const draw = (hover: boolean) => {
+    g.clear();
+    g.fillStyle(C.inchiostro, 1).fillRect(-w / 2 + 6, -h / 2 + 6, w, h);
+    g.fillStyle(hover ? 0xfff1d0 : fill, 1).fillRect(-w / 2, -h / 2, w, h);
+    g.lineStyle(hover ? 5 : 3, C.inchiostro, 1).strokeRect(-w / 2, -h / 2, w, h);
+  };
+  draw(false);
+  const parts: Phaser.GameObjects.GameObject[] = [g];
+  const pic = Math.min(h - 24, 170);
+  const px = -w / 2 + 16 + pic / 2;
+  if (o.type === "musician") parts.push(scene.add.image(px, 0, `band-${o.id}-saluta`).setDisplaySize(pic * 1.1, pic * 1.1));
+  else if (o.type === "gear") parts.push(gearIcon(scene, o.id, px, 0, pic * 0.85));
+  else parts.push(scene.add.image(px, 0, "ui-cuore").setDisplaySize(pic * 0.75, pic * 0.75));
+  // colonna del testo: dal bordo dell'immagine al bordo destro (meno lo spazio lasciato a parte)
+  const tx0 = -w / 2 + 32 + pic;
+  const tw = w / 2 - aside - 18 - tx0;
+  const cx = tx0 + tw / 2;
+  const tag = o.type === "musician" ? l(musicianById(o.id).role).toUpperCase() : o.type === "gear" ? s("gear").toUpperCase() : "";
+  const col: Phaser.GameObjects.Text[] = [];
+  if (tag) col.push(txt(scene, cx, 0, tag, 17, HEX.inchiostro).setLetterSpacing(2).setAlpha(0.75));
+  col.push(txt(scene, cx, 0, offerName(o).toUpperCase(), 28, HEX.inchiostro, "titoli").setWordWrapWidth(tw));
+  const perk = txt(scene, cx, 0, offerPerk(o), 22, HEX.inchiostro).setWordWrapWidth(tw);
+  col.push(perk);
+  // se la carta è bassa la descrizione si stringe un po'
+  const total = () => col.reduce((a, t) => a + t.height, 0) + (col.length - 1) * 8;
+  if (total() > h - 20) perk.setFontSize(19);
+  let yy = -total() / 2;
+  for (const t of col) {
+    t.setY(yy + t.height / 2);
+    yy += t.height + 8;
+  }
+  parts.push(...col);
+  const c = scene.add.container(x, y, parts).setSize(w, h).setInteractive({ useHandCursor: true });
+  c.on("pointerover", () => draw(true));
+  c.on("pointerout", () => draw(false));
+  c.on("pointerup", onPick);
+  return c;
+}
+
+// ---------- impaginazione in verticale ----------
+
+/** Pulsante da telefono: lo stesso di sempre, alto almeno 70, con la scritta più grande (che non esce mai dai bordi). */
+export function bigButton(
+  scene: Phaser.Scene,
+  x: number,
+  y: number,
+  label: string,
+  onClick: () => void,
+  w: number,
+  primary = true,
+  h = 88,
+): Phaser.GameObjects.Container {
+  const b = button(scene, x, y, label, onClick, w, primary, Math.max(70, h));
+  const t = b.list[1] as Phaser.GameObjects.Text;
+  t.setFontSize(h >= 84 ? 30 : 26);
+  if (t.width > w - 36) t.setScale((w - 36) / t.width);
+  return b;
+}
+
+/** Un pezzo della colonna: quanto è alto e dove metterlo, dato il suo centro. */
+export type Slot = { h: number; at: (y: number) => void };
+/** Un pezzo fatto di un solo oggetto centrato sul suo y (testi, pulsanti, immagini). */
+export const slot = (o: { setY(y: number): unknown }, h: number): Slot => ({ h, at: (y) => o.setY(y) });
+
+/**
+ * Impila i pezzi dall'alto in basso tra `top` e `bottom`, distribuendo lo spazio che avanza tra uno e l'altro
+ * (al massimo `maxGap`; il resto va sopra e sotto in parti uguali). Così la pagina riempie lo schermo da H 1180 a 1560.
+ */
+export function spread(slots: Slot[], top: number, bottom: number, maxGap = 70, minGap = 10): void {
+  const used = slots.reduce((a, x) => a + x.h, 0);
+  const gap = Phaser.Math.Clamp((bottom - top - used) / Math.max(1, slots.length - 1), minGap, maxGap);
+  let y = top + Math.max(0, (bottom - top - used - gap * (slots.length - 1)) / 2);
+  for (const x of slots) {
+    x.at(y + x.h / 2);
+    y += x.h + gap;
+  }
 }
