@@ -2,12 +2,13 @@
 // con la vita che resta da un duello all'altro, la tua band sul palco e i bonus di band e attrezzi.
 import Phaser from "phaser";
 import { Battle, type BattleEvent, type BattleOptions, type Round } from "../battle/logic";
-import { areaById, enemyById, type EnemyDef } from "../content/areas";
+import { areaById, enemyById, enemyLevel, type EnemyDef } from "../content/areas";
 import { formatTab, keyById, noteName, type HarpKey, type Tab } from "../harp";
 import { chipLabel } from "../scenes/BattleScene";
 import { getLang, t } from "../i18n";
 import { save } from "../state";
 import { getEngine } from "../audio/engine";
+import { grooveLevel } from "../audio/music";
 import { hop } from "../scenes/beat";
 import { applySettings } from "../settings";
 import { HearingReadout } from "../scenes/readout";
@@ -79,6 +80,8 @@ export class RunBattleScene extends Phaser.Scene {
   private cleanup: (() => void)[] = [];
   private ending = false;
   private playerTurn = false;
+  /** Arrangiamento della base per questo avversario (vedi enemyLevel). */
+  private level = 0;
   private poseUntil = 0;
   private enemyPoseUntil = 0;
   private shield = 0;
@@ -135,7 +138,9 @@ export class RunBattleScene extends Phaser.Scene {
     this.startedAt = engine.now;
     this.battle.playerHp = this.run.hp;
     // la tua band accompagna il duello, al tempo del nemico
-    runGroove(this.run, this.battle.bpm);
+    // gli élite suonano un arrangiamento più carico
+    this.level = enemyLevel(this.enemy) + (this.node.kind === "elite" ? 1 : 0);
+    runGroove(this.run, this.battle.bpm, this.level);
     this.cleanup.push(() => engine.duckBand(false));
     this.cleanup.push(
       basi.suBattito((n, tm) => {
@@ -558,6 +563,7 @@ export class RunBattleScene extends Phaser.Scene {
       case "bossPhase": {
         const d = b.currentPhase.description;
         this.setSub(`${t("bossPhase")} ${ev.index + 1}${d ? ` · ${d[getLang()]}` : ""}`);
+        grooveLevel(this.level + ev.index);
         break;
       }
       case "parry": {

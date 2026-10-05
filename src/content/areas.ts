@@ -466,3 +466,5 @@ export const areaById = (id: string): AreaDef => AREAS.find((a) => a.id === id)!
 const EXTRA_ENEMIES = new Map<string, EnemyDef>();
 export const registerEnemy = (e: EnemyDef): void => void EXTRA_ENEMIES.set(e.id, e);
 export const enemyById = (id: string): EnemyDef => EXTRA_ENEMIES.get(id) ?? AREAS.flatMap((a) => a.enemies).find((e) => e.id === id)!;
+/** Posto dell'avversario nella sua tappa (0 il primo, il boss per ultimo): sceglie l'arrangiamento della base. */
+export const enemyLevel = (e: EnemyDef): number => Math.max(0, areaById(e.areaId)?.enemies.findIndex((x) => x.id === e.id) ?? 0);

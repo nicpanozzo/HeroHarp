@@ -1,12 +1,12 @@
 import Phaser from "phaser";
 import { Battle, PLAYER_HP, type BattleEvent, type Round } from "../battle/logic";
-import { areaById, enemyById, type EnemyDef } from "../content/areas";
+import { areaById, enemyById, enemyLevel, type EnemyDef } from "../content/areas";
 import { keyById, noteName, type Tab } from "../harp";
 import type { PhraseNote } from "../battle/logic";
 import { getLang, t } from "../i18n";
 import { save, persist } from "../state";
 import { getEngine } from "../audio/engine";
-import { groove } from "../audio/music";
+import { groove, grooveLevel } from "../audio/music";
 import { hop } from "./beat";
 import { C, W, H, HEX, txt, backdrop, pop, panel, button, reducedMotion, feedback, setFeedbackY } from "../ui";
 import { battleLayout, type BattleLayout } from "./battleLayout";
@@ -65,6 +65,8 @@ export class BattleScene extends Phaser.Scene {
   private cleanup: (() => void)[] = [];
   private ending = false;
   private playerTurn = false;
+  /** Arrangiamento della base per questo avversario (vedi enemyLevel). */
+  private level = 0;
   private poseUntil = 0;
   private enemyPoseUntil = 0;
   private recorder!: BattleRecorder;
@@ -113,7 +115,9 @@ export class BattleScene extends Phaser.Scene {
     this.recorder = new BattleRecorder(stats, keyById(save.keyId));
     this.startedAt = engine.now;
     // la base dei menu continua: cambia solo il tempo (o il luogo, se si arriva da un'altra tappa)
-    groove(area.music, this.battle.bpm);
+    // ogni avversario ha il suo arrangiamento del giro: la base cambia dalla battuta dopo, senza fermarsi
+    this.level = enemyLevel(this.enemy);
+    groove(area.music, this.battle.bpm, this.level);
     this.cleanup.push(() => engine.duckBand(false));
     this.cleanup.push(
       basi.suBattito((n, tm) => {
@@ -512,6 +516,7 @@ export class BattleScene extends Phaser.Scene {
       case "bossPhase": {
         const d = this.battle.currentPhase.description;
         this.setSub(`${t("bossPhase")} ${ev.index + 1}${d ? ` · ${d[getLang()]}` : ""}`);
+        grooveLevel(this.level + ev.index);
         break;
       }
       case "parry": {

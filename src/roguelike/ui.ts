@@ -21,7 +21,7 @@ export const l = (x: L10n): string => x[getLang()];
 let playing: string | null = null;
 
 /** Fa suonare la base della tappa con gli strumenti della tua band e il groove scelto. */
-export function runGroove(run: RunState, bpm?: number): void {
+export function runGroove(run: RunState, bpm?: number, livello = 0): void {
   const engine = getEngine();
   if (engine.ctx.state !== "running") return;
   const area = areaOf(run);
@@ -31,6 +31,7 @@ export function runGroove(run: RunState, bpm?: number): void {
     // stessa tappa: la band cambia al volo (chi si unisce entra alla croma dopo)
     b.impostaBand(bandInstruments(run));
     if (bpm && b.bpm !== bpm) b.impostaTempo(bpm);
+    b.impostaStile(livello);
     return;
   }
   b.avvia({
@@ -39,6 +40,7 @@ export function runGroove(run: RunState, bpm?: number): void {
     band: bandInstruments(run),
     swing: run.groove,
     bpm: bpm ?? PRESET[area.music].bpm,
+    stile: livello,
   });
   playing = sig;
   engine.fx.tonica = b.tonicaMidi;
