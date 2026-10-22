@@ -40,7 +40,7 @@ export class Suono {
    */
   bandSicura(band: string[], cuffie: boolean): Strumento[] {
     if (cuffie) return band as Strumento[];
-    const tamburi = band.filter((s) => s === "piede" || s === "spazzole" || s === "batteria" || s === "treno") as Strumento[];
+    const tamburi = band.filter((s) => s === "piede" || s === "spazzole" || s === "batteria" || s === "treno" || s === "bodhran") as Strumento[];
     return tamburi.length ? tamburi : ["piede"];
   }
 

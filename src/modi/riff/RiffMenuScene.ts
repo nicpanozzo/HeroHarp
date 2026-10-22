@@ -1,14 +1,18 @@
 // Copiato da modes/src/riff/RiffMenuScene.ts con scripts/sync-content.mjs, non modificare qui.
-// Scelta del riff: dischi a 78 giri appesi al muro, modo Concerto/Prova e velocità.
+// Scelta del riff: dischi a 78 giri appesi al muro, modo Concerto/Prova/Ascolta e velocità.
+// Due sezioni: il blues (riff e frasi del percorso) e l'Irlanda (brani tradizionali).
 
 import Phaser from "phaser";
 import { COL, HEX, W, H, testo, titolo, bottone, scelta, grana, vaiA, verticale } from "../core/ui";
 import { t } from "../core/testi";
 import { impostazioni, record } from "../core/impostazioni";
-import { RIFF, RIFF_PERCORSO, type Riff } from "./riff";
+import { RIFF, RIFF_PERCORSO, RIFF_IRLANDA, type Riff } from "./riff";
+import { NOMI_TIPO } from "./irlanda";
 import type { OpzioniRiff } from "./RiffScene";
 
 let scelte: Omit<OpzioniRiff, "id"> = { modo: "concerto", tempo: 1 };
+let sezione: "blues" | "irlanda" = "blues";
+const MODI = [["concerto", "concerto", "concertoDesc"], ["prova", "pratica", "praticaDesc"], ["ascolta", "ascolta", "ascoltaDesc"]] as const;
 const COLORE_LIVELLO = [COL.verde, COL.ottone, COL.rosso, COL.prugna, COL.indaco];
 
 export class RiffMenuScene extends Phaser.Scene {
@@ -18,18 +22,26 @@ export class RiffMenuScene extends Phaser.Scene {
     this.cameras.main.fadeIn(140, 21, 17, 14);
     this.events.off("scelte-aggiorna");
     const g = this.add.graphics();
-    g.fillGradientStyle(0x0b1022, 0x0b1022, 0x2a1d14, 0x2a1d14, 1).fillRect(0, 0, W, H);
+    const irl = sezione === "irlanda";
+    g.fillGradientStyle(irl ? 0x0c2219 : 0x0b1022, irl ? 0x0c2219 : 0x0b1022, 0x2a1d14, 0x2a1d14, 1).fillRect(0, 0, W, H);
     if (verticale()) return this.creaAlto();
-    titolo(this, 250, 44, t("riffTitolo"), 34, HEX.lampada, HEX.rosso);
-    testo(this, 250, 78, t("scegliRiff"), 14, HEX.carta).setAlpha(0.8);
-    scelta(this, 590, 40, t("concerto"), () => scelte.modo === "concerto", () => (scelte.modo = "concerto"), 140, true);
-    scelta(this, 740, 40, t("pratica"), () => scelte.modo === "prova", () => (scelte.modo = "prova"), 140, true);
-    const desc = testo(this, 665, 72, "", 12, HEX.carta).setAlpha(0.8);
-    const agg = () => desc.setText(t(scelte.modo === "concerto" ? "concertoDesc" : "praticaDesc"));
+    titolo(this, 250, 40, t("riffTitolo"), 34, HEX.lampada, HEX.rosso);
+    this.schede(150, 96, 150);
+    MODI.forEach(([m, k], i) => scelta(this, 560 + i * 130, 40, t(k), () => scelte.modo === m, () => (scelte.modo = m), 122, true));
+    const desc = testo(this, 690, 72, "", 12, HEX.carta).setAlpha(0.8);
+    const agg = () => desc.setText(t(MODI.find(([m]) => m === scelte.modo)![2]));
     agg(); this.events.on("scelte-aggiorna", agg);
-    testo(this, 530, 100, t("tempo").toUpperCase(), 11, HEX.grigio, "fori");
-    [0.7, 0.85, 1].forEach((v, i) => scelta(this, 610 + i * 100, 100, `${Math.round(v * 100)}%`, () => scelte.tempo === v, () => (scelte.tempo = v), 86, true));
+    testo(this, 530, 104, t("tempo").toUpperCase(), 11, HEX.grigio, "fori");
+    [0.7, 0.85, 1].forEach((v, i) => scelta(this, 610 + i * 100, 104, `${Math.round(v * 100)}%`, () => scelte.tempo === v, () => (scelte.tempo = v), 86, true));
 
+    if (irl) {
+      testo(this, W / 2, 152, t("irlandaSotto"), 14, HEX.carta).setAlpha(0.85);
+      RIFF_IRLANDA.forEach((r, i) => this.disco(130 + (i % 4) * 233, 248 + Math.floor(i / 4) * 128, r, 214, 112));
+      bottone(this, 70, 516, t("indietro"), () => vaiA(this, "hub"), { w: 110, h: 34, primario: false, size: 15 });
+      this.trifoglio(W - 60, 500, 22);
+      grana(this, 0.35);
+      return;
+    }
     RIFF.forEach((r, i) => this.disco(130 + (i % 4) * 233, 162 + Math.floor(i / 4) * 62, r, 214, 54));
     testo(this, W / 2, 400, impostazioni.lingua === "it" ? "DAL PERCORSO" : "FROM THE JOURNEY", 13, HEX.ottone, "fori");
     RIFF_PERCORSO.forEach((r, i) => this.disco(90 + i * 156, 456, r, 146, 74, true));
@@ -41,17 +53,27 @@ export class RiffMenuScene extends Phaser.Scene {
   private creaAlto() {
     bottone(this, 66, 38, "‹ " + t("indietro"), () => vaiA(this, "hub"), { w: 116, h: 54, primario: false, size: 17 });
     titolo(this, 336, 30, t("riffTitolo"), 30, HEX.lampada, HEX.rosso, 356);
-    testo(this, 336, 62, t("scegliRiff"), 16, HEX.carta).setAlpha(0.85);
-    scelta(this, 166, 112, t("concerto"), () => scelte.modo === "concerto", () => (scelte.modo = "concerto"), 200, true);
-    scelta(this, 376, 112, t("pratica"), () => scelte.modo === "prova", () => (scelte.modo = "prova"), 200, true);
-    const desc = testo(this, W / 2, 150, "", 15, HEX.carta).setAlpha(0.85).setWordWrapWidth(W - 40);
-    const agg = () => desc.setText(t(scelte.modo === "concerto" ? "concertoDesc" : "praticaDesc"));
+    this.schede(166, 92, 200);
+    MODI.forEach(([m, k], i) => scelta(this, W / 2 + (i - 1) * 172, 150, t(k), () => scelte.modo === m, () => (scelte.modo = m), 162, true));
+    const desc = testo(this, W / 2, 190, "", 15, HEX.carta).setAlpha(0.85).setWordWrapWidth(W - 40);
+    const agg = () => desc.setText(t(MODI.find(([m]) => m === scelte.modo)![2]));
     agg(); this.events.on("scelte-aggiorna", agg);
-    testo(this, 30, 190, t("tempo").toUpperCase(), 15, HEX.grigio, "fori").setOrigin(0, 0.5);
-    [0.7, 0.85, 1].forEach((v, i) => scelta(this, 188 + i * 134, 190, `${Math.round(v * 100)}%`, () => scelte.tempo === v, () => (scelte.tempo = v), 126, true));
+    testo(this, 30, 230, t("tempo").toUpperCase(), 15, HEX.grigio, "fori").setOrigin(0, 0.5);
+    [0.7, 0.85, 1].forEach((v, i) => scelta(this, 188 + i * 134, 230, `${Math.round(v * 100)}%`, () => scelte.tempo === v, () => (scelte.tempo = v), 126, true));
+
+    if (sezione === "irlanda") {
+      // otto brani in due colonne, alti abbastanza per la descrizione
+      const alto = 300, basso = H - 16, gap = 12, righe = Math.ceil(RIFF_IRLANDA.length / 2);
+      testo(this, W / 2, 272, t("irlandaSotto"), 15, HEX.carta).setAlpha(0.85).setWordWrapWidth(W - 40);
+      const h = Math.min(150, (basso - alto - gap * (righe - 1)) / righe);
+      const y0 = alto + h / 2;
+      RIFF_IRLANDA.forEach((r, i) => this.disco(W / 2 + (i % 2 ? 130 : -130), y0 + Math.floor(i / 2) * (h + gap), r, 252, h));
+      grana(this, 0.35);
+      return;
+    }
 
     // i dischi riempiono il resto dello schermo: più alti sui telefoni lunghi
-    const alto = 226, basso = H - 12, gap = 8, etichetta = 28;
+    const alto = 262, basso = H - 12, gap = 8, etichetta = 28;
     const righe = Math.ceil(RIFF.length / 2) + Math.ceil(RIFF_PERCORSO.length / 2);
     const h = Math.min(72, (basso - alto - etichetta - gap * righe) / righe);
     const colonna = (i: number) => W / 2 + (i % 2 ? 130 : -130);
@@ -64,6 +86,26 @@ export class RiffMenuScene extends Phaser.Scene {
     grana(this, 0.35);
   }
 
+
+  /** Le due sezioni della strada: blues e Irlanda. Cambiare sezione ridisegna il menu. */
+  private schede(x: number, y: number, w: number) {
+    const V = verticale(), gap = V ? 210 : 160;
+    for (const [i, id, k] of [[0, "blues", "sezioneBlues"], [1, "irlanda", "sezioneIrlanda"]] as const) {
+      scelta(this, x + i * gap, y, t(k), () => sezione === id, () => { if (sezione !== id) { sezione = id; this.scene.restart(); } }, w, true);
+    }
+    // un trifoglio accanto alla scheda Irlanda
+    this.trifoglio(x + gap + w / 2 - (V ? 26 : 22), y, V ? 9 : 7);
+  }
+
+  private trifoglio(x: number, y: number, r: number) {
+    const g = this.add.graphics().setDepth(5);
+    g.fillStyle(0x3fa34d, 1);
+    for (const a of [-90, 30, 150]) {
+      const rad = Phaser.Math.DegToRad(a);
+      g.fillCircle(x + Math.cos(rad) * r * 0.9, y + Math.sin(rad) * r * 0.9, r * 0.75);
+    }
+    g.lineStyle(Math.max(2, r * 0.25), 0x3fa34d, 1).lineBetween(x, y, x + r * 0.5, y + r * 1.8);
+  }
 
   private disco(x: number, y: number, r: Riff, w: number, h: number, piccolo = false) {
     const V = verticale();
@@ -89,7 +131,8 @@ export class RiffMenuScene extends Phaser.Scene {
     else if (nome.width > tw) nome.setScale(tw / nome.width);
     c.add([g, nome]);
     if (!piccolo && h >= 80) c.add(testo(this, tx, nome.y + nome.displayHeight + 4, r.descr[impostazioni.lingua], 12, HEX.grigio).setOrigin(0, 0).setAlign("left").setWordWrapWidth(tw));
-    c.add(testo(this, tx, h / 2 - 12, "★".repeat(r.livello), V ? 15 : piccolo ? 10 : 12, HEX.ottone, "fori").setOrigin(0, 0.5));
+    const tipo = r.tipo ? `${NOMI_TIPO[r.tipo][impostazioni.lingua]}  ` : "";
+    c.add(testo(this, tx, h / 2 - 12, tipo + "★".repeat(r.livello), V ? 15 : piccolo ? 10 : 12, HEX.ottone, "fori").setOrigin(0, 0.5));
     const stelle = rec?.stelle ?? 0;
     c.add(testo(this, w / 2 - 10, h / 2 - 12, rec ? "●".repeat(stelle) + "○".repeat(3 - stelle) : "", V ? 15 : 12, HEX.lampada, "fori").setOrigin(1, 0.5));
     c.setSize(w, h).setInteractive({ useHandCursor: true });

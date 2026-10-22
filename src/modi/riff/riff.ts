@@ -6,6 +6,8 @@
 import type { Area, Forma, Strumento } from "../../style/basi";
 import percorso from "../../content/percorso.json";
 import { leggiForo, scriviForo } from "../core/armonica";
+import { leggiAbc, inIntavolatura } from "./abc";
+import { BRANI, type Brano, type TipoBrano } from "./irlanda";
 
 export interface NotaRiff { foro: string; inizio: number; durata: number }
 
@@ -15,7 +17,7 @@ export interface Riff {
   descr: { it: string; en: string };
   livello: 1 | 2 | 3 | 4 | 5;
   bpm: number;
-  posizione: 1 | 2;
+  posizione: 1 | 2 | 3;
   forma: Forma;
   swing: "shuffle" | "dritto";
   band: Strumento[];
@@ -23,7 +25,9 @@ export interface Riff {
   /** Battiti totali (multiplo di 4). */
   battiti: number;
   note: NotaRiff[];
-  origine: "riff" | "percorso";
+  origine: "riff" | "percorso" | "irlanda";
+  /** Solo per i brani irlandesi: giga, reel, polka... */
+  tipo?: TipoBrano;
 }
 
 export function leggiRiff(s: string): { note: NotaRiff[]; battiti: number } {
@@ -183,7 +187,20 @@ function daPercorso(a: AreaP, i: number): Riff | null {
   };
 }
 
+// ---------- Brani irlandesi (irlanda.ts): bodhrán e bordone al posto della band blues ----------
+
+function daBrano(b: Brano): Riff {
+  const note = inIntavolatura(leggiAbc(b.abc.musica, b.abc));
+  const fine = note[note.length - 1];
+  return {
+    id: `irlanda-${b.id}`, nome: { it: b.nome, en: b.nome }, descr: b.descr, livello: b.livello, bpm: b.bpm,
+    posizione: b.posizione, forma: "vamp", swing: b.swing, band: ["bodhran", "bordone"], area: "portico",
+    battiti: Math.ceil((fine.inizio + fine.durata - 1e-6) / 4) * 4, note, origine: "irlanda", tipo: b.tipo,
+  };
+}
+
 export const RIFF: Riff[] = DEF.map(costruisci).sort((a, b) => a.livello - b.livello);
 export const RIFF_PERCORSO: Riff[] = (percorso as unknown as { areas: AreaP[] }).areas
   .map((a, i) => daPercorso(a, i)).filter((r): r is Riff => r !== null);
-export const TUTTI_I_RIFF = [...RIFF, ...RIFF_PERCORSO];
+export const RIFF_IRLANDA: Riff[] = BRANI.map(daBrano);
+export const TUTTI_I_RIFF = [...RIFF, ...RIFF_PERCORSO, ...RIFF_IRLANDA];

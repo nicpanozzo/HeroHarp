@@ -10,7 +10,8 @@
 //   basi.impostaTempo(70);                     // difficoltà adattiva: vale dalla battuta successiva
 //   basi.ferma();
 
-export type Strumento = "piede" | "treno" | "acustica" | "basso" | "piano" | "spazzole" | "batteria" | "elettrica";
+/** "bodhran" e "bordone" sono la band dei brani irlandesi della Strada dei Riff: tamburo a cornice e nota tenuta. */
+export type Strumento = "piede" | "treno" | "acustica" | "basso" | "piano" | "spazzole" | "batteria" | "elettrica" | "bodhran" | "bordone";
 export type Forma = "vamp" | "quattro" | "blues12";
 export type Area = "portico" | "stazione" | "treno" | "juke" | "beale" | "crocevia" | "fiume" | "chicago" | "dopo";
 /** Tonalità dell'armonica diatonica (layout Richter). */
@@ -171,7 +172,7 @@ export function grado(forma: Forma, battuta: number, cambioVeloce = false): numb
 export const periodo = (forma: Forma) => (forma === "blues12" ? 12 : 8);
 
 /** Un colpo dell'arrangiamento: la voce, la nota (se intonata), il volume e la durata in battiti. */
-export type Voce = "cassa" | "rullante" | "spazzola" | "charleston" | "piatto" | "tom" | "battimani" | "basso" | "acustica" | "elettrica" | "piano";
+export type Voce = "cassa" | "rullante" | "spazzola" | "charleston" | "piatto" | "tom" | "battimani" | "basso" | "acustica" | "elettrica" | "piano" | "bodhran" | "bacchetta" | "bordone";
 export interface Colpo { voce: Voce; midi?: number; v: number; durata: number }
 
 export interface Momento {
@@ -217,6 +218,18 @@ export function arrangia(m: Momento): Colpo[] {
   const meta = fermo % 2;
   const croma = m.durataCroma;
   const c = (voce: Voce, v: number, durata = 0.2, midi?: number) => out.push(midi === undefined ? { voce, v, durata } : { voce, midi, v, durata });
+
+  // --- musica irlandese: il bodhrán batte ogni croma (forte in battere, il bordo della pelle in levare)
+  // e il bordone tiene tonica e quinta per tutta la battuta: niente terze, così sta bene sotto ogni modo ---
+  if (ha("bodhran")) {
+    const ultima8 = p === per - 1 && e >= 4;
+    if (!levare) c("bodhran", battito === 0 ? 0.85 : battito === 2 ? 0.65 : 0.5);
+    else c("bacchetta", ultima8 ? 0.3 + 0.05 * e : 0.22);
+  }
+  if (ha("bordone") && e === 0) {
+    c("bordone", 0.075, 4, m.tonica + 12 + g);
+    c("bordone", 0.05, 4, m.tonica + 19 + g);
+  }
 
   // --- stop-time: un colpo sull'uno, poi solo un tic leggero sui battiti per non perdere il tempo ---
   if (stop) {
@@ -355,6 +368,16 @@ export function arrangia(m: Momento): Colpo[] {
     }
   }
   return out;
+}
+
+/**
+ * Tonica del basso (MIDI) per uno spostamento in semitoni dal Do: tra Mi1 (40) e Sib1 (46) o subito sotto,
+ * così il basso non va troppo giù o su. Spostamento 0 = Do → 36; 7 = Sol → 43; 2 = Re → 38.
+ */
+export function tonicaGrave(spostamento: number): number {
+  // la classe della nota si conta dal Mi (40 = Mi), non dal Do: prima si contava dal Do e la band suonava una terza sopra
+  const t = 40 + (((spostamento - 4) % 12) + 12) % 12;
+  return t > 46 ? t - 12 : t;
 }
 
 const mtof = (m: number) => 440 * Math.pow(2, (m - 69) / 12);
@@ -496,9 +519,7 @@ export class GeneratoreBasi {
   }
 
   private suonaCroma(e: number, t: number) {
-    // Tonica grave tra Mi1 e Re#2 circa, in modo che il basso non vada troppo giù o su.
-    let tonica = 40 + ((this.spostamento() % 12) + 12) % 12;
-    if (tonica > 46) tonica -= 12;
+    const tonica = tonicaGrave(this.spostamento());
     const b = this.durataBattito;
     const colpi = arrangia({
       band: this.cfg.band, stile: this.cfg.stili[this.indiceStile], forma: this.cfg.forma, minore: !!this.cfg.minore,
@@ -518,6 +539,9 @@ export class GeneratoreBasi {
         case "acustica": this.pizzico(t, m, d, k.v, this.bus.medio, { taglio: 2600 }); break;
         case "elettrica": this.pizzico(t, m, d, k.v, this.bus.medio, { distorsione: true, taglio: 3200, taglioFine: 1200 }); break;
         case "piano": this.pizzico(t, m, d, k.v, this.bus.medio, { onda: "triangle", taglio: 3000, taglioFine: 1500 }); break;
+        case "bodhran": this.cassa(t, k.v, 150, 62); break;
+        case "bacchetta": this.bacchetta(t, k.v); break;
+        case "bordone": this.bordone(t, m, d, k.v); break;
       }
     }
   }
@@ -576,6 +600,31 @@ export class GeneratoreBasi {
       f.type = "bandpass"; f.frequency.value = 1300; f.Q.value = 1.2;
       this.inviluppo(g, t + dt, 0.001, v * k, 0.07);
       n.connect(f).connect(g).connect(this.bus.ritmo); n.start(t + dt); n.stop(t + dt + 0.12);
+    }
+  }
+
+  /** Il colpo leggero sul bordo del bodhrán: un tono breve e un soffio di pelle. */
+  private bacchetta(t: number, v: number) {
+    this.cassa(t, v * 0.8, 320, 210);
+    const n = this.sorgenteRumore(), f = this.ctx.createBiquadFilter(), g = this.ctx.createGain();
+    f.type = "bandpass"; f.frequency.value = 2200; f.Q.value = 0.8;
+    this.inviluppo(g, t, 0.001, v * 0.35, 0.04);
+    n.connect(f).connect(g).connect(this.bus.ritmo); n.start(t); n.stop(t + 0.08);
+  }
+
+  /** Bordone: due seghe appena scordate e filtrate, con attacco e rilascio morbidi che si sovrappongono tra le battute. */
+  private bordone(t: number, midi: number, durata: number, v: number) {
+    const g = this.ctx.createGain(), f = this.ctx.createBiquadFilter();
+    f.type = "lowpass"; f.frequency.value = 900;
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.linearRampToValueAtTime(v, t + 0.12);
+    g.gain.setValueAtTime(v, t + durata);
+    g.gain.linearRampToValueAtTime(0.0001, t + durata + 0.25);
+    f.connect(g).connect(this.bus.basso);
+    for (const cents of [-4, 4]) {
+      const o = this.ctx.createOscillator();
+      o.type = "sawtooth"; o.frequency.value = mtof(midi); o.detune.value = cents;
+      o.connect(f); o.start(t); o.stop(t + durata + 0.3);
     }
   }
 
