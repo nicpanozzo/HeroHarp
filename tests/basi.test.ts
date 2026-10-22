@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { PRESET, arrangia, grado, periodo, type Area, type Colpo, type Stile } from "../src/style/basi";
+import { PRESET, arrangia, grado, periodo, tonicaGrave, type Area, type Colpo, type Stile } from "../src/style/basi";
 
 const AREE = Object.keys(PRESET) as Area[];
 
@@ -97,5 +97,18 @@ describe("basi: ogni luogo e ogni livello hanno il loro giro", () => {
       if (g === 7) return;
       for (const c of bar.filter((c) => c.midi !== undefined && c.voce !== "basso")) expect((c.midi! - 43 - g + 120) % 12).not.toBe(4);
     });
+  });
+});
+
+describe("tonica del basso", () => {
+  it("è la nota giusta della tonalità, nel registro grave", () => {
+    expect(tonicaGrave(0) % 12).toBe(0); // Do
+    expect(tonicaGrave(7) % 12).toBe(7); // Sol: seconda posizione dell'armonica in Do
+    expect(tonicaGrave(2) % 12).toBe(2); // Re: terza posizione
+    for (let s = -5; s < 14; s++) {
+      expect((((tonicaGrave(s) - s) % 12) + 12) % 12).toBe(0);
+      expect(tonicaGrave(s)).toBeGreaterThanOrEqual(35);
+      expect(tonicaGrave(s)).toBeLessThanOrEqual(46);
+    }
   });
 });

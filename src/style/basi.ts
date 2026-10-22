@@ -370,6 +370,16 @@ export function arrangia(m: Momento): Colpo[] {
   return out;
 }
 
+/**
+ * Tonica del basso (MIDI) per uno spostamento in semitoni dal Do: tra Mi1 (40) e Sib1 (46) o subito sotto,
+ * così il basso non va troppo giù o su. Spostamento 0 = Do → 36; 7 = Sol → 43; 2 = Re → 38.
+ */
+export function tonicaGrave(spostamento: number): number {
+  // la classe della nota si conta dal Mi (40 = Mi), non dal Do: prima si contava dal Do e la band suonava una terza sopra
+  const t = 40 + (((spostamento - 4) % 12) + 12) % 12;
+  return t > 46 ? t - 12 : t;
+}
+
 const mtof = (m: number) => 440 * Math.pow(2, (m - 69) / 12);
 
 export class GeneratoreBasi {
@@ -509,9 +519,7 @@ export class GeneratoreBasi {
   }
 
   private suonaCroma(e: number, t: number) {
-    // Tonica grave tra Mi1 e Re#2 circa, in modo che il basso non vada troppo giù o su.
-    let tonica = 40 + ((this.spostamento() % 12) + 12) % 12;
-    if (tonica > 46) tonica -= 12;
+    const tonica = tonicaGrave(this.spostamento());
     const b = this.durataBattito;
     const colpi = arrangia({
       band: this.cfg.band, stile: this.cfg.stili[this.indiceStile], forma: this.cfg.forma, minore: !!this.cfg.minore,
