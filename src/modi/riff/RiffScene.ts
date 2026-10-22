@@ -15,7 +15,8 @@ import { t } from "../core/testi";
 import { Partitura, moltiplicatoreCombo, type NotaInGioco } from "./partitura";
 import { TUTTI_I_RIFF, type Riff } from "./riff";
 
-export interface OpzioniRiff { id: string; modo: "concerto" | "prova"; tempo: number }
+/** Concerto = a tempo con la band; Prova = il riff ti aspetta; Ascolta = l'armonica lo suona da sola, per sentire come va. */
+export interface OpzioniRiff { id: string; modo: "concerto" | "prova" | "ascolta"; tempo: number }
 
 /** Impaginazione della strada in orizzontale (960×540). */
 const STRADA = { CX: 480, HIT: 432, HOR: 118, CORSIA: 56, ANTICIPO: 1.7 }; // ANTICIPO: secondi di strada visibili, corta = arcade
@@ -53,18 +54,22 @@ export class RiffScene extends Phaser.Scene {
   private CORSIA = STRADA.CORSIA;
   private ANTICIPO = STRADA.ANTICIPO;
   private barraPos = { x: 20, y: 60, w: 220, h: 6 };
+  /** Ascolta: fino a quale nota l'armonica guida è già stata programmata. */
+  private programmate = 0;
 
   constructor() { super("riff"); }
 
   init(o: Partial<OpzioniRiff>) {
     this.o = { id: TUTTI_I_RIFF[0].id, modo: "concerto", tempo: 1, ...o };
     this.riff = TUTTI_I_RIFF.find((r) => r.id === this.o.id) ?? TUTTI_I_RIFF[0];
-    this.finito = false; this.attesa = false; this.sordoFino = 0; this.etichette.clear(); this.lampi.fill(0); this.ultimoMolt = 1;
+    this.finito = false; this.attesa = false; this.sordoFino = 0; this.programmate = 0; this.etichette.clear(); this.lampi.fill(0); this.ultimoMolt = 1;
   }
 
   create() {
     this.cameras.main.fadeIn(140, 21, 17, 14);
-    this.ascolto.accendiMicrofono();
+    const ascolta = this.o.modo === "ascolta";
+    if (ascolta) void this.suono.ctx.resume();
+    else this.ascolto.accendiMicrofono();
     this.V = verticale();
     const yArmonica = this.V ? H - 108 : 474;
     if (this.V) {
@@ -98,19 +103,21 @@ export class RiffScene extends Phaser.Scene {
 
     // Orologio: in concerto parte la band con una battuta di attacco; in prova il tempo avanza solo se suoni.
     const s = this.suono;
-    if (this.o.modo === "concerto") {
+    if (this.o.modo !== "prova") {
       const avvio = s.ctx.currentTime + 0.3;
-      s.basi.avvia({ area: r.area, armonica: ton, forma: r.forma, posizione: r.posizione, bpm: r.bpm * this.o.tempo, swing: r.swing, band: s.bandSicura(r.band, record.cuffie) }, avvio);
+      // in ascolto il microfono è spento: la band suona tutta anche senza cuffie
+      const band = ascolta ? r.band : s.bandSicura(r.band, record.cuffie);
+      s.basi.avvia({ area: r.area, armonica: ton, forma: r.forma, posizione: r.posizione, bpm: r.bpm * this.o.tempo, swing: r.swing, band }, avvio);
       this.t0 = avvio + 4 * this.battito;
       for (let i = 0; i < 4; i++) this.time.delayedCall((avvio - s.ctx.currentTime + i * this.battito) * 1000, () => this.mostraAvviso(i === 3 ? "VIA!" : String(3 - i), i === 3 ? HEX.lampada : HEX.carta));
     } else {
       this.tempoCanzone = -1.5;
       this.time.delayedCall(200, () => this.mostraAvviso(t("pratica"), HEX.carta));
     }
-    s.effetti.tonica = foroMidi(r.posizione === 2 ? "2↓" : "1↑", ton);
+    s.effetti.tonica = foroMidi(r.posizione === 3 ? "1↓" : r.posizione === 2 ? "2↓" : "1↑", ton);
 
     const sgancia = this.ascolto.suNota((on) => {
-      if (this.finito || on.time < this.sordoFino) return;
+      if (this.finito || this.o.modo === "ascolta" || on.time < this.sordoFino) return;
       const tc = this.o.modo === "concerto" ? on.time - this.t0 : this.tempoCanzone;
       const e = this.partitura.attacco(on.midi, tc, this.o.modo === "prova");
       if (!e) return;
@@ -133,6 +140,7 @@ export class RiffScene extends Phaser.Scene {
   }
 
   private disegnaPaesaggio() {
+    if (this.riff.origine === "irlanda") return this.paesaggioIrlanda();
     const g = this.add.graphics();
     g.fillGradientStyle(0x0b1022, 0x0b1022, 0x3a2340, 0x3a2340, 1).fillRect(0, 0, W, this.HOR + 10);
     for (let i = 0; i < 50; i++) g.fillStyle(COL.carta, Math.random() * 0.7 + 0.1).fillCircle(Math.random() * W, Math.random() * (this.HOR - 20), Math.random() * 1.4 + 0.3);
@@ -154,16 +162,63 @@ export class RiffScene extends Phaser.Scene {
     testo(this, ix + 26, iy + 27, "61", 16, HEX.inchiostro, "titoli");
   }
 
+  /**
+   * La strada irlandese: crepuscolo verde, colline a scacchi di campi, muretti a secco, una torre rotonda,
+   * un cottage con la finestra accesa e il cartello stradale verde bilingue.
+   */
+  private paesaggioIrlanda() {
+    const g = this.add.graphics(), O = this.HOR;
+    g.fillGradientStyle(0x0d1a2a, 0x0d1a2a, 0x2f4a4a, 0x2f4a4a, 1).fillRect(0, 0, W, O + 10);
+    for (let i = 0; i < 40; i++) g.fillStyle(COL.carta, Math.random() * 0.6 + 0.1).fillCircle(Math.random() * W, Math.random() * (O - 40), Math.random() * 1.3 + 0.3);
+    // luna piena dietro una nuvola
+    const [lx, ly] = this.V ? [440, O - 120] : [780, 46];
+    g.fillStyle(0xf3ead2, 1).fillCircle(lx, ly, 22);
+    g.fillStyle(0x2f4a4a, 0.9).fillEllipse(lx - 22, ly + 12, 70, 14).fillEllipse(lx + 18, ly + 16, 54, 10);
+    // colline lontane e vicine, due verdi
+    const collina = (colore: number, base: number, alt: number, f1: number, f2: number) => {
+      g.fillStyle(colore, 1).beginPath(); g.moveTo(0, O + 8);
+      for (let x = 0; x <= W; x += 20) g.lineTo(x, base - alt - Math.sin(x / f1) * alt * 0.8 - Math.sin(x / f2 + 1) * alt * 0.3);
+      g.lineTo(W, O + 8); g.closePath(); g.fillPath();
+    };
+    collina(0x1d3b2c, O - 18, 14, 120, 47);
+    // torre rotonda sulla collina lontana
+    const [tx, ty] = this.V ? [96, O - 34] : [400, O - 34];
+    g.fillStyle(0x15241d, 1).fillRect(tx - 7, ty - 46, 14, 46).fillTriangle(tx - 9, ty - 46, tx + 9, ty - 46, tx, ty - 62);
+    g.fillStyle(COL.lampada, 0.8).fillRect(tx - 2, ty - 38, 4, 6);
+    collina(0x2c5a3b, O - 4, 9, 90, 33);
+    // muretti a secco che dividono i campi
+    g.lineStyle(2, 0x9a9a86, 0.55);
+    for (let k = 0; k < 6; k++) {
+      const x0 = (k + 0.3) * W / 6, y0 = O - 4 - Math.sin(x0 / 90) * 7;
+      g.lineBetween(x0, y0, x0 + 26, y0 + 9);
+    }
+    // cottage col tetto di paglia e la finestra accesa
+    const [cx, cy] = this.V ? [W - 120, O - 6] : [W - 250, O - 4];
+    g.fillStyle(0xe9e2cf, 1).fillRect(cx - 22, cy - 20, 44, 20);
+    g.fillStyle(0x7a5a2c, 1).fillTriangle(cx - 28, cy - 18, cx + 28, cy - 18, cx, cy - 40);
+    g.fillStyle(COL.lampada, 1).fillRect(cx - 14, cy - 13, 8, 8);
+    g.fillStyle(0x2a2520, 1).fillRect(cx + 4, cy - 14, 8, 14);
+    g.fillStyle(0x16241b, 1).fillRect(0, O + 4, W, H - O);
+    // cartello stradale irlandese: verde, bilingue
+    const [ix, iy] = this.V ? [26, O - 58] : [96, 66];
+    g.fillStyle(0x0b6b3a, 1).fillRoundedRect(ix, iy, 92, 44, 4);
+    g.lineStyle(2, COL.carta, 1).strokeRoundedRect(ix + 3, iy + 3, 86, 38, 3);
+    g.fillStyle(COL.inchiostro, 1).fillRect(ix + 43, iy + 44, 5, 20);
+    testo(this, ix + 46, iy + 14, "Gaillimh", 11, "#F3EAD2", "fori").setFontStyle("italic bold");
+    testo(this, ix + 46, iy + 30, "GALWAY  61", 12, "#F3EAD2", "titoli");
+  }
+
   private interfaccia() {
     const r = this.riff;
     if (this.V) {
       // in alto: Esci e punti, sotto il nome del riff e quanto manca
+      if (this.o.modo === "ascolta") testo(this, W / 2, this.HOR - 22, "♪ " + t("inAscolto"), 18, HEX.lampada, "fori").setStroke(HEX.inchiostro, 5).setDepth(20);
       bottone(this, 64, 36, t("esci"), () => vaiA(this, "riffMenu"), { w: 108, h: 54, primario: false, size: 18 }).setDepth(20);
       this.puntiTesto = testo(this, W - 22, 32, "0", 34, HEX.carta, "titoli").setOrigin(1, 0.5).setStroke(HEX.inchiostro, 5).setDepth(20);
       this.comboTesto = testo(this, W - 22, 66, "", 17, HEX.carta, "fori").setOrigin(1, 0.5).setDepth(20);
       const nome = testo(this, W / 2, 98, r.nome[impostazioni.lingua].toUpperCase(), 22, HEX.lampada, "titoli").setDepth(20);
       if (nome.width > W - 40) nome.setScale((W - 40) / nome.width);
-      testo(this, W / 2, 126, `${"★".repeat(r.livello)}  ·  ${Math.round(r.bpm * this.o.tempo)} bpm  ·  ${t(this.o.modo === "concerto" ? "concerto" : "pratica")}`, 15, HEX.carta, "fori").setDepth(20);
+      testo(this, W / 2, 126, `${"★".repeat(r.livello)}  ·  ${Math.round(r.bpm * this.o.tempo)} bpm  ·  ${t(this.nomeModo())}`, 15, HEX.carta, "fori").setDepth(20);
       this.barraPos = { x: 20, y: 144, w: W - 40, h: 8 };
       this.barra = this.add.graphics().setDepth(20);
       this.moltTesto = testo(this, W - 70, this.HOR + 80, "", 34, HEX.ottone, "titoli").setStroke(HEX.inchiostro, 6).setDepth(20).setAngle(8);
@@ -171,13 +226,34 @@ export class RiffScene extends Phaser.Scene {
       return;
     }
     testo(this, 20, 22, r.nome[impostazioni.lingua].toUpperCase(), 18, HEX.lampada, "titoli").setOrigin(0, 0.5).setDepth(20);
-    testo(this, 20, 44, `${"★".repeat(r.livello)}  ·  ${Math.round(r.bpm * this.o.tempo)} bpm  ·  ${t(this.o.modo === "concerto" ? "concerto" : "pratica")}`, 12, HEX.carta, "fori").setOrigin(0, 0.5).setDepth(20);
+    testo(this, 20, 44, `${"★".repeat(r.livello)}  ·  ${Math.round(r.bpm * this.o.tempo)} bpm  ·  ${t(this.nomeModo())}`, 12, HEX.carta, "fori").setOrigin(0, 0.5).setDepth(20);
     this.barra = this.add.graphics().setDepth(20);
     this.puntiTesto = testo(this, W - 24, 24, "0", 28, HEX.carta, "titoli").setOrigin(1, 0.5).setStroke(HEX.inchiostro, 5).setDepth(20);
     this.comboTesto = testo(this, W - 24, 54, "", 14, HEX.carta, "fori").setOrigin(1, 0.5).setDepth(20);
+    if (this.o.modo === "ascolta") testo(this, this.CX, this.HOR + 26, "♪ " + t("inAscolto"), 15, HEX.lampada, "fori").setStroke(HEX.inchiostro, 4).setDepth(20);
     this.moltTesto = testo(this, W - 120, 214, "", 30, HEX.ottone, "titoli").setStroke(HEX.inchiostro, 6).setDepth(20).setAngle(8);
     this.avviso = testo(this, this.CX, 250, "", 54, HEX.carta, "titoli").setStroke(HEX.inchiostro, 8).setDepth(30).setAlpha(0);
     bottone(this, 52, 520, t("esci"), () => vaiA(this, "riffMenu"), { w: 84, h: 30, primario: false, size: 14 }).setDepth(20);
+  }
+
+  private nomeModo() { return this.o.modo === "concerto" ? "concerto" : this.o.modo === "prova" ? "pratica" : "ascolta"; }
+
+  /**
+   * Ascolta: l'armonica guida suona le note un attimo prima che arrivino (l'audio va programmato in anticipo)
+   * e quando una nota tocca la linea si accende come se l'avessi presa tu.
+   */
+  private guida(tc: number) {
+    const p = this.partitura, s = this.suono;
+    const ora = s.ctx.currentTime, anticipo = 0.4;
+    while (this.programmate < p.note.length && p.note[this.programmate].t - tc < anticipo) {
+      const n = p.note[this.programmate++];
+      if (n.t - tc < -0.05) continue;
+      s.effetti.voceNemico(n.midi, Math.max(0.09, n.durata * 0.9), "normale", ora + (n.t - tc));
+    }
+    for (const n of p.note) {
+      if (n.t > tc) break;
+      if (n.giudizio === null) { const e = p.attacco(n.midi, n.t); if (e) this.colpo(e.nota, true); }
+    }
   }
 
   private mostraAvviso(s: string, colore: string) {
@@ -188,32 +264,34 @@ export class RiffScene extends Phaser.Scene {
   }
 
   private colpo(n: NotaInGioco, perfetto: boolean) {
+    // in ascolto si sente solo l'armonica guida: niente suoni di gioco sopra la melodia
+    const muto = this.o.modo === "ascolta";
     const tab = leggiForo(n.foro);
     const x = this.xCorsia(tab.hole);
     this.lampi[tab.hole] = 1;
     const colore = tab.bend ? COL.prugna : tab.draw ? COL.indacoChiaro : COL.ottone;
     this.scintille.setParticleTint(colore);
     this.scintille.explode(perfetto ? 18 : 9, x, this.HIT);
-    pop(this, Phaser.Math.Clamp(x, 70, W - 70), this.HIT - (this.V ? 64 : 50), t(perfetto ? "perfetto" : "bene"), perfetto ? HEX.lampada : HEX.carta, (perfetto ? 20 : 16) + (this.V ? 4 : 0), 600);
+    if (!muto) pop(this, Phaser.Math.Clamp(x, 70, W - 70), this.HIT - (this.V ? 64 : 50), t(perfetto ? "perfetto" : "bene"), perfetto ? HEX.lampada : HEX.carta, (perfetto ? 20 : 16) + (this.V ? 4 : 0), 600);
     const molt = moltiplicatoreCombo(this.partitura.combo);
-    if (molt > this.ultimoMolt) {
+    if (molt > this.ultimoMolt && !muto) {
       this.mostraAvviso(`${t("fuoco")}${molt}`, HEX.ottone);
-      this.suono.effetti.critico();
+      if (!muto) this.suono.effetti.critico();
       this.cameras.main.shake(220, 0.008);
       this.cameras.main.flash(160, 255, 200, 120);
     }
     this.ultimoMolt = molt;
-    if (perfetto) this.suono.effetti.notaGiusta(this.partitura.combo);
+    if (perfetto && !muto) this.suono.effetti.notaGiusta(this.partitura.combo);
     // l'armonica "salta" a ogni colpo
     this.tweens.add({ targets: this.armonica, scale: { from: perfetto ? 1.06 : 1.03, to: 1 }, duration: 120 });
-    if (this.partitura.combo > 0 && this.partitura.combo % 25 === 0) { pop(this, this.CX, this.V ? (this.HOR + this.HIT) / 2 : 300, `${this.partitura.combo}!`, HEX.lampada, 48); this.cameras.main.flash(120, 255, 230, 160); }
+    if (!muto && this.partitura.combo > 0 && this.partitura.combo % 25 === 0) { pop(this, this.CX, this.V ? (this.HOR + this.HIT) / 2 : 300, `${this.partitura.combo}!`, HEX.lampada, 48); this.cameras.main.flash(120, 255, 230, 160); }
   }
 
   update(_: number, dms: number) {
     const dt = Math.min(0.05, dms / 1000);
     this.ascolto.aggiorna(dt);
     const p = this.partitura;
-    if (this.o.modo === "concerto") this.tempoCanzone = this.ascolto.ora - this.t0;
+    if (this.o.modo !== "prova") this.tempoCanzone = this.ascolto.ora - this.t0;
     else if (!this.finito) {
       // Prova: il tempo si ferma sulla prossima nota finché non la suoni
       const prossima = p.prossima();
@@ -233,9 +311,12 @@ export class RiffScene extends Phaser.Scene {
       } else this.attesa = false;
     }
     const tc = this.tempoCanzone;
-    if (!this.finito) this.suono.abbassaBand(this.ascolto.midi !== null, record.cuffie);
+    if (!this.finito && this.o.modo !== "ascolta") this.suono.abbassaBand(this.ascolto.midi !== null, record.cuffie);
 
-    if (!this.finito) {
+    if (!this.finito && this.o.modo === "ascolta") {
+      this.guida(tc);
+      if (tc > this.fine) this.fineAscolto();
+    } else if (!this.finito) {
       if (this.o.modo === "concerto") for (const n of p.scadute(tc)) this.mancata(n);
       p.tieni(this.ascolto.midi, dt, tc);
       if ((this.o.modo === "concerto" && tc > this.fine) || (this.o.modo === "prova" && p.finita && tc > this.fine - 1)) this.chiudi();
@@ -249,9 +330,11 @@ export class RiffScene extends Phaser.Scene {
     const molt = moltiplicatoreCombo(p.combo);
     this.fiamme.emitting = molt >= 2;
     this.fiamme.frequency = molt >= 4 ? 8 : molt >= 3 ? 16 : 30;
-    this.moltTesto.setText(molt > 1 ? `×${molt}` : "");
-    this.puntiTesto.setText(String(Math.round(p.punti)));
-    this.comboTesto.setText(p.combo >= 2 ? `${p.combo} ${t("combo")}` : "");
+    // in ascolto non si fanno punti: restano le fiamme, spariscono i numeri
+    const gara = this.o.modo !== "ascolta";
+    this.moltTesto.setText(gara && molt > 1 ? `×${molt}` : "");
+    this.puntiTesto.setText(gara ? String(Math.round(p.punti)) : "");
+    this.comboTesto.setText(gara && p.combo >= 2 ? `${p.combo} ${t("combo")}` : "");
     const avanzamento = Phaser.Math.Clamp(tc / this.fine, 0, 1);
     const b = this.barraPos;
     this.barra.clear().fillStyle(COL.inchiostro, 0.8).fillRoundedRect(b.x, b.y, b.w, b.h, b.h / 2).fillStyle(COL.ottone, 1).fillRoundedRect(b.x, b.y, b.w * avanzamento, b.h, b.h / 2);
@@ -276,7 +359,7 @@ export class RiffScene extends Phaser.Scene {
     for (let k = Math.floor((tc - 0.4) / meta); k * meta - tc < this.ANTICIPO; k++) {
       if (k % 2) continue;
       const y1 = this.proietta(0, Math.max(-0.35, k * meta - tc)).y, y2 = this.proietta(0, Math.min(this.ANTICIPO, (k + 1) * meta - tc)).y;
-      g.fillStyle(0x221c15, 1).fillRect(0, Math.min(y1, y2), W, Math.abs(y1 - y2));
+      g.fillStyle(this.riff.origine === "irlanda" ? 0x1d3324 : 0x221c15, 1).fillRect(0, Math.min(y1, y2), W, Math.abs(y1 - y2));
     }
     // asfalto
     g.fillStyle(0x2a2520, 1).fillPoints([{ x: sx.x, y: sx.y }, { x: dx.x, y: dx.y }, { x: dxb.x, y: dxb.y }, { x: sxb.x, y: sxb.y }], true);
@@ -383,6 +466,26 @@ export class RiffScene extends Phaser.Scene {
       }
     }
     for (const [i, et] of this.etichette) if (!visibili.has(i)) { et.destroy(); this.etichette.delete(i); }
+  }
+
+  /** Fine dell'ascolto: niente punteggio, solo la scelta tra suonarlo subito o riascoltarlo. */
+  private fineAscolto() {
+    this.finito = true;
+    this.suono.basi.ferma(0.8);
+    const V = this.V, y = V ? (this.HOR + this.HIT) / 2 : 250;
+    const velo = this.add.graphics().setDepth(40);
+    velo.fillStyle(COL.inchiostro, 0.72).fillRect(0, 0, W, H);
+    testo(this, W / 2, y - (V ? 90 : 70), this.riff.nome[impostazioni.lingua].toUpperCase(), V ? 26 : 24, HEX.lampada, "titoli").setStroke(HEX.inchiostro, 6).setDepth(41);
+    const suona = () => vaiA(this, "riff", { ...this.o, modo: "concerto" });
+    const ancora = () => vaiA(this, "riff", this.o);
+    if (V) {
+      bottone(this, W / 2, y, t("suonaOra"), suona, { w: 320, h: 64, size: 24 }).setDepth(41);
+      bottone(this, W / 2, y + 84, t("riascoltaBrano"), ancora, { w: 260, h: 56, primario: false, size: 18 }).setDepth(41);
+    } else {
+      bottone(this, W / 2, y, t("suonaOra"), suona, { w: 260, h: 52, size: 20 }).setDepth(41);
+      bottone(this, W / 2, y + 66, t("riascoltaBrano"), ancora, { w: 200, h: 40, primario: false, size: 15 }).setDepth(41);
+    }
+    this.input.keyboard?.once("keydown-ENTER", suona);
   }
 
   private chiudi() {
