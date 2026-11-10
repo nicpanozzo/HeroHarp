@@ -1,5 +1,5 @@
 // Copiato da modes/src/scene/HubScene.ts con scripts/sync-content.mjs, non modificare qui.
-// Il Juke Joint: la sala delle modalità libere. Tre locandine sul muro, una per modalità.
+// Il Juke Joint: la sala delle modalità libere. Quattro locandine sul muro, una per modalità.
 
 import Phaser from "phaser";
 import { keyById, noteName } from "../../harp";
@@ -12,6 +12,7 @@ import { LICK } from "../jam/lick";
 import { scelteJam } from "../jam/JamMenuScene";
 import { RIFF } from "../riff/riff";
 import { VOLI } from "../volo/voli";
+import { branoAperto } from "../brano/sessione";
 
 interface Locandina { chiave: string; via: () => [string, object]; titolo: string; testo: string; colore: number; inchiostro: string; disegno: (g: Phaser.GameObjects.Graphics) => void; record: string }
 
@@ -42,15 +43,19 @@ export class HubScene extends Phaser.Scene {
         record: riffFatti ? `★ ${riffFatti}` : "" },
       { chiave: "voloMenu", via: () => ["volo", { id: (VOLI.find((v) => (record.volo[v.id]?.stelle ?? 0) < 3) ?? VOLI[0]).id }], titolo: t("voloTitolo"), testo: t("voloPoster"), colore: COL.indaco, inchiostro: HEX.carta, disegno: (g) => this.disegnoVolo(g),
         record: voliFatti ? `★ ${voliFatti}` : "" },
+      { chiave: "branoMenu", via: () => ["branoMenu", { vista: branoAperto() ? "mappa" : "libreria" }],
+        titolo: impostazioni.lingua === "it" ? "Impara un brano" : "Learn a song",
+        testo: impostazioni.lingua === "it" ? "Carica un assolo: lo impari frase per frase." : "Load a solo: learn it phrase by phrase.",
+        colore: COL.verde, inchiostro: HEX.inchiostro, disegno: (g) => this.disegnoBrano(g), record: "" },
     ];
     if (V) {
       // locandine una sopra l'altra, alte quanto lo schermo permette
-      const alto = 186, basso = H - 166, posto = (basso - alto) / 3;
+      const alto = 186, basso = H - 166, posto = (basso - alto) / locandine.length;
       const hp = Math.min(250, posto - 22);
-      locandine.forEach((l, i) => this.locandinaLarga(W / 2, alto + posto * (i + 0.5), l, [-1.2, 0.9, -0.6][i], hp));
+      locandine.forEach((l, i) => this.locandinaLarga(W / 2, alto + posto * (i + 0.5), l, [-1.2, 0.9, -0.6, 1.1][i], hp));
       this.barraImpostazioniAlta();
     } else {
-      locandine.forEach((l, i) => this.locandina(170 + i * 310, 272, l, [-2.5, 1.5, -1][i]));
+      locandine.forEach((l, i) => this.locandina(124 + i * 237, 272, l, [-2.5, 1.5, -1, 2][i], 214));
       this.barraImpostazioni();
     }
     grana(this);
@@ -113,7 +118,7 @@ export class HubScene extends Phaser.Scene {
     const disegno = this.add.graphics().setPosition(sx, 12 * k - 12).setScale(k);
     l.disegno(disegno);
     const x0 = -w / 2 + 40 + 240 * k, x1 = w / 2 - 16, cx = (x0 + x1) / 2, tw = x1 - x0;
-    const tit = titolo(this, cx, -h / 2 + 32, l.titolo, 25, l.inchiostro, l.colore === COL.ottone ? HEX.rosso : HEX.inchiostro, tw);
+    const tit = titolo(this, cx, -h / 2 + 32, l.titolo, 25, l.inchiostro, l.colore === COL.ottone || l.colore === COL.verde ? HEX.rosso : HEX.inchiostro, tw);
     const desc = testo(this, cx, -h / 2 + 58, l.testo, 16, l.inchiostro).setOrigin(0.5, 0).setWordWrapWidth(tw);
     const rec = testo(this, sx, h / 2 - 18, l.record, 15, l.inchiostro, "fori").setAlpha(0.9);
     if (rec.width > 240 * k + 20) rec.setScale((240 * k + 20) / rec.width);
@@ -130,8 +135,8 @@ export class HubScene extends Phaser.Scene {
     bottone(this, x + x1 - bw / 2, y + yb, "≡ " + (impostazioni.lingua === "it" ? "Scegli" : "Choose"), () => vaiA(this, l.chiave), { w: bw, h: 54, primario: false, size: 17 });
   }
 
-  private locandina(x: number, y: number, l: Locandina, angolo: number) {
-    const w = 270, h = 300;
+  private locandina(x: number, y: number, l: Locandina, angolo: number, w = 270) {
+    const h = 300, k = w / 270;
     const c = this.add.container(x, y).setAngle(angolo);
     const g = this.add.graphics();
     g.fillStyle(COL.inchiostro, 1).fillRect(-w / 2 + 7, -h / 2 + 7, w, h);
@@ -139,10 +144,10 @@ export class HubScene extends Phaser.Scene {
     g.lineStyle(3, COL.inchiostro, 1).strokeRect(-w / 2, -h / 2, w, h);
     g.fillStyle(COL.carta, 1).fillCircle(-w / 2 + 14, -h / 2 + 12, 5); // puntina
     const disegno = this.add.graphics();
-    disegno.setPosition(0, -50);
+    disegno.setPosition(0, -50).setScale(Math.min(1, k * 1.05));
     l.disegno(disegno);
-    const tit = titolo(this, 0, 52, l.titolo, 25, l.inchiostro, l.colore === COL.ottone ? HEX.rosso : HEX.inchiostro, w - 30);
-    const desc = testo(this, 0, 86, l.testo, 14, l.inchiostro).setWordWrapWidth(w - 40);
+    const tit = titolo(this, 0, 52, l.titolo, 25, l.inchiostro, l.colore === COL.ottone || l.colore === COL.verde ? HEX.rosso : HEX.inchiostro, w - 30);
+    const desc = testo(this, 0, 88, l.testo, 14, l.inchiostro).setWordWrapWidth(w - 30);
     const rec = testo(this, 0, 112, l.record, 13, l.inchiostro, "fori").setAlpha(0.85);
     c.add([g, disegno, tit, desc, rec]);
     c.setSize(w, h).setInteractive({ useHandCursor: true });
@@ -179,6 +184,21 @@ export class HubScene extends Phaser.Scene {
     }
     g.fillStyle(0xc9c6bd, 1).fillRoundedRect(-112, 36, 224, 22, 6);
     g.lineStyle(2, COL.inchiostro, 1).strokeRoundedRect(-112, 36, 224, 22, 6);
+  }
+
+  private disegnoBrano(g: Phaser.GameObjects.Graphics) {
+    // un disco in vinile con una frase che ne esce: tre dischetti dei fori, soffio e aspirato
+    g.fillStyle(COL.inchiostro, 1).fillCircle(-40, -10, 62);
+    g.lineStyle(2, 0x3a3a3a, 1);
+    for (const r of [50, 40, 30]) g.strokeCircle(-40, -10, r);
+    g.fillStyle(COL.rosso, 1).fillCircle(-40, -10, 18);
+    g.fillStyle(COL.carta, 1).fillCircle(-40, -10, 4);
+    const fori: [number, number, number][] = [[34, -46, COL.ottone], [70, -6, COL.indaco], [106, 34, COL.ottone]];
+    g.lineStyle(4, COL.inchiostro, 1).beginPath(); g.moveTo(10, -60); g.lineTo(34, -46); g.lineTo(70, -6); g.lineTo(106, 34); g.strokePath();
+    for (const [x, y, c] of fori) { g.fillStyle(COL.inchiostro, 1).fillCircle(x + 3, y + 3, 19); g.fillStyle(c, 1).fillCircle(x, y, 16); }
+    // ripeti: freccia circolare
+    g.lineStyle(6, COL.carta, 1); g.beginPath(); g.arc(-40, -10, 76, -0.4, 0.9); g.strokePath();
+    g.fillStyle(COL.carta, 1).fillTriangle(-40 + 76 * Math.cos(0.9) - 10, -10 + 76 * Math.sin(0.9) - 2, -40 + 76 * Math.cos(0.9) + 10, -10 + 76 * Math.sin(0.9) - 6, -40 + 76 * Math.cos(0.9) - 2, -10 + 76 * Math.sin(0.9) + 12);
   }
 
   private disegnoVolo(g: Phaser.GameObjects.Graphics) {
