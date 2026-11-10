@@ -12,6 +12,8 @@ import { RiffScene } from "./modi/riff/RiffScene";
 import { RiffFineScene } from "./modi/riff/RiffFineScene";
 import { VoloMenuScene } from "./modi/volo/VoloMenuScene";
 import { VoloScene } from "./modi/volo/VoloScene";
+import { BranoMenuScene } from "./modi/brano/BranoMenuScene";
+import { BranoScene } from "./modi/brano/BranoScene";
 import { impostazioni, record } from "./modi/core/impostazioni";
 import { bottone, impostaPalco, verticale, W as modiW, H as modiH } from "./modi/core/ui";
 import { W as gameW, H as gameH } from "./ui";
@@ -20,9 +22,21 @@ import { save, persist } from "./state";
 import { grooveOnGesture, hush } from "./audio/music";
 import type { TonalitaArmonica } from "./style/basi";
 
-export const MODE_SCENES = [HubScene, JamMenuScene, JamScene, JamFineScene, RiffMenuScene, RiffScene, RiffFineScene, VoloMenuScene, VoloScene];
+export const MODE_SCENES = [
+  HubScene,
+  JamMenuScene,
+  JamScene,
+  JamFineScene,
+  RiffMenuScene,
+  RiffScene,
+  RiffFineScene,
+  VoloMenuScene,
+  VoloScene,
+  BranoMenuScene,
+  BranoScene,
+];
 /** Le scene in cui suona la band della modalità: la base del gioco tace. */
-const OWN_MUSIC = new Set(["jam", "riff", "volo"]);
+const OWN_MUSIC = new Set(["jam", "riff", "volo", "brano"]);
 let inModes = false;
 
 /** true mentre si gioca nel Juke Joint (la tastiera la gestiscono le modalità, con il bend sullo Spazio). */
@@ -49,7 +63,7 @@ function leaveModes(): void {
 
 /** Da chiamare una volta creato il gioco: aggancia zoom, musica e salvataggi alle scene. */
 export function wireModes(game: Phaser.Game): void {
-  const keys = new Set(["hub", "jamMenu", "jam", "jamFine", "riffMenu", "riff", "riffFine", "voloMenu", "volo"]);
+  const keys = new Set(["hub", "jamMenu", "jam", "jamFine", "riffMenu", "riff", "riffFine", "voloMenu", "volo", "branoMenu", "brano"]);
   // le scene esistono solo dopo l'avvio del gioco
   game.events.once(Phaser.Core.Events.READY, () => game.scene.getScenes(false).forEach(hook));
   const hook = (scene: Phaser.Scene): void => {
