@@ -110,7 +110,7 @@ export function estraiNote(tr: Traccia, tonalita: TonalitaArmonica): NotaBrano[]
   const cala = (a: number, b: number) => {
     if (!liv) return true;
     const rif = Math.min(liv[a] ?? 0, liv[b] ?? 0);
-    for (let k = a + 1; k < b; k++) if (liv[k] < rif * 0.55) return true;
+    for (let k = a + 1; k < b; k++) if (liv[k] < rif * 0.35) return true;
     return false;
   };
   let f = 0;
@@ -123,7 +123,7 @@ export function estraiNote(tr: Traccia, tonalita: TonalitaArmonica): NotaBrano[]
       const prima = note[note.length - 1];
       // stessa nota spezzata da un buco breve: è una nota sola, a meno che il volume non cali (nota ribattuta).
       // Un colpo di rullante o un accordo della band coprono l'armonica senza abbassare il volume.
-      if (prima && prima.midi === v && (f - prima.f1 <= 4 || (f - prima.f1 <= 20 && !cala(prima.f1, f)))) prima.f1 = g;
+      if (prima && prima.midi === v && (f - prima.f1 <= 4 || (f - prima.f1 <= 40 && !cala(prima.f1, f)))) prima.f1 = g;
       else note.push({ f0: f, f1: g, midi: v });
     }
     f = g + 1;
@@ -155,6 +155,11 @@ export function estraiNote(tr: Traccia, tonalita: TonalitaArmonica): NotaBrano[]
     if (!vicina) continue;
     vicina.f0 = Math.min(vicina.f0, x.f0); vicina.f1 = Math.max(vicina.f1, x.f1);
     note.splice(i, 1); i--;
+  }
+  // dopo aver tolto i fantasmi, due pezzi della stessa nota possono essere di nuovo vicini
+  for (let i = 1; i < note.length; i++) {
+    const a = note[i - 1], b = note[i];
+    if (a.midi === b.midi && b.f0 - a.f1 <= 40 && !cala(a.f1, b.f0)) { a.f1 = b.f1; note.splice(i, 1); i--; }
   }
   return note.map((x) => {
     const durata = (x.f1 - x.f0 + 1) * tr.passo;

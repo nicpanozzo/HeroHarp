@@ -66,4 +66,7 @@ test("impara un brano", async ({ page }) => {
   await shot("05-tocca-a-te", 200);
   await fase(page, "esito");
   await shot("06-esito", 900);
+  await go(page, "brano", { tutto: true });
+  await fase(page, "ascolta");
+  await shot("07-ascolta-tutto", 9000);
 });

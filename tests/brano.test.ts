@@ -10,7 +10,7 @@ describe("Impara un brano", () => {
     const trovate = demo.verita.filter((v) => note.some((n) => n.midi === v.midi && Math.abs(n.t - v.t) < 0.12));
     console.log(note.length, demo.verita.length, trovate.length);
     expect(trovate.length / demo.verita.length).toBeGreaterThan(0.9);
-    expect(note.length).toBeLessThan(demo.verita.length * 1.3);
+    expect(note.length).toBeLessThan(demo.verita.length * 1.1);
     const frasi = dividiFrasi(note);
     console.log(frasi.map((f) => [f.inizio.toFixed(2), f.fine.toFixed(2), f.a - f.da + 1]));
     expect(frasi.length).toBe(6);
