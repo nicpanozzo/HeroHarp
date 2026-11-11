@@ -53,10 +53,12 @@ export class BranoScene extends Phaser.Scene {
   private sgancia: (() => void) | null = null;
   private pausa = false;
   private lati = false;
+  /** Ascolta tutto: la traccia intera con la tab che scorre, senza giudizio. */
+  private soloAscolto = false;
 
   constructor() { super("brano"); }
 
-  init(d: { da?: number; a?: number }) {
+  init(d: { da?: number; a?: number; tutto?: boolean }) {
     const b = branoAperto();
     if (!b) return;
     this.b = b;
@@ -72,6 +74,13 @@ export class BranoScene extends Phaser.Scene {
     this.overlay = [];
     this.pausa = false;
     this.lati = false;
+    this.soloAscolto = !!d?.tutto && b.note.length > 0;
+    if (this.soloAscolto) {
+      this.pz = { da: 0, a: Math.max(0, b.frasi.length - 1), tipo: "tutto" };
+      this.note = b.note;
+      this.inizio = 0;
+      this.fine = b.durata;
+    }
   }
 
   create() {
@@ -105,7 +114,7 @@ export class BranoScene extends Phaser.Scene {
     this.input.keyboard?.on("keydown-ESC", () => this.esci());
     this.input.keyboard?.on("keydown-ENTER", () => { if (this.fase === "ascolta") this.vaiTocca(); });
     // ascolta subito, tranne l'assolo intero (lo conosci già: si va dritti al tuo turno)
-    void this.lettore.attendi().then(() => (this.pz.tipo === "tutto" ? this.vaiTocca() : this.vaiAscolta()));
+    void this.lettore.attendi().then(() => (this.soloAscolto ? this.vaiAscolta() : this.pz.tipo === "tutto" ? this.vaiTocca() : this.vaiAscolta()));
   }
 
   private get velocita() { return progresso(this.b.id).velocita || 1; }
@@ -122,8 +131,14 @@ export class BranoScene extends Phaser.Scene {
     this.fase = "ascolta";
     this.giudice = null;
     this.pulisciOverlay();
-    this.mostraBanner(L("Ascolta", "Listen"), L("l'armonica originale, sulla base", "the original harp, over the backing"), COL.ottone, HEX.inchiostro);
     this.contoFatto = -1;
+    if (this.soloAscolto) {
+      this.mostraBanner(L("Ascolta tutto", "Hear it all"), L("il brano intero, con la tab che scorre", "the whole track, with the tab scrolling"), COL.ottone, HEX.inchiostro);
+      void this.lettore.suona(0, this.fine, this.velocita, false);
+      this.comandiAscolto();
+      return;
+    }
+    this.mostraBanner(L("Ascolta", "Listen"), L("l'armonica originale, sulla base", "the original harp, over the backing"), COL.ottone, HEX.inchiostro);
     void this.lettore.suona(this.inizio - ATTACCO, this.fine + CODA, this.velocita, false);
     this.bottoneSalta();
   }
@@ -142,6 +157,7 @@ export class BranoScene extends Phaser.Scene {
   }
 
   private fineGiro() {
+    if (this.soloAscolto) { if (!this.pausa) this.esci(); return; }
     if (this.fase === "ascolta") { if (!this.pausa) this.vaiTocca(); return; }
     if (this.fase !== "tocca" || !this.giudice) return;
     this.giudice.aggiorna(Infinity);
@@ -230,8 +246,8 @@ export class BranoScene extends Phaser.Scene {
     const V = this.V;
     bottone(this, V ? 60 : 56, V ? 40 : 26, "‹", () => this.esci(), { w: V ? 80 : 64, h: V ? 54 : 34, primario: false, size: V ? 26 : 20 }).setDepth(30);
     testo(this, W / 2, V ? 32 : 20, this.b.titolo, V ? 15 : 13, HEX.carta, "fori").setAlpha(0.7).setDepth(30);
-    testo(this, W / 2, V ? 62 : 44, nomePezzo(this.pz, this.b.frasi.length), V ? 24 : 20, HEX.lampada, "titoli").setStroke(HEX.inchiostro, 5).setDepth(30);
-    this.stelleTxt = stelleTesto(this, W - (V ? 70 : 80), V ? 40 : 26, 0, V ? 24 : 20, HEX.carta).setDepth(30);
+    testo(this, W / 2, V ? 62 : 44, this.soloAscolto ? L("Tutto il brano", "The whole track") : nomePezzo(this.pz, this.b.frasi.length), V ? 24 : 20, HEX.lampada, "titoli").setStroke(HEX.inchiostro, 5).setDepth(30);
+    this.stelleTxt = stelleTesto(this, W - (V ? 70 : 80), V ? 40 : 26, 0, V ? 24 : 20, HEX.carta).setDepth(30).setVisible(!this.soloAscolto);
     testo(this, W - (V ? 70 : 80), V ? 72 : 50, `${L("velocità", "speed")} ${Math.round(this.velocita * 100)}%`, V ? 13 : 12, HEX.carta, "fori").setAlpha(0.75).setDepth(30);
     this.aggiornaStelle();
     const yb = V ? 150 : 96;
@@ -260,6 +276,20 @@ export class BranoScene extends Phaser.Scene {
     this.bannerSotto.setText(sotto).setY(h / 2 + (this.V ? 12 : 8));
     this.banner.setScale(0.6).setAlpha(0);
     this.tweens.add({ targets: this.banner, scale: 1, alpha: 1, duration: 200, ease: "Back.easeOut" });
+  }
+
+  /** Ascolta tutto: pausa e salti di 5 secondi, per fermarsi su un punto e guardare la tab. */
+  private comandiAscolto() {
+    const V = this.V, y = this.yRullo + (V ? 210 : 118);
+    const el = this.lettore.el;
+    const salta = (d: number) => { el.currentTime = Math.max(0, Math.min(this.fine - 0.1, el.currentTime + d)); };
+    const o = { h: V ? 58 : 36, primario: false, size: V ? 20 : 15 };
+    bottone(this, W / 2 - (V ? 150 : 130), y, "« 5s", () => salta(-5), { ...o, w: V ? 110 : 90 }).setDepth(30);
+    const pp = bottone(this, W / 2, y, "❚❚", () => {
+      if (el.paused) { void el.play(); pp.label.setText("❚❚"); } else { el.pause(); pp.label.setText("▶"); }
+    }, { ...o, w: V ? 130 : 100, primario: true }).setDepth(30);
+    bottone(this, W / 2 + (V ? 150 : 130), y, "5s »", () => salta(5), { ...o, w: V ? 110 : 90 }).setDepth(30);
+    this.input.keyboard?.on("keydown-SPACE", () => pp.emit("pointerup"));
   }
 
   private bottoneSalta() {
@@ -348,7 +378,7 @@ export class BranoScene extends Phaser.Scene {
       g.lineStyle(1, COL.carta, 0.08).lineBetween(x, alto + 6, x, basso - 6);
     }
     // inizio e fine della frase
-    for (const t of [this.inizio, this.fine]) {
+    for (const t of this.soloAscolto ? this.b.frasi.map((f) => f.inizio) : [this.inizio, this.fine]) {
       const x = this.xTesta + (t - s) * this.pxs;
       if (x > 40 && x < W - 40) g.lineStyle(3, COL.rosso, 0.5).lineBetween(x, alto + 4, x, basso - 4);
     }

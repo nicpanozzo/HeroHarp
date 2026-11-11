@@ -271,11 +271,14 @@ export class BranoMenuScene extends Phaser.Scene {
 
     const righe = Math.ceil(visibili.length / cols);
     const yl = y0 + righe * (th + gy) + (V ? 30 : 14);
-    if (yl < (V ? H - 200 : H - 70)) {
+    if (yl < (V ? H - 290 : H - 80)) {
       testo(this, W / 2, yl, L("Ascolta la frase, poi tocca a te: la base resta, l'armonica originale sparisce.",
         "Hear the phrase, then it's your turn: the backing stays, the original harp vanishes."), V ? 16 : 13, HEX.carta).setWordWrapWidth(W - 60).setAlpha(0.85);
       testo(this, W / 2, yl + (V ? 52 : 22), L("★ con la tab   ★★ tab a scomparsa   ★★★ a memoria", "★ with the tab   ★★ fading tab   ★★★ by heart"), V ? 16 : 13, HEX.lampada, "fori").setWordWrapWidth(W - 40);
     }
+    // il brano intero, solo da ascoltare, con la tab che scorre (per controllare la trascrizione)
+    bottone(this, V ? W / 2 : W - 118, V ? H - 196 : H - 40, "🎧 " + L("Ascolta tutto", "Hear it all"), () => vaiA(this, "brano", { tutto: true }),
+      { w: V ? 300 : 196, h: V ? 58 : 46, primario: false, size: V ? 19 : 15 });
     const pr = prossimo(b);
     if (pr) {
       const yb = V ? H - 110 : H - 40;
